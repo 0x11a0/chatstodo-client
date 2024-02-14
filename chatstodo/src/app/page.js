@@ -2,9 +2,13 @@
 import { FiRefreshCcw } from "react-icons/fi";
 import { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "./context";
-import { HomePanel } from "./home";
-import { SettingsPanel } from "./settings";
-import { BotPanel } from "./bot";
+import { HomePanel, MobileHome } from "./home";
+import { MobileSettings, SettingsPanel } from "./settings";
+import { BotPanel, MobileBots } from "./bot";
+import { FaRobot, FaSmileBeam } from "react-icons/fa";
+import { IoMdSettings } from "react-icons/io";
+
+const MOBILE_BREAKPOINT = 480;
 
 export default function Home() {
     const [theme, setTheme] = useState("dark");
@@ -15,6 +19,19 @@ export default function Home() {
     console.log("theme: ", theme);
 
     const [tabIndex, setTabIndex] = useState(1);
+    const [width, setWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        function handleWindowSizeChange() {
+            setWidth(window.innerWidth);
+        }
+        window.addEventListener('resize', handleWindowSizeChange);
+        return () => {
+            window.removeEventListener('resize', handleWindowSizeChange);
+        }
+    }, [setWidth]);
+
+    const [hasData, setHasData] = useState(false);
 
     return (
         <ThemeContext.Provider value={{ theme, setTheme }}>
@@ -31,47 +48,79 @@ export default function Home() {
                     w-screen px-3 h-24 border-b"
                 >
 
-                    <h2 className="
+                    <button className="
                         text-dark-font-primary 
-                        flex-1
+                        flex-1 text-start
                         font-primary font-bold
                         text-2xl"
+                        onClick={() => setTabIndex(1)}
+                    >ChatsToDo</button>
 
-                    > ChatsToDo</h2>
-                    <button>
+                    {width <= MOBILE_BREAKPOINT &&
+                        <>
+                            <button onClick={() => setTabIndex(2)}>
+                                <FaRobot className="
+                                    text-2xl text-dark-font-primary mx-2"/>
+                            </button>
+
+                            <button onClick={() => setTabIndex(3)}>
+                                <IoMdSettings className="
+                                    text-2xl text-dark-font-primary mx-2"/>
+                            </button>
+
+                        </>
+                    }
+                    <button onClick={() => setHasData(true)}>
                         <FiRefreshCcw className="
-                    text-2xl text-dark-font-primary"/>
+                            text-2xl text-dark-font-primary mx-2"/>
                     </button>
                 </div>
-
-                <div className="
+                {width > MOBILE_BREAKPOINT &&
+                    <>
+                        <div className="
                 flex-1 flex flex-row
                 justify-start items-start
                 w-screen h-screen p-0
             ">
 
-                    <div className="
+                            <div className="
                     flex-1 flex flex-col justify-start items-first
                     bg-dark-background-secondary
                     w-32 min-w-32 max-w-32
                     h-screen p-2">
 
-                        <Tab title="Home" index={1} setIndex={setTabIndex} />
-                        <Tab title="Bots" index={2} setIndex={setTabIndex} />
-                        <Tab title="Settings" index={3} setIndex={setTabIndex} />
+                                <Tab title="Home" index={1} setIndex={setTabIndex} />
+                                <Tab title="Bots" index={2} setIndex={setTabIndex} />
+                                <Tab title="Settings" index={3} setIndex={setTabIndex} />
 
-                    </div>
+                            </div>
 
-                    {tabIndex == 1 &&
-                        <HomePanel />
-                    }
-                    {tabIndex == 2 &&
-                        <BotPanel />
-                    }
-                    {tabIndex == 3 &&
-                        <SettingsPanel />
-                    }
-                </div>
+                            {tabIndex == 1 &&
+                                <HomePanel />
+                            }
+                            {tabIndex == 2 &&
+                                <BotPanel />
+                            }
+                            {tabIndex == 3 &&
+                                <SettingsPanel />
+                            }
+                        </div>
+
+                    </>
+                }
+                {width <= MOBILE_BREAKPOINT &&
+                    <>
+                        {tabIndex == 1 &&
+                            <MobileHome hasData={hasData} />
+                        }
+                        {tabIndex == 2 &&
+                            <MobileBots />
+                        }
+                        {tabIndex == 3 &&
+                            <MobileSettings />
+                        }
+                    </>
+                }
             </main>
         </ThemeContext.Provider >
     );
@@ -89,3 +138,4 @@ function Tab({ title, index, setIndex }) {
         >{title}</button>
     );
 }
+
