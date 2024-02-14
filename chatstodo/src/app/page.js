@@ -51,7 +51,7 @@ export default function Home() {
             ">
 
                     <div className="
-                    flex-1 flex flex-col justify-start items-first
+                    flex flex-col justify-start items-first
                     bg-dark-background-secondary
                     w-32 min-w-32 max-w-32
                     h-screen p-2">

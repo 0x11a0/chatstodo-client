@@ -1,4 +1,6 @@
 import { Card, CardEntry, CardEntrySubtitle } from "./card";
+import { useEffect } from "react";
+import { Swappable, Plugins } from '@shopify/draggable';
 
 export function HomePanel() {
     const today = new Date();
@@ -8,23 +10,38 @@ export function HomePanel() {
     const todayString = day + "/" + month + "/" + year;
     console.log(todayString);
 
+
     return (
+
         <div className="
-            flex flex-wrap
-            justify-start items-start
             p-2 w-full
-        "
+            h-full
+            ">
 
-        >
-            <TodoCard date={todayString} />
-            <EventsCard date={todayString} />
-            <SummaryCard date={todayString} />
-        </div>
 
+        </div >
     );
 
 }
 
+
+/*
+
+    <div className="
+flex flex-wrap
+justify-start items-start
+p-2 w-full
+"
+
+    >
+    </div>
+    <TodoCard date={todayString} />
+    <EventsCard date={todayString} />
+    <SummaryCard date={todayString} />
+
+
+
+    */
 function TodoCard({ date }) {
     //const [todoList, setTodoList] = useState([]);
     const todoList = [
