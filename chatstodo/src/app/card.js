@@ -1,9 +1,22 @@
 import { FaFileExport } from "react-icons/fa";
+import { MdOutlineCheckBox, MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
+import { useState } from "react";
 
 export function CardEntrySubtitle({ title }) {
     return (
         <h4 className="
             flex-1
+            font-primary font-bold
+            text-lg text-dark-font-primary
+            my-2
+        ">{title}</h4>
+
+    );
+}
+export function MobileCardEntrySubtitle({ title }) {
+    return (
+        <h4 className="
+            text-start w-full
             font-primary font-bold
             text-lg text-dark-font-primary
             my-2
@@ -106,28 +119,31 @@ export function CardEntry({ todo, date }) {
 
 }
 //<a href="https://calendar.google.com/" target="_blank">
-export function MobileCard({ title, type, children }) {
+//<a href="https://calendar.google.com/calendar?authuser=0">
+export function MobileCard({ title, type, showCheckboxes, setShowCheckboxes, children, numTicks }) {
     const exportIcon = type === "summary" ?
         <div className="flex-1"></div> :
         <div className="
             flex-1 flex
             text-right justify-end
         ">
-            <a href="https://calendar.google.com/calendar?authuser=0">
+            <button onClick={() => setShowCheckboxes(!showCheckboxes)}
 
+            >
                 <FaFileExport className="
                 text-right
                 font-primary font-bold
                 text-xl text-dark-font-primary
             "/>
-            </a>
+
+            </button>
         </div>
 
-
+    const [showExportButton, setShowExportButton] = useState(false);
 
     return (
         <div className="
-            flex-1 flex-col justify-start items-center
+            flex-1 flex flex-col justify-start items-center
             min-w-full
             bg-dark-background-secondary
             p-4 m-4 rounded-xl
@@ -141,7 +157,7 @@ export function MobileCard({ title, type, children }) {
             ">...</p>
             <div className="
                 flex flex-row justify-between items-center
-                my-4
+                my-4 w-full
                 ">
 
                 <div className="flex-1"
@@ -157,29 +173,53 @@ export function MobileCard({ title, type, children }) {
                 {exportIcon}
 
             </div>
+
             {children}
+            {numTicks == 0 ? "" :
+                <GoogleCalendarButton setShowCheckboxes={setShowCheckboxes}
+                    setShowExportButton={setShowExportButton} />
+            }
         </div >
     );
 
 }
 
-export function MobileCardEntry({ todo, date }) {
+function GoogleCalendarButton({ setShowCheckboxes, setShowExportButton }) {
+
+
+
+    return (
+        <a href="https://calendar.google.com/calendar?authuser=0"
+            className="
+            flex-1
+            font-primary font-bold self-center
+            text-sm text-dark-font-primary
+            bg-[#F8F8F8]/5px-2 mt-2
+            rounded"
+            onClick={() => {
+                setShowCheckboxes(false);
+                setShowExportButton(false);
+            }}
+        > Add to Google Calendar</a >
+    );
+}
+
+export function MobileCardEntry({ todo, date, showCheckboxes, numTicks, setNumTicks }) {
     var dateTag;
     if (todo.type === "event") {
-        //const dateArr = todo.date.split("/");
-        //const eventDate = new Date(dateArr[1] + "-" + dateArr[0] + "-" + dateArr[2]);
-        //const dateFormatter = new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'long' });
-        // {dateFormatter.format(eventDate)}, {todo.timeStr}
+        const dateArr = todo.date.split("/");
+        const eventDate = new Date(dateArr[1] + "-" + dateArr[0] + "-" + dateArr[2]);
+        const dateFormatter = new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'long' });
 
         dateTag =
             <p className="
-        font-primary font-bold
-        text-sm text-dark-font-primary
-        bg-[#F8F8F8]/5 px-2 mt-2
-        inline-block rounded
-        "
-            >{todo.date}, {todo.timeStr}
-            </p>
+             font-primary font-bold
+             text-sm text-dark-font-primary
+             bg-[#F8F8F8]/5 px-2 mt-2
+             inline-block rounded
+                 "
+            >{dateFormatter.format(eventDate)}, {todo.timeStr}</p>
+
     } else {
         dateTag = date === todo.date ?
             <p className="
@@ -192,20 +232,52 @@ export function MobileCardEntry({ todo, date }) {
             <p></p>
     }
 
+    const [isTicked, setIsTicked] = useState(false);
+
 
     return (
         <div key={todo.id}
             className="
-            border-b
+            border-b w-full
             border-dark-border-primary
+            pt-2
         "
         >
-            <p className="
-                mt-2
-                font-primary font-medium
-                text-lg text-dark-font-secondary
-            ">{todo.title}</p>
+            <div className="
+                flex flex-row justify-start
+                items-center
+    
+        ">
+                {!showCheckboxes ? "" :
+                    (isTicked ?
+                        <MdOutlineCheckBox className="
+                            float-left 
+                            text-lg text-dark-font-secondary
+                            mr-2"
+                            onClick={() => {
+                                setIsTicked(false);
+                                setNumTicks(numTicks - 1);
+                            }}
+                        />
+                        :
 
+                        <MdOutlineCheckBoxOutlineBlank className="
+                            float-left 
+                            text-lg text-dark-font-secondary
+                            mr-2"
+                            onClick={() => {
+                                setIsTicked(true);
+                                setNumTicks(numTicks + 1);
+                            }}
+                        />
+                    )
+                }
+                <p className="
+                font-primary font-medium
+                text-m text-dark-font-secondary
+            ">
+                    {todo.title}</p>
+            </div>
             {dateTag}
 
             {todo.type !== "event" ? "" :

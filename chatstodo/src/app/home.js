@@ -1,5 +1,5 @@
 import { FaSmileBeam } from "react-icons/fa";
-import { Card, CardEntry, CardEntrySubtitle, MobileCard, MobileCardEntry } from "./card";
+import { Card, CardEntry, CardEntrySubtitle, MobileCard, MobileCardEntry, MobileCardEntrySubtitle } from "./card";
 import { useState } from "react";
 
 export function HomePanel() {
@@ -326,6 +326,8 @@ export function MobileHome({ hasData }) {
 
 function MobileTodoCard({ date }) {
     //const [todoList, setTodoList] = useState([]);
+    const [showCheckboxes, setShowCheckboxes] = useState(false);
+    const [numTicks, setNumTicks] = useState(0);
 
     let urgentList = [];
     let otherList = [];
@@ -336,18 +338,22 @@ function MobileTodoCard({ date }) {
 
     todoList.forEach((todo, index) => {
         if (todo.group === "urgent") {
-            urgentList.push(<MobileCardEntry key={index} todo={todo} date={date} />);
+            urgentList.push(<MobileCardEntry key={index} todo={todo} date={date}
+                showCheckboxes={showCheckboxes} numTicks={numTicks} setNumTicks={setNumTicks} />);
         } else {
-            otherList.push(<MobileCardEntry key={index} todo={todo} date={date} />);
+            otherList.push(<MobileCardEntry key={index} todo={todo} date={date}
+                showCheckboxes={showCheckboxes} numTicks={numTicks} setNumTicks={setNumTicks} />);
         }
     });
 
+
     return (
 
-        <MobileCard title="Todo List" >
-            <CardEntrySubtitle title="Urgent" />
+        <MobileCard title="Todo List" showCheckboxes={showCheckboxes}
+            setShowCheckboxes={setShowCheckboxes} numTicks={numTicks}>
+            <MobileCardEntrySubtitle title="Urgent" />
             {urgentList}
-            <CardEntrySubtitle title="Others" />
+            <MobileCardEntrySubtitle title="Others" />
             {otherList}
         </MobileCard>
 
