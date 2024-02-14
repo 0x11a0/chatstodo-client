@@ -166,9 +166,10 @@ export function MobileCard({ title, type, children }) {
 export function MobileCardEntry({ todo, date }) {
     var dateTag;
     if (todo.type === "event") {
-        const dateArr = todo.date.split("/");
-        const eventDate = new Date(dateArr[1] + "-" + dateArr[0] + "-" + dateArr[2]);
-        const dateFormatter = new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'long' });
+        //const dateArr = todo.date.split("/");
+        //const eventDate = new Date(dateArr[1] + "-" + dateArr[0] + "-" + dateArr[2]);
+        //const dateFormatter = new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'long' });
+        // {dateFormatter.format(eventDate)}, {todo.timeStr}
 
         dateTag =
             <p className="
@@ -177,7 +178,8 @@ export function MobileCardEntry({ todo, date }) {
         bg-[#F8F8F8]/5 px-2 mt-2
         inline-block rounded
         "
-            >{dateFormatter.format(eventDate)}, {todo.timeStr}</p>
+            >{todo.date}, {todo.timeStr}
+            </p>
     } else {
         dateTag = date === todo.date ?
             <p className="
