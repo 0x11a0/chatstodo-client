@@ -19,7 +19,7 @@ export default function Home() {
     console.log("theme: ", theme);
 
     const [tabIndex, setTabIndex] = useState(1);
-    const [width, setWidth] = useState(window.innerWidth);
+    const [width, setWidth] = useState(0);
 
     useEffect(() => {
         function handleWindowSizeChange() {
