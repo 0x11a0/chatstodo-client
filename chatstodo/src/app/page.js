@@ -8,7 +8,7 @@ import { BotPanel, MobileBots } from "./bot";
 import { FaRobot, FaSmileBeam } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 
-const MOBILE_BREAKPOINT = 480;
+const MOBILE_BREAKPOINT = 600;
 
 export default function Home() {
     const [theme, setTheme] = useState("dark");
