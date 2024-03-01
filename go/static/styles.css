@@ -59,39 +59,79 @@ body {
 
 #main {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: start;
-    align-items: start;
+    align-items: center;
     width: 100%;
     min-height: 100%;
-    padding: 0rem;
+    padding: 2rem;
+    transition: margin-left .5s;
 }
 
+
 #tab-list {
-    width: 8rem;
+    width: 0rem;
     min-height: 100%;
+    position: fixed;
     background-color: var(--dark-background-secondary);
-    padding: 0.5rem;
     display: flex;
     flex-direction: column;
     justify-content: start;
     align-items: center;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+    transition: 0.5s;
+}
+
+#tab-close {
+    color: var(--dark-font-primary);
+    align-self: flex-end;
+    font-size: 2rem;
+    cursor: pointer;
+    margin: 1rem;
 }
 
 .tab {
-    width: 100%;
+    display: block;
+    width: 90%;
     text-align: start;
     color: var(--dark-font-secondary);
     cursor: pointer;
-    font-size: 1rem;
-    font-weight: 400;
+    font-size: 1.25rem;
     line-height: 1.5rem;
+    font-weight: 400;
     padding: 0.5rem 0rem;
     border-bottom: 1px solid var(--dark-border-primary);
     margin: 0rem;
+    transition: 0.3s;
+}
+
+.tab :hover {
+    color: #F1F1F1;
+}
+
+#menu-icon {
+    flex: 1;
+    margin: 1rem;
+
+    img {
+        cursor: pointer;
+    }
+}
+
+#logout-button {
+    outline: none;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid var(--dark-border-primary);
 }
 
 #tab-panel {
+    width: 95%;
     flex: 1;
     display: flex;
     flex-direction: row;
@@ -371,17 +411,6 @@ body {
         margin-left: auto;
     }
 
-    /*
- *
-        <h1>Add new bot</h1>
-        <p>To get started, add the one of the following bots into your chat.
-        <ul>
-            <li><a href="https://t.me/chats_todo_bot" target="_blank">Telegram</a></li>
-            <li><a href="https://discordapp.com/users/1210996330588020827" target="_blank">Discord</a></li>
-        </ul>
-        <button _="on click trigger closeModal">Close</button>
- *
- */
     /* Animate when opening */
     animation-name: zoomIn;
     animation-duration: 150ms;
@@ -441,4 +470,3 @@ body {
         transform: scale(0.9);
     }
 }
-
