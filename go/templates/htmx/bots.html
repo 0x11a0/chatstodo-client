@@ -1,0 +1,27 @@
+<div id="tab-panel" hx-get="/htmx/bots" hx-swap="outerHTML" hx-target="this" role="tabpanel" hx-trigger="every 5s">
+    <div id="bots-panel">
+        <h3 id="bots-title">Your bots</h3>
+
+        {{ range .bots }}
+        <div class="bot-block">
+
+            <p class="bot-name">{{ .Name }}</p>
+            <p class="bot-name">{{ .BotType }}</p>
+            {{ if .IsActive }}
+
+            <p class="bot-active">Active</p>
+
+            {{ else }}
+
+            <p class="bot-inactive">Activate</p>
+
+            {{ end }}
+        </div>
+
+        {{ else }}
+
+        <span>No bots found.</span>
+
+        {{ end }}
+    </div>
+</div>

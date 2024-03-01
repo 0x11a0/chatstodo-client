@@ -15,7 +15,11 @@
     --dark-font-secondary: #8D8D8D;
     --dark-font-tertiary: #FFFFFF;
     --dark-border-primary: #434343;
-    --font-family-primary: Roboto, sans-serif;
+    --font-family-primary: "Roboto";
+}
+
+html {
+    height: 100%;
 }
 
 body {
@@ -24,13 +28,8 @@ body {
     flex-direction: column;
     justify-content: start;
     align-items: center;
-    padding: 0.5rem;
     margin: 0rem;
-    height: 100%;
-}
-
-h3,
-p {
+    min-height: 100%;
     font-family: var(--font-family-primary);
 }
 
@@ -46,13 +45,237 @@ p {
 
 #logo {
     color: var(--dark-font-primary);
-    flex: 1;
     text-align: start;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 1.5rem;
     line-height: 2rem;
+    margin: 0.5rem;
+    cursor: pointer;
 }
 
 #copyright {
     color: var(--dark-font-secondary);
 }
+
+#main {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: start;
+    width: 100%;
+    min-height: 100%;
+    padding: 0rem;
+}
+
+#tab-list {
+    width: 8rem;
+    min-height: 100%;
+    background-color: var(--dark-background-secondary);
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+.tab {
+    width: 100%;
+    text-align: start;
+    color: var(--dark-font-secondary);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5rem;
+    padding: 0.5rem 0rem;
+    border-bottom: 1px solid var(--dark-border-primary);
+    margin: 0rem;
+}
+
+#tab-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    flex-wrap: wrap;
+    padding: 0.5rem 0.5rem;
+}
+
+.card {
+    flex: 1;
+    background-color: var(--dark-background-secondary);
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    border-radius: 15px;
+    margin: 0.5rem;
+    min-width: 325px;
+    padding: 1rem;
+    height: fit-content;
+    filter: drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08));
+}
+
+.dots {
+    font-weight: 700;
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+    color: white;
+}
+
+.card-header {
+    color: var(--dark-font-primary);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    .card-export {
+        flex: 1;
+        margin-left: auto;
+        text-align: end;
+    }
+
+    .card-title {
+        text-align: center;
+        flex: 1;
+    }
+
+    .export-div {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        justify-content: end;
+        align-items: center;
+    }
+}
+
+.card-content {
+    width: 100%;
+    height: auto;
+}
+
+.card-subtitle {
+    font-weight: 700;
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+    color: var(--dark-font-primary);
+    padding: 0rem;
+    margin: 0.75rem 0rem;
+}
+
+.card-block {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    border-bottom: 1px solid var(--dark-border-primary);
+    width: 100%;
+
+    ul {
+        padding: 0rem 1rem;
+    }
+
+    li {
+        color: var(--dark-font-secondary);
+    }
+}
+
+.card-block-point {
+    font-weight: 500;
+    padding: 0rem;
+    margin: 0.25rem 0rem;
+    color: var(--dark-font-secondary);
+}
+
+.card-block-date {
+    font-weight: 400;
+    padding: 0rem;
+    margin: 0.25rem 0rem;
+    color: white;
+}
+
+.card-block-notes {
+    font-weight: 400;
+    padding: 0rem;
+    margin: 0.25rem 0rem;
+    color: var(--dark-font-secondary);
+}
+
+#settings-title,
+#bots-title {
+    color: var(--dark-font-primary);
+}
+
+#settings-panel,
+#bots-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+.settings-block,
+.bot-block {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 95%;
+    padding: 0rem 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--dark-border-primary);
+}
+
+.settings-name,
+.bot-name {
+    color: white;
+}
+
+.settings-subtitle {
+    align-self: flex-start;
+    margin-left: 0.5rem;
+    color: var(--dark-font-primary);
+    font-weight: bold;
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+}
+
+.settings-active,
+.settings-inactive,
+.bot-active,
+.bot-inactive {
+    width: 6rem;
+    border-radius: 9999px;
+    line-height: 1.5rem;
+    cursor: pointer;
+    text-align: center;
+    background-color: var(--dark-background-tertiary);
+}
+
+.settings-active,
+.bot-active {
+    color: var(--dark-font-primary);
+}
+
+.settings-inactive,
+.bot-inactive {
+    color: white;
+}
+
+/*
+ *
+    <h3 id="bots-title">Your bots</h3>
+
+    {{ range .bots }}
+    <div class="bot-block">
+
+        <p class="bot-name">{{ .Name }} </p>
+
+        {{ if .IsActive }}
+
+        <p class="bot-active">Active</p>
+
+        {{ else }}
+
+        <p class="bot-inactive">Activate</p>
+ *
+ */

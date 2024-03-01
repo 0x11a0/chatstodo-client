@@ -1,0 +1,126 @@
+<div id="tab-panel" hx-get="/htmx/homeCards" hx-swap="outerHTML" hx-target="this" role="tabpanel" hx-trigger="every 5s">
+    <div class="card">
+        <p class="dots">...</p>
+        <div class="card-header">
+            <div style="flex: 1;"></div>
+            <h3 class="card-title">Todo List</h3>
+            <div class="export-div">
+                <img width="25" height="25" src="/static/exportYellow.png" />
+            </div>
+        </div>
+
+        <div class="card-content">
+            <h4 class="card-subtitle">Urgent</h4>
+            {{ range .todos }}
+
+            {{ if .Urgent }}
+            <div class="card-block">
+
+                <p class="card-block-point">{{ .Title }}</p>
+                <p class="card-block-date">{{ .Date }}</p>
+                <p class="card-block-notes">{{ .Description }}</p>
+
+            </div>
+            {{ end }}
+
+            {{ else }}
+
+            <span>No urgent tasks.</span>
+
+            {{ end }}
+
+            <h4 class="card-subtitle">Others</h4>
+            {{ range .todos}}
+
+            {{ if not .Urgent }}
+            <div class="card-block">
+                <p class="card-block-point">{{ .Title }}</p>
+                <p class="card-block-date">{{ .Date }}</p>
+            </div>
+            {{ end }}
+
+            {{ else }}
+
+            <span>No other tasks.</span>
+
+            {{ end }}
+
+        </div>
+
+    </div>
+
+    <div class="card">
+        <p class="dots">...</p>
+        <div class="card-header">
+            <div style="flex: 1;"></div>
+            <h3 class="card-title">Events</h3>
+            <div class="export-div">
+                <img width="25" height="25" src="/static/exportYellow.png" />
+            </div>
+        </div>
+
+        <div class="card-content">
+            {{ range .events }}
+
+            <div class="card-block">
+                <p class="card-block-point">{{ .Title }}</p>
+                <p class="card-block-date">{{ .Date }}</p>
+                <p class="card-block-notes">{{ .Description }}</p>
+            </div>
+
+
+            {{ else }}
+
+            <span>No events.</span>
+
+            {{ end }}
+
+        </div>
+    </div>
+
+    <div class="card">
+        <p class="dots">...</p>
+        <div class="card-header">
+            <div style="flex: 1;"></div>
+            <h3 class="card-title">Summary</h3>
+            <div class="export-div">
+                <img width="25" height="25" src="/static/exportYellow.png" />
+            </div>
+        </div>
+
+        <div class="card-content">
+            {{ range .summaries }}
+
+            <div class="card-block">
+                <p class="card-block-point">{{ .Title }}</p>
+                <p class="card-block-date">{{ .Date }}</p>
+
+                <ul>
+                    {{ range .Points }}
+
+                    <li>{{ . }}</li>
+
+                    {{ end }}
+                </ul>
+
+                <u class="card-block-point">Important Notes</u>
+
+                <ul>
+                    {{ range .ImportantPoints }}
+
+                    <li>{{ . }}</li>
+
+                    {{ end }}
+                </ul>
+            </div>
+
+
+            {{ else }}
+
+            <span>No events.</span>
+
+            {{ end }}
+
+        </div>
+    </div>
+</div>

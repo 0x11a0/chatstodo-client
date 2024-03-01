@@ -39,8 +39,13 @@ func (server *Server) run() {
 		csrf.Secure(os.Getenv("IS_PROD") == "true"))
 
 	router := server.router
-	router.HandleFunc("/", server.indexHandler)
-
+	router.HandleFunc("/", server.indexHome)
+	router.HandleFunc("/home", server.indexHome)
+	router.HandleFunc("/bots", server.indexBots)
+	router.HandleFunc("/settings", server.indexSettings)
+	router.HandleFunc("/htmx/homeCards", server.htmxHomeCards)
+	router.HandleFunc("/htmx/bots", server.htmxBots)
+	router.HandleFunc("/htmx/settings", server.htmxSettings)
 	server.addFileServer()
 
 	http.ListenAndServe(server.listenAddr, CSRF(server.router))

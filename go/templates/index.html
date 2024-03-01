@@ -10,7 +10,10 @@
     <meta name="description" content="Your very own virtual personal assistant.">
 
     <link rel="shortcut icon" href="#" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=DM Sans|Inter" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap">
     <link rel="stylesheet" href="/static/styles.css" />
 
     <script src="https://unpkg.com/htmx.org@1.9.10"
@@ -24,9 +27,37 @@
 
 <body>
     <div id="header">
-        <h1 id="logo">ChatsToDo</h1>
+        <h1 hx-target="#tab-panel" hx-swap="outerHTML" hx-get="/htmx/homeCards" id="logo">ChatsToDo</h1>
+
+        <!--h3 style="color: red;">refresh</h3-->
+    </div>
+
+    <div id="main">
+        <div id="tab-list" role="tablist" hx-target="#tab-panel" _="on htmx:afterOnLoad set @aria-selected of 
+            <[aria-selected=true]/> to false tell the 
+            target take .selected set @aria-selected to true">
+
+            <h2 class="tab" hx-get="/htmx/homeCards" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/home"
+                }} aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML"
+                hx-push-url="/home" hx-replace-url="true">Home</h2>
+
+            <h2 class="tab" hx-get="/htmx/bots" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/bots" }}
+                aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML" hx-push-url="/bots"
+                hx-replace-url="true">Bots</h2>
+
+            <h2 class="tab" hx-get="/htmx/settings" role="tab" aria-controls="tab-panel" {{ if eq
+                .redirectUrl "/settings" }} aria-selected="true" {{ else }} aria-selected="false" {{ end }}
+                hx-swap="outerHTML" hx-push-url="/settings" hx-replace-url="true">Settings</h2>
+        </div>
+
+        <div id="tab-panel" hx-get="{{ .htmxPath }}" hx-swap="outerHTML" hx-target="this" role="tabpanel"
+            hx-trigger="load" hx-push-url="{{ .redirectUrl }}" hx-replace-url="true">
+        </div>
 
     </div>
+
+
+
 
 </body>
 <footer>
