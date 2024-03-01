@@ -19,9 +19,16 @@
     <script src="https://unpkg.com/htmx.org@1.9.10"
         integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"
         crossorigin="anonymous"></script>
-
     <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
 
+    <script type="module">
+        import {
+            Draggable,
+            Sortable,
+            Droppable,
+            Swappable,
+        } from 'https://cdn.jsdelivr.net/npm/@shopify/draggable/build/esm/index.mjs';
+    </script>
 </head>
 
 
@@ -37,7 +44,7 @@
             <[aria-selected=true]/> to false tell the 
             target take .selected set @aria-selected to true">
 
-            <h2 class="tab" hx-get="/htmx/homeCards" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/home"
+            <h2 class="tab" hx-get="/htmx/home" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/home"
                 }} aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML"
                 hx-push-url="/home" hx-replace-url="true">Home</h2>
 

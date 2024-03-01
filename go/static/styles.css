@@ -202,7 +202,9 @@ body {
 
 #settings-title,
 #bots-title {
+    flex: 1;
     color: var(--dark-font-primary);
+    text-align: center;
 }
 
 #settings-panel,
@@ -261,21 +263,182 @@ body {
     color: white;
 }
 
-/*
+#bot-new {
+    flex: 1;
+    background: none;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    button {
+        background-color: var(--dark-background-tertiary);
+        outline: none;
+        border: none;
+        border-radius: 9999px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    span {
+        color: var(--dark-font-primary);
+        font-size: 1.25rem;
+        line-height: 1.75rem;
+        margin: 0.25rem;
+    }
+}
+
+#bots-header {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#modal {
+    /* Underlay covers entire screen. */
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+
+    /* Flexbox centers the .modal-content vertically and horizontally */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    /* Animate when opening */
+    animation-name: fadeIn;
+    animation-duration: 150ms;
+    animation-timing-function: ease;
+}
+
+#modal>.modal-underlay {
+    /* underlay takes up the entire viewport. This is only
+	required if you want to click to dismiss the popup */
+    position: absolute;
+    z-index: -1;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+#modal>.modal-content {
+    /* Position visible dialog near the top of the window */
+    margin-top: 10vh;
+
+    /* Sizing for visible dialog */
+    width: 80%;
+    max-width: 600px;
+
+    /* Display properties for visible dialog*/
+    border: solid 1px #999;
+    border-radius: 8px;
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.3);
+    background-color: var(--dark-background-secondary);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h1 {
+        color: var(--dark-font-primary);
+    }
+
+    p {
+        color: var(--dark-font-secondary);
+    }
+
+    a {
+        margin: 1rem;
+        font-size: 1.25rem;
+        line-height: 1.75rem;
+    }
+
+    button {
+        margin-left: auto;
+    }
+
+    /*
  *
-    <h3 id="bots-title">Your bots</h3>
-
-    {{ range .bots }}
-    <div class="bot-block">
-
-        <p class="bot-name">{{ .Name }} </p>
-
-        {{ if .IsActive }}
-
-        <p class="bot-active">Active</p>
-
-        {{ else }}
-
-        <p class="bot-inactive">Activate</p>
+        <h1>Add new bot</h1>
+        <p>To get started, add the one of the following bots into your chat.
+        <ul>
+            <li><a href="https://t.me/chats_todo_bot" target="_blank">Telegram</a></li>
+            <li><a href="https://discordapp.com/users/1210996330588020827" target="_blank">Discord</a></li>
+        </ul>
+        <button _="on click trigger closeModal">Close</button>
  *
  */
+    /* Animate when opening */
+    animation-name: zoomIn;
+    animation-duration: 150ms;
+    animation-timing-function: ease;
+}
+
+#modal.closing {
+    /* Animate when closing */
+    animation-name: fadeOut;
+    animation-duration: 150ms;
+    animation-timing-function: ease;
+}
+
+#modal.closing>.modal-content {
+    /* Animate when closing */
+    animation-name: zoomOut;
+    animation-duration: 150ms;
+    animation-timing-function: ease;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes zoomIn {
+    0% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes zoomOut {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(0.9);
+    }
+}
+

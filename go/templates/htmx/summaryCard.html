@@ -1,0 +1,43 @@
+<p class="dots">...</p>
+<div class="card-header">
+    <div style="flex: 1;"></div>
+    <h3 class="card-title">Summary</h3>
+    <div class="export-div">
+        <img width="25" height="25" src="/static/exportYellow.png" />
+    </div>
+</div>
+
+<div class="card-content">
+    {{ range .summaries }}
+
+    <div class="card-block">
+        <p class="card-block-point">{{ .Title }}</p>
+        <p class="card-block-date">{{ .Date }}</p>
+
+        <ul>
+            {{ range .Points }}
+
+            <li>{{ . }}</li>
+
+            {{ end }}
+        </ul>
+
+        <u class="card-block-point">Important Notes</u>
+
+        <ul>
+            {{ range .ImportantPoints }}
+
+            <li>{{ . }}</li>
+
+            {{ end }}
+        </ul>
+    </div>
+
+
+    {{ else }}
+
+    <span>No events.</span>
+
+    {{ end }}
+
+</div>

@@ -27,7 +27,7 @@ func indexHandler(writer http.ResponseWriter,
 
 func (server *Server) indexHome(writer http.ResponseWriter,
 	request *http.Request) {
-	indexHandler(writer, "/htmx/homeCards", "/home")
+	indexHandler(writer, "/htmx/home", "/home")
 }
 
 func (server *Server) indexBots(writer http.ResponseWriter,
@@ -125,17 +125,50 @@ var fakeHomeSummaryData = []Summary{
 	},
 }
 
-func (server *Server) htmxHomeCards(writer http.ResponseWriter,
+func (server *Server) htmxHomePanel(writer http.ResponseWriter,
 	request *http.Request) {
 
-	tmpl, err := template.ParseFiles("./templates/htmx/homeCards.html")
+	tmpl, err := template.ParseFiles("./templates/htmx/home.html")
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	tmpl.Execute(writer, nil)
+}
+
+func (server *Server) htmxTodoCard(writer http.ResponseWriter,
+	request *http.Request) {
+
+	tmpl, err := template.ParseFiles("./templates/htmx/todoCard.html")
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	tmpl.Execute(writer, map[string]interface{}{
-		"todos":     fakeHomeToDoData,
-		"events":    fakeHomeEventsData,
+		"todos": fakeHomeToDoData,
+	})
+}
+func (server *Server) htmxEventCard(writer http.ResponseWriter,
+	request *http.Request) {
+
+	tmpl, err := template.ParseFiles("./templates/htmx/eventCard.html")
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	tmpl.Execute(writer, map[string]interface{}{
+		"events": fakeHomeEventsData,
+	})
+}
+func (server *Server) htmxSummaryCard(writer http.ResponseWriter,
+	request *http.Request) {
+
+	tmpl, err := template.ParseFiles("./templates/htmx/summaryCard.html")
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	tmpl.Execute(writer, map[string]interface{}{
 		"summaries": fakeHomeSummaryData,
 	})
 }
@@ -174,6 +207,17 @@ func (server *Server) htmxBots(writer http.ResponseWriter,
 func (server *Server) htmxSettings(writer http.ResponseWriter,
 	request *http.Request) {
 	tmpl, err := template.ParseFiles("./templates/htmx/settings.html")
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	tmpl.Execute(writer, map[string]interface{}{})
+
+}
+
+func (server *Server) htmxBotModal(writer http.ResponseWriter,
+	request *http.Request) {
+	tmpl, err := template.ParseFiles("./templates/htmx/botModal.html")
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return

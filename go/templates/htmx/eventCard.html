@@ -1,0 +1,26 @@
+<p class="dots">...</p>
+<div class="card-header">
+    <div style="flex: 1;"></div>
+    <h3 class="card-title">Events</h3>
+    <div class="export-div">
+        <img width="25" height="25" src="/static/exportYellow.png" />
+    </div>
+</div>
+
+<div class="card-content">
+    {{ range .events }}
+
+    <div class="card-block">
+        <p class="card-block-point">{{ .Title }}</p>
+        <p class="card-block-date">{{ .Date }}</p>
+        <p class="card-block-notes">{{ .Description }}</p>
+    </div>
+
+
+    {{ else }}
+
+    <span>No events.</span>
+
+    {{ end }}
+
+</div>

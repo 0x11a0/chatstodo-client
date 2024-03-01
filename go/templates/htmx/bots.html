@@ -1,7 +1,16 @@
-<div id="tab-panel" hx-get="/htmx/bots" hx-swap="outerHTML" hx-target="this" role="tabpanel" hx-trigger="every 5s">
+<div id="tab-panel" hx-get="/htmx/bots" hx-swap="outerHTML" hx-target="this" role="tabpanel" hx-trigger="">
     <div id="bots-panel">
-        <h3 id="bots-title">Your bots</h3>
-
+        <div id="bots-header">
+            <div style="flex:1;"></div>
+            <h3 id="bots-title">Your bots</h3>
+            <div id="bot-new">
+                <button hx-get="/htmx/botModal"
+                    hx-target="body" hx-swap="beforeend">
+                    <img src="/static/plusYellow.png" width="25" height="25" />
+                    <span>Add bot</span>
+                </button>
+            </div>
+        </div>
         {{ range .bots }}
         <div class="bot-block">
 
@@ -25,3 +34,5 @@
         {{ end }}
     </div>
 </div>
+
+<!-- a https://discordapp.com/users/1210996330588020827 -->

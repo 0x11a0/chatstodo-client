@@ -43,8 +43,12 @@ func (server *Server) run() {
 	router.HandleFunc("/home", server.indexHome)
 	router.HandleFunc("/bots", server.indexBots)
 	router.HandleFunc("/settings", server.indexSettings)
-	router.HandleFunc("/htmx/homeCards", server.htmxHomeCards)
+	router.HandleFunc("/htmx/home", server.htmxHomePanel)
+	router.HandleFunc("/htmx/home/todoCard", server.htmxTodoCard)
+	router.HandleFunc("/htmx/home/eventCard", server.htmxEventCard)
+	router.HandleFunc("/htmx/home/summaryCard", server.htmxSummaryCard)
 	router.HandleFunc("/htmx/bots", server.htmxBots)
+	router.HandleFunc("/htmx/botModal", server.htmxBotModal)
 	router.HandleFunc("/htmx/settings", server.htmxSettings)
 	server.addFileServer()
 
