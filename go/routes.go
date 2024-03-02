@@ -13,10 +13,6 @@ type User struct {
 
 func indexHandler(writer http.ResponseWriter, request *http.Request,
 	htmxPath string, redirectUrl string) {
-	if !isValidSession(request) {
-		http.Redirect(writer, request, "/login", http.StatusSeeOther)
-		return
-	}
 	tmpl, err := template.ParseFiles("./templates/index.html", "./templates/dashboard.html")
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
