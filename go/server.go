@@ -2,22 +2,23 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/gorilla/csrf"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/gorilla/csrf"
+	"github.com/gorilla/mux"
+	"gopkg.in/boj/redistore.v1"
 )
 
 type Server struct {
 	listenAddr        string
-	redisSessionStore RedisSessionStore
+	redisSessionStore redistore.RediStore
 	router            *mux.Router
 	telebotAddr       string
 }
 
-func initServer(redisSessionStore *RedisSessionStore) *Server {
-
+func initServer(redisSessionStore *redistore.RediStore) *Server {
 	listenAddr := os.Getenv("LISTEN_ADDR")
 	if listenAddr == "" {
 		log.Panicln("Env variable \"LISTEN_ADDR\" has not been set. Exiting.")
@@ -40,16 +41,22 @@ func (server *Server) run() {
 
 	router := server.router
 	router.HandleFunc("/", server.indexHome)
-	router.HandleFunc("/home", server.indexHome)
-	router.HandleFunc("/bots", server.indexBots)
-	router.HandleFunc("/settings", server.indexSettings)
-	router.HandleFunc("/htmx/home", server.htmxHomePanel)
-	router.HandleFunc("/htmx/home/todoCard", server.htmxTodoCard)
-	router.HandleFunc("/htmx/home/eventCard", server.htmxEventCard)
-	router.HandleFunc("/htmx/home/summaryCard", server.htmxSummaryCard)
-	router.HandleFunc("/htmx/bots", server.htmxBots)
-	router.HandleFunc("/htmx/botModal", server.htmxBotModal)
-	router.HandleFunc("/htmx/settings", server.htmxSettings)
+	router.HandleFunc("/login", server.loginPage)
+	router.HandleFunc("/auth/{provider}", server.authHandler)
+	router.HandleFunc("/auth/{provider}/callback", server.authCallback)
+	router.HandleFunc("/logout/{provider}", server.logout)
+
+	router.HandleFunc("/home", authWrapper(server.indexHome))
+	router.HandleFunc("/bots", authWrapper(server.indexBots))
+	router.HandleFunc("/settings", authWrapper(server.indexSettings))
+	router.HandleFunc("/htmx/home", authWrapper(server.htmxHomePanel))
+	router.HandleFunc("/htmx/home/todoCard", authWrapper(server.htmxTodoCard))
+	router.HandleFunc("/htmx/home/eventCard", authWrapper(server.htmxEventCard))
+	router.HandleFunc("/htmx/home/summaryCard", authWrapper(server.htmxSummaryCard))
+	router.HandleFunc("/htmx/bots", authWrapper(server.htmxBots))
+	router.HandleFunc("/htmx/botModal", authWrapper(server.htmxBotModal))
+	router.HandleFunc("/htmx/settings", authWrapper(server.htmxSettings))
+
 	server.addFileServer()
 
 	http.ListenAndServe(server.listenAddr, CSRF(server.router))

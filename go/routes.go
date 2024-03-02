@@ -11,15 +11,18 @@ type User struct {
 	Name   string
 }
 
-func indexHandler(writer http.ResponseWriter,
+func indexHandler(writer http.ResponseWriter, request *http.Request,
 	htmxPath string, redirectUrl string) {
-
-	tmpl, err := template.ParseFiles("./templates/index.html")
+	if !isValidSession(request) {
+		http.Redirect(writer, request, "/login", http.StatusSeeOther)
+		return
+	}
+	tmpl, err := template.ParseFiles("./templates/index.html", "./templates/dashboard.html")
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	tmpl.Execute(writer, map[string]interface{}{
+	tmpl.ExecuteTemplate(writer, "base", map[string]interface{}{
 		"htmxPath":    htmxPath,
 		"redirectUrl": redirectUrl,
 	})
@@ -27,16 +30,16 @@ func indexHandler(writer http.ResponseWriter,
 
 func (server *Server) indexHome(writer http.ResponseWriter,
 	request *http.Request) {
-	indexHandler(writer, "/htmx/home", "/home")
+	indexHandler(writer, request, "/htmx/home", "/home")
 }
 
 func (server *Server) indexBots(writer http.ResponseWriter,
 	request *http.Request) {
-	indexHandler(writer, "/htmx/bots", "/bots")
+	indexHandler(writer, request, "/htmx/bots", "/bots")
 }
 func (server *Server) indexSettings(writer http.ResponseWriter,
 	request *http.Request) {
-	indexHandler(writer, "/htmx/settings", "/settings")
+	indexHandler(writer, request, "/htmx/settings", "/settings")
 }
 
 type Entry struct {
@@ -45,18 +48,6 @@ type Entry struct {
 	Date        string
 	Description string
 	Urgent      bool
-}
-
-func (server *Server) homeHandler(writer http.ResponseWriter,
-	request *http.Request) {
-
-	tmpl, err := template.ParseFiles("./templates/index.html")
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	tmpl.Execute(writer, nil)
-
 }
 
 var fakeHomeToDoData = []Entry{
@@ -223,5 +214,18 @@ func (server *Server) htmxBotModal(writer http.ResponseWriter,
 		return
 	}
 	tmpl.Execute(writer, map[string]interface{}{})
+}
 
+func (server *Server) loginPage(writer http.ResponseWriter,
+	request *http.Request) {
+	if isValidSession(request) {
+		http.Redirect(writer, request, "/home", http.StatusSeeOther)
+		return
+	}
+	tmpl, err := template.ParseFiles("./templates/index.html", "./templates/login.html")
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	tmpl.ExecuteTemplate(writer, "base", nil)
 }

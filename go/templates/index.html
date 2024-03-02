@@ -1,3 +1,4 @@
+{{ define "base" }}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -24,64 +25,11 @@
 
 
 <body>
-
-    <div id="tab-list" role="tablist" hx-target="#tab-panel" _="on htmx:afterOnLoad set @aria-selected of 
-        <[aria-selected=true]/> to false tell the 
-        target take .selected set @aria-selected to true">
-        <h2 id="tab-close" onclick="closeSidebar()">&times;</h2>
-
-        <h2 class="tab" hx-get="/htmx/home" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/home" }}
-            aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML" hx-push-url="/home"
-            hx-replace-url="true" onclick="closeSidebar()">Home</h2>
-
-        <h2 class="tab" hx-get="/htmx/bots" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/bots" }}
-            aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML" hx-push-url="/bots"
-            hx-replace-url="true" onclick="closeSidebar()">Bots</h2>
-
-        <h2 class="tab" hx-get="/htmx/settings" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/settings"
-            }} aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML"
-            hx-push-url="/settings" hx-replace-url="true" onclick="closeSidebar()">Settings</h2>
-        <button id="logout-button" class="tab" onclick="console.log('logout')">Logout
-        </button>
-    </div>
-
-    <div id="main">
-        <div id="header">
-            <div id="menu-icon" onclick="openSidebar()">
-                <img src="/static/menuYellow.png" width="35" height="35" />
-            </div>
-            <h1 hx-target="#tab-panel" hx-swap="outerHTML" hx-get="/htmx/home" id="logo">ChatsToDo</h1>
-            <div style="flex: 1;"></div>
-        </div>
-
-
-        <div id="tab-panel" hx-get="{{ .htmxPath }}" hx-swap="outerHTML" hx-target="this" role="tabpanel"
-            hx-trigger="load" hx-push-url="{{ .redirectUrl }}" hx-replace-url="true">
-        </div>
-
-    </div>
-
-    <script>
-        const bg = document.body.style.backgroundColor;
-
-        function openSidebar() {
-            document.getElementById("tab-list").style.width = "250px";
-            document.getElementById("main").style.marginLeft = "250px";
-            // document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
-        }
-
-        /* Set the width of the side navigation to 0 and the left margin of the page content to 0, and the background color of body to white */
-        function closeSidebar() {
-            document.getElementById("tab-list").style.width = "0";
-            document.getElementById("main").style.marginLeft = "0";
-            //document.body.style.backgroundColor = bg;
-        }
-
-
-    </script>
-
+    {{ template "body" . }}
 
 </body>
 <footer>
     <p id="copyright">Copyright © 2024 ChatsToDo</p>
 </footer>
+
+{{ end }}

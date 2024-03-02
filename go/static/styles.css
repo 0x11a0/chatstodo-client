@@ -470,3 +470,42 @@ body {
         transform: scale(0.9);
     }
 }
+
+#login-logo {
+    color: var(--dark-font-primary);
+    font-size: 3rem;
+    line-height: 4rem;
+}
+
+#login-panel {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+
+    p {
+        color: var(--dark-font-secondary);
+    }
+}
+
+.login-block {
+    background-color: #F1F1F1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 9999px;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+
+.login-platform {
+    color: black;
+    margin-left: 1rem;
+    margin-top: 0rem;
+    margin-right: 0rem;
+    margin-bottom: 0rem;
+}

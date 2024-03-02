@@ -1,0 +1,18 @@
+{{ define "body" }}
+
+<div id="login-panel">
+    <h1 id="login-logo">ChatsToDo</h1>
+    <p>Welcome to ChatsToDo, your very own A.I. virtual assistant.</p>
+    <p>To get started, please login through one of the platforms below.</p>
+
+    <div class="login-block"
+        onclick="window.location='/auth/google'"
+        >
+
+        <img src="/static/google.png" width="25" height="25" />
+        <h2 class="login-platform">Google</h2>
+
+    </div>
+</div>
+
+{{ end }}
