@@ -16,8 +16,8 @@
     <h2 class="tab" hx-get="/htmx/settings" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/settings" }}
         aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML" hx-push-url="/settings"
         hx-replace-url="true" onclick="closeSidebar()">Settings</h2>
-    <button id="logout-button" class="tab" onclick="window.location='/logout/google'">Logout
-    </button>
+    <h2 id="logout-button" class="tab" onclick="window.location='/logout/google'">Logout
+    </h2>
 </div>
 
 <div id="main">

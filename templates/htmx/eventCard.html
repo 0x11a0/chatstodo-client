@@ -10,18 +10,17 @@
 <div class="card-content">
     {{ range .events }}
 
-    <div class="card-block">
-        <div class="card-container">
-            <p class="card-block-point">{{ .Title }}</p>
-            <p class="card-block-date">{{ .Date }}</p>
-            <p class="card-block-notes">{{ .Description }}</p>
+    <div id="event-{{ .Id }}" class="card-block" data-todoid="{{ .Id }}">
+
+        <div class="card-container" data-hxpost="/htmx/home/eventCard" data-type="#event-">
+            <p name="title" class="card-block-point">{{ .Title }}</p>
+            <p name="date" class="card-block-date">{{ .Date }}</p>
+            <p name="description" class="card-block-notes">{{ .Description }}</p>
         </div>
-        <div class="edit-container" onclick="console.log('edit')">
+        <div class="edit-container" onclick="getEditable(this)">
             <img src="/static/editYellow.png" width="25" height="25" />
         </div>
     </div>
-
-
 
     {{ else }}
 

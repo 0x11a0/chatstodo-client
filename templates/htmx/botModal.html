@@ -3,8 +3,16 @@
     <div class="modal-content">
         <h1>Add new bot</h1>
         <p>To get started, add the one of the following bots into your chat.</p>
-        <a href="https://t.me/chats_todo_bot" target="_blank">Telegram</a>
-        <a href="https://discordapp.com/users/1210996330588020827" target="_blank">Discord</a>
+
+        <div class="bot-modal-button" onclick="window.open('https://t.me/chats_todo_bot', '_blank')">
+            <img src="/static/telegram.png" height="30" width="30" />
+            <h2 class="bot-modal-name">Telegram</h2>
+        </div>
+        <div class="bot-modal-button"
+            onclick="window.open('https://discordapp.com/users/1210996330588020827', '_blank')">
+            <img src="/static/discord.png" height="30" width="30" />
+            <h2 class="bot-modal-name">Discord</h2>
+        </div>
         <button _="on click trigger closeModal">Close</button>
     </div>
 </div>

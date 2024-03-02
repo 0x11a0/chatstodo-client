@@ -48,12 +48,9 @@ var fakeHomeTodoData = []*Todo{
 
 func (server *Server) htmxTodoCard(writer http.ResponseWriter,
 	request *http.Request) {
-	log.Println(request.Method)
 	if request.Method == "GET" {
-		log.Println("todo get")
 		htmxTodoCardAll(writer, request)
 	} else if request.Method == "POST" {
-		log.Println("todo post")
 		htmxTodoSave(writer, request)
 	} else {
 		http.Error(writer, "Method not allowed.", http.StatusMethodNotAllowed)
@@ -94,11 +91,12 @@ func htmxTodoSave(writer http.ResponseWriter,
 	}
 	title := request.FormValue("title")
 	date := request.FormValue("date")
-
+	description := request.FormValue("description")
 	for _, v := range fakeHomeTodoData {
 		if v.Id == id {
 			v.Title = title
 			v.Date = date
+			v.Description = description
 			break
 		}
 	}
@@ -109,8 +107,9 @@ func htmxTodoSave(writer http.ResponseWriter,
 		return
 	}
 	tmpl.Execute(writer, Todo{
-		Id:    id,
-		Title: title,
-		Date:  date,
+		Id:          id,
+		Title:       title,
+		Date:        date,
+		Description: description,
 	})
 }

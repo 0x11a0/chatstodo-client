@@ -1,38 +1,29 @@
 <div id="tab-panel" hx-get="/htmx/bots" hx-swap="outerHTML" hx-target="this" role="tabpanel" hx-trigger="">
     <div id="bots-panel">
         <div id="bots-header">
-            <div style="flex:1;"></div>
-            <h3 id="bots-title">Your bots</h3>
-            <div id="bot-new">
-                <button hx-get="/htmx/botModal"
-                    hx-target="body" hx-swap="beforeend">
-                    <img src="/static/plusYellow.png" width="25" height="25" />
-                    <span>Add bot</span>
-                </button>
-            </div>
-        </div>
-        {{ range .bots }}
-        <div class="bot-block">
 
-            <p class="bot-name">{{ .Name }}</p>
-            <p class="bot-name">{{ .BotType }}</p>
-            {{ if .IsActive }}
-
-            <p class="bot-active">Active</p>
-
-            {{ else }}
-
-            <p class="bot-inactive">Activate</p>
-
-            {{ end }}
+            <input id="bot-search" name="search" class="search-box" type="search" placeholder="Search for bots"
+                hx-post="/htmx/bots" hx-headers='{ "X-CSRF-Token": "{{ .csrfToken }}" }' hx-target="#search-results"
+                hx-swap="innerHTML" hx-trigger="input changed delay:500ms, search, load">
+            <button id="bot-new" hx-get="/htmx/botModal" hx-target="body" hx-swap="beforeend">
+                <img src="/static/plusYellow.png" width="25" height="25" />
+                <h3>Add bot</h3>
+            </button>
         </div>
 
-        {{ else }}
+        <table id="bot-table">
+            <thead id="bot-table-header">
+                <tr class="bot-row">
+                    <th class="bot-table-header-row">Name</th>
+                    <th class="bot-table-header-row">Platform</th>
+                    <th class="bot-table-header-row">Status</th>
+                    <th class="bot-table-header-row">Switch</th>
+                </tr>
+            </thead>
 
-        <span>No bots found.</span>
+            <tbody id="search-results" class="bot-table-body">
+            </tbody>
+        </table>
 
-        {{ end }}
     </div>
 </div>
-
-<!-- a https://discordapp.com/users/1210996330588020827 -->

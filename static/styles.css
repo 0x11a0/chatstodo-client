@@ -47,8 +47,8 @@ body {
     color: var(--dark-font-primary);
     text-align: start;
     font-weight: 700;
-    font-size: 1.5rem;
-    line-height: 2rem;
+    font-size: 2rem;
+    line-height: 2.5rem;
     margin: 0.5rem;
     cursor: pointer;
 }
@@ -102,37 +102,46 @@ body {
     font-size: 1.25rem;
     line-height: 1.5rem;
     font-weight: 400;
-    padding: 0.5rem 0rem;
+    padding: 0.5rem;
     border-bottom: 1px solid var(--dark-border-primary);
     margin: 0rem;
     transition: 0.3s;
 }
 
-.tab :hover {
+#logout-button {
+    color: darkred;
+}
+
+#logout-button:hover {
+    color: red;
+}
+
+.tab:hover {
     color: #F1F1F1;
 }
 
 .tab[aria-selected="true"] {
+    color: var(--dark-font-tertiary);
     background-color: var(--dark-background-tertiary);
 }
 
 #menu-icon {
     flex: 1;
     margin: 1rem;
+    transition: 0.5s;
+    background: none;
 
     img {
         cursor: pointer;
+        transition: 0.5s;
+        border-radius: 10px;
     }
 }
 
-#logout-button {
-    outline: none;
-    background: none;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    border-bottom: 1px solid var(--dark-border-primary);
+#menu-icon:hover img {
+    background-color: var(--dark-background-tertiary);
 }
+
 
 #tab-panel {
     width: 95%;
@@ -249,6 +258,7 @@ body {
     line-height: 1.5rem;
     border-bottom: 1px solid var(--dark-border-primary);
     width: 100%;
+    transition: 0.5s;
 
     ul {
         padding: 0rem 1rem;
@@ -284,6 +294,7 @@ body {
     font-size: 1rem;
     line-height: 1.5rem;
     width: 100%;
+    transition: 0.5s;
 
     li {
         color: var(--dark-font-secondary);
@@ -329,6 +340,9 @@ body {
 }
 
 .card-block-notes {
+    background: none;
+    outline: none;
+    border: none;
     font-weight: 400;
     padding: 0rem;
     margin: 0.25rem 0rem;
@@ -399,7 +413,6 @@ body {
 }
 
 #bot-new {
-    flex: 1;
     background: none;
     background-color: transparent;
     border: none;
@@ -408,20 +421,15 @@ body {
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    border-radius: 10px;
+    padding: 0.5rem;
+    height: 2.5rem;
+    background-color: var(--dark-background-secondary);
+    cursor: pointer;
+    transition: 0.5s;
 
-    button {
-        background-color: var(--dark-background-tertiary);
-        outline: none;
-        border: none;
-        border-radius: 9999px;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-    }
 
-    span {
+    h3 {
         color: var(--dark-font-primary);
         font-size: 1.25rem;
         line-height: 1.75rem;
@@ -429,12 +437,62 @@ body {
     }
 }
 
+#bot-new:hover {
+    background-color: var(--dark-background-tertiary);
+}
+
 #bots-header {
     width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    margin: 1rem 0rem;
+}
+
+#bot-table {
+    background-color: var(--dark-background-secondary);
+    width: 100%;
+}
+
+#bot-table,
+.bot-table-header-row,
+.bot-table-row {
+    border: 1px solid var(--dark-border-primary);
+    border-collapse: collapse;
+}
+
+.bot-table-header-row,
+.bot-table-row {
+    padding: 1rem;
+}
+
+.bot-table-header-row {
+    font-size: 1.25rem;
+    border: 3px solid var(--dark-border-primary);
+    color: var(--dark-font-primary);
+}
+
+.bot-table-row {
+    color: var(--dark-font-tertiary);
+}
+
+#bot-search {
+    height: 2.5rem;
+    background-color: var(--dark-background-secondary);
+    outline: none;
+    border: 1px solid var(--dark-border-primary);
+    margin: 0rem 1rem;
+    width: 250px;
+    color: var(--dark-font-tertiary);
+    font-weight: 500;
+    transition: 0.5s;
+    border-radius: 10px;
+    padding: 0.5rem;
+}
+
+#bot-search:hover {
+    background-color: var(--dark-background-tertiary);
 }
 
 #modal {
@@ -481,7 +539,7 @@ body {
     border: solid 1px #999;
     border-radius: 8px;
     box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.3);
-    background-color: var(--dark-background-secondary);
+    background-color: var(--dark-background-primary);
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -490,6 +548,33 @@ body {
 
     h1 {
         color: var(--dark-font-primary);
+    }
+
+    h2 {
+        margin: 0.5rem;
+        color: var(--dark-font-tertiary);
+    }
+
+    .bot-modal-button {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--dark-background-secondary);
+        transition: 0.5s;
+        border-radius: 15px;
+        width: 180px;
+        margin: 0.5rem 0rem;
+        border: 1px solid var(--dark-border-primary);
+        cursor: pointer;
+    }
+
+    .bot-modal-button:hover {
+        background-color: var(--dark-background-tertiary);
+    }
+
+    img {
+        margin: 0.5rem;
     }
 
     p {
@@ -503,7 +588,19 @@ body {
     }
 
     button {
-        margin-left: auto;
+        border: none;
+        outline: none;
+        background-color: darkred;
+        color: #F1F1F1;
+        font-size: 1.125rem;
+        margin: 0.5rem 0rem;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 5px;
+    }
+
+    button:hover {
+        background-color: red;
     }
 
     /* Animate when opening */
