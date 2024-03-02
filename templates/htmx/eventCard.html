@@ -11,10 +11,16 @@
     {{ range .events }}
 
     <div class="card-block">
-        <p class="card-block-point">{{ .Title }}</p>
-        <p class="card-block-date">{{ .Date }}</p>
-        <p class="card-block-notes">{{ .Description }}</p>
+        <div class="card-container">
+            <p class="card-block-point">{{ .Title }}</p>
+            <p class="card-block-date">{{ .Date }}</p>
+            <p class="card-block-notes">{{ .Description }}</p>
+        </div>
+        <div class="edit-container" onclick="console.log('edit')">
+            <img src="/static/editYellow.png" width="25" height="25" />
+        </div>
     </div>
+
 
 
     {{ else }}

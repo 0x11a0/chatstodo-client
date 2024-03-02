@@ -42,6 +42,7 @@ func (server *Server) run() {
 	router := server.router
 	router.HandleFunc("/", server.indexHome)
 	router.HandleFunc("/login", server.loginPage)
+
 	router.HandleFunc("/auth/{provider}", server.authHandler)
 	router.HandleFunc("/auth/{provider}/callback", server.authCallback)
 	router.HandleFunc("/logout/{provider}", server.logout)
@@ -49,6 +50,7 @@ func (server *Server) run() {
 	router.HandleFunc("/home", authWrapper(server.indexHome))
 	router.HandleFunc("/bots", authWrapper(server.indexBots))
 	router.HandleFunc("/settings", authWrapper(server.indexSettings))
+
 	router.HandleFunc("/htmx/home", authWrapper(server.htmxHomePanel))
 	router.HandleFunc("/htmx/home/todoCard", authWrapper(server.htmxTodoCard))
 	router.HandleFunc("/htmx/home/eventCard", authWrapper(server.htmxEventCard))

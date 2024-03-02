@@ -5,22 +5,4 @@
         hx-trigger="load"></div>
     <div id="summary-card" class="card" hx-get="/htmx/home/summaryCard" hx-target="this" hx-swap="innerHTML"
         hx-trigger="load"></div>
-
-
-
-    <script>
-        function openSidebar() {
-            document.getElementById("tab-list").style.width = "250px";
-            document.getElementById("main").style.marginLeft = "250px";
-        }
-        function closeSidebar() {
-            document.getElementById("tab-list").style.width = "0";
-            document.getElementById("main").style.marginLeft = "0";
-        }
-
-        document.oncontextmenu = function (e) {
-            e.preventDefault();
-            console.log("open menu");
-        }
-    </script>
 </div>

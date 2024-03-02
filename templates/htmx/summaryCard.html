@@ -10,15 +10,21 @@
 <div class="card-content">
     {{ range .summaries }}
 
-    <div class="card-block">
+    <div class="card-summary-container">
         <p class="card-block-point">{{ .Title }}</p>
         <p class="card-block-date">{{ .Date }}</p>
 
+
         <ul>
             {{ range .Points }}
-
-            <li>{{ . }}</li>
-
+            <div class="card-block-summary">
+                <div class="card-container">
+                    <li>{{ . }}</li>
+                </div>
+                <div class="edit-container" onclick="console.log('edit')">
+                    <img src="/static/editYellow.png" width="25" height="25" />
+                </div>
+            </div>
             {{ end }}
         </ul>
 
@@ -27,7 +33,14 @@
         <ul>
             {{ range .ImportantPoints }}
 
-            <li>{{ . }}</li>
+            <div class="card-block-summary">
+                <div class="card-container">
+                    <li>{{ . }}</li>
+                </div>
+                <div class="edit-container" onclick="console.log('edit')">
+                    <img src="/static/editYellow.png" width="25" height="25" />
+                </div>
+            </div>
 
             {{ end }}
         </ul>

@@ -1,0 +1,10 @@
+<div id="todo-{{ .Id }}" class="card-block" data-todoid="{{ .Id }}">
+
+    <div class="card-container">
+        <p name="title" class="card-block-point">{{ .Title }}</p>
+        <p name="date" class="card-block-date">{{ .Date }}</p>
+    </div>
+    <div class="edit-container" onclick="getEditable(this)">
+        <img src="/static/editYellow.png" width="25" height="25" />
+    </div>
+</div>

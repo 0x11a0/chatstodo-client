@@ -1,4 +1,5 @@
 {{ define "body" }}
+
 <div id="tab-list" role="tablist" hx-target="#tab-panel" _="on htmx:afterOnLoad set @aria-selected of 
         <[aria-selected=true]/> to false tell the 
         target take .selected set @aria-selected to true">
@@ -29,12 +30,22 @@
         <div style="flex: 1;"></div>
     </div>
 
-
     <div id="tab-panel" hx-get="{{ .htmxPath }}" hx-swap="outerHTML" hx-target="this" role="tabpanel" hx-trigger="load"
         hx-push-url="{{ .redirectUrl }}" hx-replace-url="true">
     </div>
 
-</div>
+    <script>
+        function openSidebar() {
+            document.getElementById("tab-list").style.width = "250px";
+            document.getElementById("main").style.marginLeft = "250px";
+        }
 
+        function closeSidebar() {
+            document.getElementById("tab-list").style.width = "0px";
+            document.getElementById("main").style.marginLeft = "0px";
+        } 
+    </script>
+
+</div>
 
 {{ end }}

@@ -1,12 +1,13 @@
 package main
 
 import (
-	"net/http"
-	"os"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/google"
 	"gopkg.in/boj/redistore.v1"
+	"log"
+	"net/http"
+	"os"
 )
 
 type serverFunc func(http.ResponseWriter, *http.Request)
@@ -23,18 +24,20 @@ func authWrapper(function serverFunc) http.HandlerFunc {
 
 func initAuth(cookieStore *redistore.RediStore) {
 	goth.UseProviders(
-		google.New(os.Getenv("GOOGLE_KEY"), os.Getenv("GOOGLE_SECRET"), "http://localhost:3000/auth/google/callback"),
+		google.New(os.Getenv("GOOGLE_KEY"), os.Getenv("GOOGLE_SECRET"),
+			"http://localhost:3000/auth/google/callback"),
 	)
 	gothic.Store = cookieStore
 }
 
 func (server *Server) authCallback(writer http.ResponseWriter,
 	request *http.Request) {
-	_, err := gothic.CompleteUserAuth(writer, request)
+	user, err := gothic.CompleteUserAuth(writer, request)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 	}
-	gothic.StoreInSession("jwt", "example token", request, writer)
+	log.Println(user)
+	gothic.StoreInSession("userId", "testUser", request, writer)
 	server.indexHome(writer, request)
 }
 
@@ -54,11 +57,7 @@ func (server *Server) authHandler(writer http.ResponseWriter,
 	server.indexHome(writer, request)
 }
 
-
 func isValidSession(request *http.Request) bool {
-	_, err := gothic.GetFromSession("jwt", request)
-	if err != nil {
-		return false
-	}
-	return true
+	_, err := gothic.GetFromSession("userId", request)
+	return err == nil
 }
