@@ -14,11 +14,12 @@ import (
 type Server struct {
 	listenAddr        string
 	redisSessionStore redistore.RediStore
+	gcAPI             GoogleCalendarAPI
 	router            *mux.Router
-	telebotAddr       string
 }
 
-func initServer(redisSessionStore *redistore.RediStore) *Server {
+func initServer(redisSessionStore *redistore.RediStore,
+	gcAPI *GoogleCalendarAPI) *Server {
 	listenAddr := os.Getenv("LISTEN_ADDR")
 	if listenAddr == "" {
 		log.Panicln("Env variable \"LISTEN_ADDR\" has not been set. Exiting.")
@@ -28,6 +29,7 @@ func initServer(redisSessionStore *redistore.RediStore) *Server {
 	server := &Server{
 		listenAddr:        listenAddr,
 		redisSessionStore: *redisSessionStore,
+		gcAPI:             *gcAPI,
 		router:            router,
 	}
 
@@ -58,6 +60,11 @@ func (server *Server) run() {
 	router.HandleFunc("/htmx/bots", authWrapper(server.htmxBots))
 	router.HandleFunc("/htmx/botModal", authWrapper(server.htmxBotModal))
 	router.HandleFunc("/htmx/settings", authWrapper(server.htmxSettings))
+
+	router.HandleFunc("/api/listCalendars", authWrapper(func(writer http.ResponseWriter,
+		request *http.Request) {
+			server.gcAPI.getCalendars(writer, request)
+	}))
 
 	server.addFileServer()
 

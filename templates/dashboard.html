@@ -22,8 +22,8 @@
 
 <div id="main">
     <div id="header">
-        <div id="menu-icon" onclick="openSidebar()">
-            <img src="/static/menuYellow.png" width="35" height="35" />
+        <div id="menu-icon">
+            <img onclick="openSidebar()" src="/static/menuYellow.png" width="35" height="35" />
         </div>
         <h1 hx-target="#tab-panel" hx-swap="outerHTML" hx-get="/htmx/home" id="logo" hx-replace-url="true"
             hx-push-url="/home" onclick="closeSidebar()">ChatsToDo</h1>
@@ -31,7 +31,9 @@
     </div>
 
     <div id="tab-panel" hx-get="{{ .htmxPath }}" hx-swap="outerHTML" hx-target="this" role="tabpanel" hx-trigger="load"
-        hx-push-url="{{ .redirectUrl }}" hx-replace-url="true">
+        hx-push-url="{{ .redirectUrl }}" hx-replace-url="true" hx-indicator="#tab-panel-indicator">
+
+        <img id="tab-panel-indicator" src="/static/SVG-Loaders-master/svg-loaders/bars.svg" height="30" width="30" />
     </div>
 
     <script>

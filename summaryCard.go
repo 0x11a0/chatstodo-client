@@ -1,8 +1,8 @@
 package main
 
 import (
-    "html/template"
-    "net/http"
+	"html/template"
+	"net/http"
 )
 
 type Summary struct {
@@ -19,7 +19,7 @@ var fakeHomeSummaryData = []Summary{
 		Points: []string{
 			`The group chat discussion revolved around planning two outings
             - one for the IDP group and another to celebrate with a friend
-            named Antoine`,
+            named Antoine.`,
 			`A supper outing at Swee Choon was also mentioned.`,
 			`The conversation included logistical questions about fetching,
             sleeping schedules, and venue preferences.`,
@@ -28,13 +28,12 @@ var fakeHomeSummaryData = []Summary{
 		},
 		ImportantPoints: []string{
 			`Prioritise CS202 meeting and CS420 research proposal.`,
-			`Review CS206 code before Tuesday`,
+			`Review CS206 code before Tuesday.`,
 			`Collaborate on CS205 exam prep.`,
 			`Attend Samba Masala practices for upcoming open house gig.`,
 		},
 	},
 }
-
 
 func (server *Server) htmxSummaryCard(writer http.ResponseWriter,
 	request *http.Request) {
