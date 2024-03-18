@@ -1,10 +1,12 @@
 package main
 
 import (
-	"google.golang.org/api/calendar/v3"
-	"google.golang.org/api/option"
 	"log"
 	"net/http"
+	"time"
+
+	"google.golang.org/api/calendar/v3"
+	"google.golang.org/api/option"
 )
 
 func (server *Server) testAddEvent(writer http.ResponseWriter,
@@ -34,6 +36,9 @@ func (server *Server) testAddEvent(writer http.ResponseWriter,
 		},
 	}
 	server.addEvent(request, &event)
+}
+
+func googleEventDateTimeRFC3339ToUTC(googleEvent *calendar.Event) {
 }
 
 func (server *Server) addEvent(request *http.Request,
