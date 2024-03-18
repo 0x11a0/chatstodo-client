@@ -66,6 +66,11 @@ func (server *Server) run() {
 			server.gcAPI.getCalendars(writer, request)
 	}))
 
+	router.HandleFunc("/api/addEvent", authWrapper(func(writer http.ResponseWriter,
+		request *http.Request) {
+			server.gcAPI.addEvent(writer, request)
+	}))
+
 	server.addFileServer()
 
 	http.ListenAndServe(server.listenAddr, CSRF(server.router))

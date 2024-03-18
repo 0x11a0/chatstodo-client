@@ -1,15 +1,19 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"log"
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/markbates/goth"
-	"github.com/markbates/goth/gothic"
-	"github.com/markbates/goth/providers/google"
+	//"github.com/markbates/goth"
+	//"github.com/markbates/goth/gothic"
+	//"github.com/markbates/goth/providers/google"
+	"github.com/gorilla/sessions"
+	"google.golang.org/api/calendar/v3"
 	"gopkg.in/boj/redistore.v1"
 )
 
@@ -18,21 +22,42 @@ type serverFunc func(http.ResponseWriter, *http.Request)
 func authWrapper(function serverFunc) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		if !isValidSession(request) {
+			log.Println("invalid session")
 			http.Redirect(writer, request, "/login", http.StatusSeeOther)
 		} else {
+			log.Println("valid session")
 			function(writer, request)
 		}
 	}
 }
 
-const GOOGLE_CALLBACK_URL = "http://localhost:3000/auth/google/callback"
+var (
+	GOOGLE_SCOPES = []string{
+		"https://www.googleapis.com/auth/calendar.events",
+	}
+
+	GOOGLE_CONFIG = &oauth2.Config{
+		ClientID:     os.Getenv("GOOGLE_KEY"),
+		ClientSecret: os.Getenv("GOOGLE_SECRET"),
+		RedirectURL:  os.Getenv("GOOGLE_CALLBACK_URL"),
+		Endpoint:     google.Endpoint,
+		Scopes:       GOOGLE_SCOPES,
+	}
+)
 
 func initAuth(cookieStore *redistore.RediStore) {
-	goth.UseProviders(
-		google.New(os.Getenv("GOOGLE_KEY"), os.Getenv("GOOGLE_SECRET"),
-			GOOGLE_CALLBACK_URL),
-	)
-	gothic.Store = cookieStore
+	gob.Register(&oauth2.Token{})
+
+	/*
+		goth.UseProviders(
+			google.New(os.Getenv("GOOGLE_KEY"), os.Getenv("GOOGLE_SECRET"),
+				os.Getenv("GOOGLE_CALLBACK_URL"),
+				//"https://www.googleapis.com/auth/calendar.events",
+				calendar.CalendarScope,
+			),
+		)
+		gothic.Store = cookieStore
+	*/
 }
 
 func (server *Server) authCallback(writer http.ResponseWriter,
@@ -40,6 +65,8 @@ func (server *Server) authCallback(writer http.ResponseWriter,
 	user, err := gothic.CompleteUserAuth(writer, request)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		log.Println("authCallback userAuth err")
+		return
 	}
 	if user.Provider == "" {
 		server.indexHome(writer, request)
@@ -49,6 +76,7 @@ func (server *Server) authCallback(writer http.ResponseWriter,
 	log.Println("email", user.Email)
 	if user.Provider == "google" {
 		log.Println("googleAccessExpiry", user.ExpiresAt.Format(time.RFC3339))
+
 		gothic.StoreInSession("googleRefreshToken", user.RefreshToken, request, writer)
 		gothic.StoreInSession("googleAccessExpiry", user.ExpiresAt.Format(time.RFC3339),
 			request, writer)
@@ -106,11 +134,15 @@ func (server *Server) logout(writer http.ResponseWriter,
 
 func (server *Server) authHandler(writer http.ResponseWriter,
 	request *http.Request) {
+	log.Println("authHandler called")
 	_, err := gothic.CompleteUserAuth(writer, request)
+	log.Println("completeUserAuth err")
 	if err != nil {
 		gothic.BeginAuthHandler(writer, request)
+		log.Println("beginAuthHandler done")
 		return
 	}
+	log.Println("completeUserAuth no err")
 	server.indexHome(writer, request)
 }
 
