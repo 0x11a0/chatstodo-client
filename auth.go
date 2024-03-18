@@ -1,27 +1,21 @@
 package main
 
 import (
-	"encoding/gob"
-	"fmt"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
 	"log"
 	"net/http"
 	"os"
 	"time"
-	//"github.com/markbates/goth"
-	//"github.com/markbates/goth/gothic"
-	//"github.com/markbates/goth/providers/google"
-	"github.com/gorilla/sessions"
-	"google.golang.org/api/calendar/v3"
-	"gopkg.in/boj/redistore.v1"
+
+	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 )
 
 type serverFunc func(http.ResponseWriter, *http.Request)
 
-func authWrapper(function serverFunc) http.HandlerFunc {
+func (server *Server) authWrapper(function serverFunc) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-		if !isValidSession(request) {
+		if !server.isValidSession(request) {
 			log.Println("invalid session")
 			http.Redirect(writer, request, "/login", http.StatusSeeOther)
 		} else {
@@ -33,120 +27,210 @@ func authWrapper(function serverFunc) http.HandlerFunc {
 
 var (
 	GOOGLE_SCOPES = []string{
+		"https://www.googleapis.com/auth/userinfo.email",
 		"https://www.googleapis.com/auth/calendar.events",
-	}
-
-	GOOGLE_CONFIG = &oauth2.Config{
-		ClientID:     os.Getenv("GOOGLE_KEY"),
-		ClientSecret: os.Getenv("GOOGLE_SECRET"),
-		RedirectURL:  os.Getenv("GOOGLE_CALLBACK_URL"),
-		Endpoint:     google.Endpoint,
-		Scopes:       GOOGLE_SCOPES,
 	}
 )
 
-func initAuth(cookieStore *redistore.RediStore) {
-	gob.Register(&oauth2.Token{})
+func initAuth() *oauth2.Config {
+	clientID := os.Getenv("GOOGLE_KEY")
+	clientSecret := os.Getenv("GOOGLE_SECRET")
+	redirectURL := os.Getenv("GOOGLE_CALLBACK_URL")
+	if clientID == "" {
+		log.Fatalln("Required env variable \"GOOGLE_KEY\" is not set. Exiting.")
+	} else if clientSecret == "" {
+		log.Fatalln("Required env variable \"GOOGLE_SECRET\" is not set. Exiting.")
+	} else if redirectURL == "" {
+		log.Fatalln("Required env variable \"GOOGLE_CALLBACK_URL\" is not set. Exiting.")
+	}
 
-	/*
-		goth.UseProviders(
-			google.New(os.Getenv("GOOGLE_KEY"), os.Getenv("GOOGLE_SECRET"),
-				os.Getenv("GOOGLE_CALLBACK_URL"),
-				//"https://www.googleapis.com/auth/calendar.events",
-				calendar.CalendarScope,
-			),
-		)
-		gothic.Store = cookieStore
-	*/
+	return &oauth2.Config{
+		ClientID:     clientID,
+		ClientSecret: clientSecret,
+		RedirectURL:  redirectURL,
+		Endpoint:     google.Endpoint,
+		Scopes:       GOOGLE_SCOPES,
+	}
+
 }
+
+const (
+	COOKIE_GOOGLE_TOKEN_SOURCE  = "cookie_google_token_source"
+	COOKIE_GOOGLE_ACCESS_TOKEN  = "cookie_google_access_token"
+	COOKIE_GOOGLE_REFRESH_TOKEN = "cookie_google_refresh_token"
+	COOKIE_GOOGLE_EXPIRES_AT    = "cookie_google_expires_at"
+	COOKIE_EMAIL                = "cookie_email"
+)
 
 func (server *Server) authCallback(writer http.ResponseWriter,
 	request *http.Request) {
-	user, err := gothic.CompleteUserAuth(writer, request)
+	googleOAuthCode := request.FormValue("code")
+	token, err := server.googleOAuthConfig.Exchange(
+		request.Context(),
+		googleOAuthCode,
+		oauth2.VerifierOption(server.oAuthVerifier),
+	)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		log.Println("authCallback userAuth err")
+		log.Println("auth.go - authCallback(), get token")
+		log.Println(err)
 		return
 	}
-	if user.Provider == "" {
-		server.indexHome(writer, request)
+	session, err := server.redisSessionStore.Get(
+		request,
+		COOKIE_NAME,
+	)
+	if err != nil {
+		log.Println("auth.go - authCallback(), get session")
+		log.Println(err)
 		return
 	}
-	log.Println("provider", user.Provider)
-	log.Println("email", user.Email)
-	if user.Provider == "google" {
-		log.Println("googleAccessExpiry", user.ExpiresAt.Format(time.RFC3339))
 
-		gothic.StoreInSession("googleRefreshToken", user.RefreshToken, request, writer)
-		gothic.StoreInSession("googleAccessExpiry", user.ExpiresAt.Format(time.RFC3339),
-			request, writer)
-		gothic.StoreInSession("googleAccessToken", user.AccessToken, request, writer)
+	claims := jwt.MapClaims{}
+	_, err = jwt.ParseWithClaims(
+		token.Extra("id_token").(string),
+		claims,
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(os.Getenv("GOOGLE_SECRET")), nil
+		},
+	)
+	log.Println("claims", claims)
+
+	session.Values[COOKIE_GOOGLE_ACCESS_TOKEN] = token.AccessToken
+	session.Values[COOKIE_GOOGLE_REFRESH_TOKEN] = token.RefreshToken
+	session.Values[COOKIE_GOOGLE_EXPIRES_AT] = token.Expiry.Format(time.RFC3339)
+	session.Values[COOKIE_EMAIL] = claims["email"]
+
+	err = session.Save(request, writer)
+	if err != nil {
+		log.Println("auth.go - authCallback(), save session")
+		log.Println(err)
+		return
 	}
-	gothic.StoreInSession("email", user.Email, request, writer)
 
+	log.Println("authCallback success")
 	server.indexHome(writer, request)
 }
 
-func (server *Server) refreshGoogleAccessToken(writer http.ResponseWriter,
-	request *http.Request) error {
-	// Will never error here since this function is wrapped with the auth wrapper
-	accessExpiry, err := gothic.GetFromSession("googleAccessExpiry", request)
-
-	accessTime, err := time.Parse(time.RFC3339, accessExpiry)
+// Returns the token if found, or nil if error
+func (server *Server) getGoogleOAuthToken(request *http.Request) *oauth2.Token {
+	session, err := server.redisSessionStore.Get(
+		request,
+		COOKIE_NAME,
+	)
 	if err != nil {
-		log.Println("auth.go - refreshGoogleAccessToken()")
-		return err
-
-	} else if accessTime.After(time.Now().Add(5 * time.Minute)) {
-		// Only refresh if within 5 minutes of expiry
-
-		log.Println("No need to refresh token")
+		log.Println("auth.go - getGooleOAuthToken() get session")
+		log.Println(err)
 		return nil
 	}
 
+	googleExpiresAt := session.Values[COOKIE_GOOGLE_EXPIRES_AT]
+
+	expireTime, err := time.Parse(time.RFC3339, googleExpiresAt.(string))
+	if err != nil {
+		log.Println("auth.go - getGooleOAuthToken(), parse time")
+		log.Println(err)
+		return nil
+	}
+
+	return &oauth2.Token{
+		AccessToken:  session.Values[COOKIE_GOOGLE_ACCESS_TOKEN].(string),
+		RefreshToken: session.Values[COOKIE_GOOGLE_REFRESH_TOKEN].(string),
+		Expiry:       expireTime,
+		TokenType:    "Bearer",
+	}
+}
+
+// Returns the token source if found, or nil if error
+func (server *Server) getGoogleOAuthTokenSource(request *http.Request) oauth2.TokenSource {
+	googleOAuthToken := server.getGoogleOAuthToken(request)
+	if googleOAuthToken == nil {
+		log.Println("no token found")
+		return nil
+	}
+	return server.googleOAuthConfig.TokenSource(
+		request.Context(),
+		googleOAuthToken,
+	)
+}
+
+// Refreshes the google access token if its within 5 minutes
+// of expiring
+func (server *Server) refreshGoogleAccessToken(writer http.ResponseWriter,
+	request *http.Request) error {
+	// Will never error here since this function is wrapped with the auth wrapper
+	googleOAuthToken := server.getGoogleOAuthToken(request)
+	if googleOAuthToken.Expiry.After(time.Now().Add(5 * time.Minute)) {
+		log.Println("No need to refresh token")
+		return nil
+
+	}
+
 	log.Println("token expiring soon, refreshing")
-
-	refreshToken, err := gothic.GetFromSession("googleRefreshToken", request)
-	googleProvider, err := goth.GetProvider("google")
+	log.Println("oldToken", googleOAuthToken.AccessToken)
+	newToken, err := server.googleOAuthConfig.TokenSource(
+		request.Context(),
+		googleOAuthToken,
+	).Token()
+	log.Println("newToken", newToken.AccessToken)
+	session, err := server.redisSessionStore.Get(
+		request,
+		COOKIE_NAME,
+	)
 	if err != nil {
-		log.Println("auth.go - refreshGoogleAccessToken()")
-		return err
+		log.Println("auth.go - refreshGoogleAccessToken() get session")
+		log.Println(err)
+		return nil
 	}
-
-	accessToken, err := googleProvider.RefreshToken(refreshToken)
-	if err != nil {
-		log.Println("auth.go - refreshGoogleAccessToken()")
-		return err
-	}
-	log.Println("accessToken", accessToken)
-
-	gothic.StoreInSession("googleAccessTime", fmt.Sprint(time.Now().UnixMilli()),
-		request, writer)
-	gothic.StoreInSession("googleAccessToken", accessToken.AccessToken, request, writer)
+	session.Values[COOKIE_GOOGLE_ACCESS_TOKEN] = newToken.AccessToken
+	session.Save(request, writer)
 	return nil
 }
 
 func (server *Server) logout(writer http.ResponseWriter,
 	request *http.Request) {
-	gothic.Logout(writer, request)
+	session, err := server.redisSessionStore.Get(
+		request,
+		COOKIE_NAME,
+	)
+	if err != nil {
+		log.Println("auth.go - logout() get session")
+		log.Println(err)
+		return
+	}
+
+	session.Options.MaxAge = -1
+	err = session.Save(request, writer)
+	if err != nil {
+		log.Println("auth.go - logout(), save session")
+		log.Println(err)
+		return
+	}
+
 	http.Redirect(writer, request, "/login", http.StatusSeeOther)
 }
 
 func (server *Server) authHandler(writer http.ResponseWriter,
 	request *http.Request) {
-	log.Println("authHandler called")
-	_, err := gothic.CompleteUserAuth(writer, request)
-	log.Println("completeUserAuth err")
-	if err != nil {
-		gothic.BeginAuthHandler(writer, request)
-		log.Println("beginAuthHandler done")
+	if server.isValidSession(request) {
+		server.indexHome(writer, request)
 		return
 	}
-	log.Println("completeUserAuth no err")
-	server.indexHome(writer, request)
+
+	url := server.googleOAuthConfig.AuthCodeURL(
+		"state",
+		oauth2.AccessTypeOffline,
+		oauth2.S256ChallengeOption(server.oAuthVerifier),
+	)
+	http.Redirect(writer, request, url, http.StatusTemporaryRedirect)
 }
 
-func isValidSession(request *http.Request) bool {
-	_, err := gothic.GetFromSession("email", request)
-	return err == nil
+func (server *Server) isValidSession(request *http.Request) bool {
+	session, err := server.redisSessionStore.Get(request, COOKIE_NAME)
+	if err != nil {
+		log.Println("auth.go - isValidSession, getSession")
+		log.Println(err)
+		return false
+	}
+	log.Println(COOKIE_EMAIL, session.Values[COOKIE_EMAIL])
+	return session.Values[COOKIE_EMAIL] != nil
 }

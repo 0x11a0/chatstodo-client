@@ -47,7 +47,7 @@ func (server *Server) htmxHomePanel(writer http.ResponseWriter,
 
 func (server *Server) loginPage(writer http.ResponseWriter,
 	request *http.Request) {
-	if isValidSession(request) {
+	if server.isValidSession(request) {
 		http.Redirect(writer, request, "/home", http.StatusSeeOther)
 		//server.indexHome(writer, request)
 		return

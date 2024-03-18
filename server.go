@@ -8,29 +8,31 @@ import (
 
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
+	"golang.org/x/oauth2"
 	"gopkg.in/boj/redistore.v1"
 )
 
 type Server struct {
 	listenAddr        string
 	redisSessionStore redistore.RediStore
-	gcAPI             GoogleCalendarAPI
 	router            *mux.Router
+	googleOAuthConfig *oauth2.Config
+	oAuthVerifier     string
 }
 
-func initServer(redisSessionStore *redistore.RediStore,
-	gcAPI *GoogleCalendarAPI) *Server {
+func initServer(redisSessionStore *redistore.RediStore) *Server {
 	listenAddr := os.Getenv("LISTEN_ADDR")
 	if listenAddr == "" {
 		log.Panicln("Env variable \"LISTEN_ADDR\" has not been set. Exiting.")
 	}
-
 	router := mux.NewRouter()
 	server := &Server{
 		listenAddr:        listenAddr,
 		redisSessionStore: *redisSessionStore,
-		gcAPI:             *gcAPI,
+		//gcAPI:             *gcAPI,
 		router:            router,
+		googleOAuthConfig: initAuth(),
+		oAuthVerifier:     oauth2.GenerateVerifier(),
 	}
 
 	log.Println("Server running on: http://" + listenAddr)
@@ -45,30 +47,25 @@ func (server *Server) run() {
 	router.HandleFunc("/", server.indexHome)
 	router.HandleFunc("/login", server.loginPage)
 
-	router.HandleFunc("/auth/{provider}", server.authHandler)
-	router.HandleFunc("/auth/{provider}/callback", server.authCallback)
-	router.HandleFunc("/logout/{provider}", server.logout)
+	router.HandleFunc("/auth/google", server.authHandler)
+	router.HandleFunc("/auth/google/callback", server.authCallback)
+	router.HandleFunc("/logout/google", server.logout)
 
-	router.HandleFunc("/home", authWrapper(server.indexHome))
-	router.HandleFunc("/bots", authWrapper(server.indexBots))
-	router.HandleFunc("/settings", authWrapper(server.indexSettings))
+	router.HandleFunc("/home", server.authWrapper(server.indexHome))
+	router.HandleFunc("/bots", server.authWrapper(server.indexBots))
+	router.HandleFunc("/settings", server.authWrapper(server.indexSettings))
 
-	router.HandleFunc("/htmx/home", authWrapper(server.htmxHomePanel))
-	router.HandleFunc("/htmx/home/todoCard", authWrapper(server.htmxTodoCard))
-	router.HandleFunc("/htmx/home/eventCard", authWrapper(server.htmxEventCard))
-	router.HandleFunc("/htmx/home/summaryCard", authWrapper(server.htmxSummaryCard))
-	router.HandleFunc("/htmx/bots", authWrapper(server.htmxBots))
-	router.HandleFunc("/htmx/botModal", authWrapper(server.htmxBotModal))
-	router.HandleFunc("/htmx/settings", authWrapper(server.htmxSettings))
+	router.HandleFunc("/htmx/home", server.authWrapper(server.htmxHomePanel))
+	router.HandleFunc("/htmx/home/todoCard", server.authWrapper(server.htmxTodoCard))
+	router.HandleFunc("/htmx/home/eventCard", server.authWrapper(server.htmxEventCard))
+	router.HandleFunc("/htmx/home/summaryCard", server.authWrapper(server.htmxSummaryCard))
+	router.HandleFunc("/htmx/bots", server.authWrapper(server.htmxBots))
+	router.HandleFunc("/htmx/botModal", server.authWrapper(server.htmxBotModal))
+	router.HandleFunc("/htmx/settings", server.authWrapper(server.htmxSettings))
 
-	router.HandleFunc("/api/listCalendars", authWrapper(func(writer http.ResponseWriter,
+	router.HandleFunc("/api/addEvent", server.authWrapper(func(writer http.ResponseWriter,
 		request *http.Request) {
-			server.gcAPI.getCalendars(writer, request)
-	}))
-
-	router.HandleFunc("/api/addEvent", authWrapper(func(writer http.ResponseWriter,
-		request *http.Request) {
-			server.gcAPI.addEvent(writer, request)
+		server.addEvent(writer, request)
 	}))
 
 	server.addFileServer()

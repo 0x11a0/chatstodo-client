@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+const COOKIE_NAME = "ctd-cookie"
+
 func newRedisSessionStore() *redistore.RediStore {
 	store, err := redistore.NewRediStore(10, "tcp", os.Getenv("REDIS_ADDR"),
 		os.Getenv("REDIS_PASSWORD"), []byte(os.Getenv("REDIS_SECRET")))
