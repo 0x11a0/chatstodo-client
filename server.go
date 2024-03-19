@@ -23,13 +23,13 @@ type Server struct {
 func initServer(redisSessionStore *redistore.RediStore) *Server {
 	listenAddr := os.Getenv("LISTEN_ADDR")
 	if listenAddr == "" {
-		log.Panicln("Env variable \"LISTEN_ADDR\" has not been set. Exiting.")
+		log.Println("Optional env variable \"LISTEN_ADDR\" is not set. Defaulting to \"localhost:3000\".")
+		listenAddr = "localhost:3000"
 	}
 	router := mux.NewRouter()
 	server := &Server{
 		listenAddr:        listenAddr,
 		redisSessionStore: *redisSessionStore,
-		//gcAPI:             *gcAPI,
 		router:            router,
 		googleOAuthConfig: initAuth(),
 		oAuthVerifier:     oauth2.GenerateVerifier(),
@@ -40,11 +40,20 @@ func initServer(redisSessionStore *redistore.RediStore) *Server {
 }
 
 func (server *Server) run() {
-	CSRF := csrf.Protect([]byte(os.Getenv("CSRF_SECRET")),
-		csrf.Secure(os.Getenv("IS_PROD") == "true"))
+	CSRFSecret := os.Getenv("CSRF_SECRET")
+	isProd := os.Getenv("IS_PROD")
+
+	if CSRFSecret == "" {
+		log.Fatalln("Required env variable \"CSRF_SECRET\" is not set. Exiting.")
+	} else if isProd == "" {
+		log.Fatalln("Required env variable \"IS_PROD\" is not set. Exiting.")
+	}
+
+	CSRF := csrf.Protect([]byte(CSRFSecret),
+		csrf.Secure(isProd == "true"))
 
 	router := server.router
-	router.HandleFunc("/", server.indexHome)
+	router.HandleFunc("/", server.authWrapper(server.indexHome))
 	router.HandleFunc("/login", server.loginPage)
 
 	router.HandleFunc("/auth/google", server.authHandler)
@@ -62,11 +71,6 @@ func (server *Server) run() {
 	router.HandleFunc("/htmx/bots", server.authWrapper(server.htmxBots))
 	router.HandleFunc("/htmx/botModal", server.authWrapper(server.htmxBotModal))
 	router.HandleFunc("/htmx/settings", server.authWrapper(server.htmxSettings))
-
-	router.HandleFunc("/api/addEvent", server.authWrapper(func(writer http.ResponseWriter,
-		request *http.Request) {
-		server.addEvent(writer, request)
-	}))
 
 	server.addFileServer()
 

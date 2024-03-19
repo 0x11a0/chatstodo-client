@@ -16,10 +16,8 @@ type serverFunc func(http.ResponseWriter, *http.Request)
 func (server *Server) authWrapper(function serverFunc) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		if !server.isValidSession(request) {
-			log.Println("invalid session")
 			http.Redirect(writer, request, "/login", http.StatusSeeOther)
 		} else {
-			log.Println("valid session")
 			function(writer, request)
 		}
 	}
@@ -51,7 +49,6 @@ func initAuth() *oauth2.Config {
 		Endpoint:     google.Endpoint,
 		Scopes:       GOOGLE_SCOPES,
 	}
-
 }
 
 const (
@@ -62,6 +59,7 @@ const (
 	COOKIE_EMAIL                = "cookie_email"
 )
 
+// Any errors during callback will redirect back to login
 func (server *Server) authCallback(writer http.ResponseWriter,
 	request *http.Request) {
 	googleOAuthCode := request.FormValue("code")
@@ -73,8 +71,10 @@ func (server *Server) authCallback(writer http.ResponseWriter,
 	if err != nil {
 		log.Println("auth.go - authCallback(), get token")
 		log.Println(err)
+		http.Redirect(writer, request, "/login", http.StatusSeeOther)
 		return
 	}
+
 	session, err := server.redisSessionStore.Get(
 		request,
 		COOKIE_NAME,
@@ -82,6 +82,7 @@ func (server *Server) authCallback(writer http.ResponseWriter,
 	if err != nil {
 		log.Println("auth.go - authCallback(), get session")
 		log.Println(err)
+		http.Redirect(writer, request, "/login", http.StatusSeeOther)
 		return
 	}
 
@@ -93,7 +94,6 @@ func (server *Server) authCallback(writer http.ResponseWriter,
 			return []byte(os.Getenv("GOOGLE_SECRET")), nil
 		},
 	)
-	log.Println("claims", claims)
 
 	session.Values[COOKIE_GOOGLE_ACCESS_TOKEN] = token.AccessToken
 	session.Values[COOKIE_GOOGLE_REFRESH_TOKEN] = token.RefreshToken
@@ -104,6 +104,7 @@ func (server *Server) authCallback(writer http.ResponseWriter,
 	if err != nil {
 		log.Println("auth.go - authCallback(), save session")
 		log.Println(err)
+		http.Redirect(writer, request, "/login", http.StatusSeeOther)
 		return
 	}
 
