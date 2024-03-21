@@ -1,4 +1,4 @@
-module chatstodo-web
+module github.com/lucasodra/chatstodo-client
 
 go 1.22.0
 

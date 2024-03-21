@@ -1,4 +1,4 @@
-package server
+package internal
 
 import (
 	"encoding/json"
@@ -20,7 +20,7 @@ type Server struct {
 	oAuthVerifier     string
 }
 
-func initServer(redisSessionStore *redistore.RediStore) *Server {
+func InitServer(redisSessionStore *redistore.RediStore) *Server {
 	listenAddr := os.Getenv("LISTEN_ADDR")
 	if listenAddr == "" {
 		log.Println("Optional env variable \"LISTEN_ADDR\" is not set. Defaulting to \"localhost:3000\".")
@@ -39,7 +39,7 @@ func initServer(redisSessionStore *redistore.RediStore) *Server {
 	return server
 }
 
-func (server *Server) run() {
+func (server *Server) Run() {
 	CSRFSecret := os.Getenv("CSRF_SECRET")
 	isProd := os.Getenv("IS_PROD")
 

@@ -1,4 +1,4 @@
-package server
+package internal
 
 import (
 	"google.golang.org/api/calendar/v3"

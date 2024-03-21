@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/gorilla/sessions"
+	"github.com/lucasodra/chatstodo-client/internal"
 	"log"
 	"net/http"
-
-	"github.com/gorilla/sessions"
 )
 
 /*
@@ -35,7 +35,7 @@ const (
 // Get the summaries from the backend
 // Returns the list of tasks, events, an summaries
 // if successful. Otherwise returns all nil
-func getSummary(writer http.ResponseWriter,
+func GetSummary(writer http.ResponseWriter,
 	request *http.Request, session *sessions.Session) ([]Task, []Event, []Summary) {
 
 	backendRequest, err := http.NewRequest(
@@ -73,7 +73,7 @@ func getSummary(writer http.ResponseWriter,
 }
 
 // Get all bot entries from the backend
-func getAllBots(session *sessions.Session) []PlatformEntry {
+func GetAllBots(session *sessions.Session) []PlatformEntry {
 
 	backendRequest, err := http.NewRequest(
 		http.MethodPost,
@@ -86,7 +86,7 @@ func getAllBots(session *sessions.Session) []PlatformEntry {
 		return nil
 	}
 	backendRequest.Header.Set(
-		"Authorization", session.Values[COOKIE_JWT].(string),
+		"Authorization", session.Values[internal.COOKIE_JWT].(string),
 	)
 
 	backendResponse, err := http.DefaultClient.Do(backendRequest)
@@ -108,7 +108,7 @@ func getAllBots(session *sessions.Session) []PlatformEntry {
 }
 
 // Remove a linked platform account from the backend
-func removePlatform(session *sessions.Session,
+func RemovePlatform(session *sessions.Session,
 	verificationCode string) error {
 
 	type PostBody struct {
@@ -136,7 +136,7 @@ func removePlatform(session *sessions.Session,
 		return err
 	}
 	backendRequest.Header.Set(
-		"Authorization", session.Values[COOKIE_JWT].(string),
+		"Authorization", session.Values[internal.COOKIE_JWT].(string),
 	)
 
 	backendResponse, err := http.DefaultClient.Do(backendRequest)
@@ -165,7 +165,7 @@ func removePlatform(session *sessions.Session,
 }
 
 // Add a platform account to the backend
-func addPlatform(session *sessions.Session,
+func AddPlatform(session *sessions.Session,
 	verificationCode string) error {
 
 	type PostBody struct {
@@ -193,7 +193,7 @@ func addPlatform(session *sessions.Session,
 		return err
 	}
 	backendRequest.Header.Set(
-		"Authorization", session.Values[COOKIE_JWT].(string),
+		"Authorization", session.Values[internal.COOKIE_JWT].(string),
 	)
 
 	backendResponse, err := http.DefaultClient.Do(backendRequest)
@@ -224,7 +224,7 @@ func addPlatform(session *sessions.Session,
 // Get jwt from backend auth and set to
 // the cookie jwt field
 // Returns any errors found, or nil if succeeds
-func getJWT(writer http.ResponseWriter,
+func GetJWT(writer http.ResponseWriter,
 	request *http.Request, session *sessions.Session) error {
 
 	type PostBody struct {
@@ -278,7 +278,7 @@ func getJWT(writer http.ResponseWriter,
 	// cookie will contain the jwt token inclusive of the
 	// "Bearer " prefix so future calls will just have
 	// to type cast it into string without further addition
-	session.Values[COOKIE_JWT] = "Bearer " + responseBody.Token
+	session.Values[internal.COOKIE_JWT] = "Bearer " + responseBody.Token
 	session.Save(request, writer)
 	return nil
 }

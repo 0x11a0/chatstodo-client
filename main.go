@@ -1,14 +1,15 @@
 package main
 
 import (
-	"github.com:"
+	"github.com/lucasodra/chatstodo-client/internal/utils"
+	"github.com/lucasodra/chatstodo-client/internal"
 )
 
 func main() {
-	setEnv()
+	utils.SetEnv()
 
-	redisStore := newRedisSessionStore()
+	redisStore := utils.NewRedisSessionStore()
 	defer redisStore.Close()
-	server := initServer(redisStore)
-	server.run()
+	server := internal.InitServer(redisStore)
+	server.Run()
 }

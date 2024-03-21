@@ -1,4 +1,4 @@
-package dashboard
+package internal
 
 import (
 	"html/template"

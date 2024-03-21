@@ -1,16 +1,25 @@
-package server
+package internal
 
 import (
+	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"log"
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/golang-jwt/jwt/v5"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
 )
 
+// Constants for cookie naming scheme
+const (
+	COOKIE_NAME                 = "ctd-cookie"
+	COOKIE_GOOGLE_TOKEN_SOURCE  = "google_token_source"
+	COOKIE_GOOGLE_ACCESS_TOKEN  = "google_access_token"
+	COOKIE_GOOGLE_REFRESH_TOKEN = "google_refresh_token"
+	COOKIE_GOOGLE_EXPIRES_AT    = "google_expires_at"
+	COOKIE_EMAIL                = "email"
+	COOKIE_JWT                  = "jwt"
+)
 
 // Function prototype for the authWrapper below
 type serverFunc func(http.ResponseWriter, *http.Request)
@@ -58,16 +67,6 @@ func initGoogleOAuth() *oauth2.Config {
 		Scopes:       GOOGLE_SCOPES,
 	}
 }
-
-// Constants for cookie naming scheme
-const (
-	COOKIE_GOOGLE_TOKEN_SOURCE  = "google_token_source"
-	COOKIE_GOOGLE_ACCESS_TOKEN  = "google_access_token"
-	COOKIE_GOOGLE_REFRESH_TOKEN = "google_refresh_token"
-	COOKIE_GOOGLE_EXPIRES_AT    = "google_expires_at"
-	COOKIE_EMAIL                = "email"
-	COOKIE_JWT                  = "jwt"
-)
 
 // /auth/google/callback
 // Auth callback function for Google oauth.

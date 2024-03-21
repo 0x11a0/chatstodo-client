@@ -1,4 +1,4 @@
-package dashboard
+package internal
 
 import (
 	"github.com/gorilla/csrf"

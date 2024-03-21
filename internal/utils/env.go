@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func setEnv() {
+func SetEnv() {
 	readFile, err := os.Open("./.env")
 	if err != nil {
 		log.Fatal(err)
@@ -27,7 +27,7 @@ func setEnv() {
 		if i == 2 {
 			fmt.Println()
 		}
-        i++
+		i++
 		i %= 3
 		os.Setenv(strArr[0], strArr[1])
 	}
