@@ -22,10 +22,6 @@ func dashboardHandler(writer http.ResponseWriter,
 	})
 }
 
-func (server *Server) dashboardSettings(writer http.ResponseWriter,
-	request *http.Request) {
-	dashboardHandler(writer, "/htmx/settings", "/settings")
-}
 
 func (server *Server) loginPage(writer http.ResponseWriter,
 	request *http.Request) {
@@ -42,15 +38,6 @@ func (server *Server) loginPage(writer http.ResponseWriter,
 	tmpl.ExecuteTemplate(writer, "base", nil)
 }
 
-func (server *Server) htmxSettings(writer http.ResponseWriter,
-	request *http.Request) {
-	tmpl, err := template.ParseFiles("./templates/htmx/settings.html")
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	tmpl.Execute(writer, map[string]interface{}{})
-}
 
 var (
 	ERROR_MAP = map[int]string{

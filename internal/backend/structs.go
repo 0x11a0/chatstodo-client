@@ -15,7 +15,7 @@ type Task struct {
 	Id              int    `json:"id"`
 	Value           string `json:"value"`
 	Deadline        string `json:"deadline"`
-	LocalDeadline   string
+	HTMLDeadline   string
 	DisplayDeadline string
 	Tags            []string `json:"tags"`
 	DisplayTags     string

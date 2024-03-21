@@ -1,38 +1,101 @@
 <div id="tab-panel" role="tabpanel">
+
+    <div id="task-card" class="card">
+        <p class="dots">...</p>
+        <div class="card-header">
+            <div style="flex: 1;"></div>
+            <h3 class="card-title">Task List</h3>
+            <div class="export-div">
+                <img width="30" height="30" src="/static/exportYellow.png" />
+            </div>
+        </div>
+        <div class="card-content">
+            {{ range .tasks }}
+
+            <div id="task-{{ .Id }}" class="card-block">
+                <form hx-post="/htmx/home/tasks" hx-target="body" hx-swap="beforeend">
+                    <input type="hidden" name="id" value="{{ .Id }}" required></input>
+                    <div class="card-container">
+                        <input type="text" name="value" value="{{ .Value }}" class="card-block-point" readonly
+                            required></input>
+
+                        <div class="card-date-container">
+                            <label>Deadline:</label>
+                            <input type="text" name="deadline" value="{{ .DisplayDeadline }}" class="card-block-date"
+                                readonly required></input>
+                        </div>
+
+                        <input type="text" name="tags" value="{{ .DisplayTags }}" class="card-block-notes" readonly
+                            required></input>
+
+                        <input type="hidden" name="localDeadline" value="{{ .HTMLDeadline }}" required></input>
+                    </div>
+
+                    <div class="edit-container">
+                        <button type="submit">
+                            <img src="/static/editYellow.png" width="25" height="25" />
+                        </button>
+                    </div>
+                    {{ $.csrfField }}
+                </form>
+            </div>
+
+            {{ else }}
+
+            <span>No other tasks.</span>
+
+            {{ end }}
+        </div>
+    </div>
+
+
     <div id="event-card" class="card">
         <p class="dots">...</p>
         <div class="card-header">
             <div style="flex: 1;"></div>
             <h3 class="card-title">Events</h3>
             <div class="export-div">
-                <img width="25" height="25" src="/static/exportYellow.png" />
+                <img id="export-yellow" width="30" height="30" style="display:block;" onclick="toggleExport()"
+                    src="/static/exportYellow.png" />
+                <img id="export-blue" width="30" height="30" style="display: none;" onclick="toggleExport()"
+                    src="/static/exportBlue.png" />
             </div>
+
         </div>
         <div class="card-content">
             {{ range .events }}
 
             <div id="event-{{ .Id }}" class="card-block">
                 <form hx-post="/htmx/home/events" hx-target="body" hx-swap="beforeend">
-                    <input type="hidden" name="id" value="{{ .Id }}"></input>
+                    <input type="hidden" name="id" value="{{ .Id }}" required></input>
                     <div class="card-container">
-                        <input type="text" name="value" value="{{ .Value }}" class="card-block-point" readonly></input>
+                        <input type="text" name="value" value="{{ .Value }}" class="card-block-point" readonly
+                            required></input>
 
-                        <label>Start date:</label>
-                        <input type="text" name="displayDateStart" value="{{ .DisplayDateStart }}"
-                            class="card-block-date" readonly></input>
+                        <div class="card-date-container">
+                            <label>Start date:</label>
+                            <input type="text" name="displayDateStart" value="{{ .DisplayDateStart }}"
+                                class="card-block-date" readonly required></input>
+                        </div>
 
-                        <label>End date:</label>
-                        <input type="text" name="displayDateEnd" value="{{ .DisplayDateEnd }}" class="card-block-date"
-                            readonly></input>
+                        <div class="card-date-container">
+                            <label>End date:&nbsp;&nbsp;</label>
+                            <input type="text" name="displayDateEnd" value="{{ .DisplayDateEnd }}"
+                                class="card-block-date" readonly required></input>
+                        </div>
 
-                        <input type="text" name="location" value="{{ .Location }}" class="card-block-notes"
-                            readonly></input>
+                        {{ if .Location }}
 
-                        <input type="text" name="tags" value="{{ .DisplayTags }}" class="card-block-notes"
-                            readonly></input>
+                        <input type="text" name="location" value="{{ .Location }}" class="card-block-notes" readonly
+                            required></input>
 
-                        <input type="hidden" name="localDateStart" value="{{ .HTMLDateStart }}"></input>
-                        <input type="hidden" name="localDateEnd" value="{{ .HTMLDateEnd }}"></input>
+                        {{ end }}
+
+                        <input type="text" name="tags" value="{{ .DisplayTags }}" class="card-block-notes" readonly
+                            required></input>
+
+                        <input type="hidden" name="localDateStart" value="{{ .HTMLDateStart }}" required></input>
+                        <input type="hidden" name="localDateEnd" value="{{ .HTMLDateEnd }}" required></input>
                     </div>
 
                     <div class="edit-container">
@@ -51,6 +114,22 @@
             {{ end }}
 
         </div>
+
+
+        <script>
+            var exportYellow = document.getElementById("export-yellow");
+            var exportBlue = document.getElementById("export-blue");
+
+            function toggleExport() {
+                if (exportYellow.style.display === "block") {
+                    exportYellow.style.display = "none";
+                    exportBlue.style.display = "block";
+                } else {
+                    exportBlue.style.display = "none";
+                    exportYellow.style.display = "block";
+                }
+            }
+        </script>
     </div>
 
     <!--div id="summary-card" class="card">

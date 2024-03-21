@@ -5,76 +5,38 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/csrf"
+	"github.com/lucasodra/chatstodo-client/internal/backend"
+	"github.com/lucasodra/chatstodo-client/internal/utils"
 )
 
-type Todo1 struct {
-	Id          int
-	Title       string
-	Date        string
-	Description string
-	Urgent      bool
-}
-
-var fakeHomeTodoData = []*Todo1{
-	{
-		Id:          0,
-		Title:       "Fill indemnity form",
-		Date:        "14/02/2024",
-		Description: "Needs to be completed ASAP",
-		Urgent:      true,
-	},
-	{
-		Id:     1,
-		Title:  "Research places with gin tonic",
-		Date:   "11/02/2024",
-		Urgent: false,
-	},
-	{
-		Id:     2,
-		Title:  "Make a reservation for LAVO on March 18, 3pm",
-		Date:   "11/02/2024",
-		Urgent: false,
-	},
-	{
-		Id:     3,
-		Title:  "Bring cake for the celebration",
-		Date:   "11/02/2024",
-		Urgent: false,
-	},
-}
-
-func (server *Server) htmxTodoCard(writer http.ResponseWriter,
+// /htmx/home/tasks
+func (server *Server) htmxTasks(writer http.ResponseWriter,
 	request *http.Request) {
-	if request.Method == "GET" {
-		htmxTodoCardAll(writer, request)
-	} else if request.Method == "POST" {
-		htmxTodoSave(writer, request)
+	/*
+		if request.Method == "GET" {
+			htmxEventCard(writer, request)
+		} else
+	*/
+	if request.Method == "POST" {
+		htmxTaskModal(writer, request)
+	} else if request.Method == "PUT" {
+		htmxTaskSave(writer, request)
 	} else {
 		http.Error(writer, "Method not allowed.", http.StatusMethodNotAllowed)
 	}
 }
 
-func htmxTodoCardAll(writer http.ResponseWriter,
-	request *http.Request) {
-	tmpl, err := template.ParseFiles("./templates/htmx/todoCard.html")
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	tmpl.Execute(writer, map[string]interface{}{
-		"todos":          fakeHomeTodoData,
-		csrf.TemplateTag: csrf.TemplateField(request),
-	})
-}
-
-func htmxTodoSave(writer http.ResponseWriter,
+// /htmx/home/tasks "POST"
+// Spawns the modal for editing of task details
+func htmxTaskModal(writer http.ResponseWriter,
 	request *http.Request) {
 
 	err := request.ParseForm()
 	if err != nil {
-		log.Println("todoCard.go - htmxTodoSave()")
+		log.Println("dashboardHomeTask.go - htmxTaskModal(), parse form")
 		log.Println(err)
 		return
 	}
@@ -83,27 +45,86 @@ func htmxTodoSave(writer http.ResponseWriter,
 		http.Error(writer, "Mismatched data found in form.", http.StatusUnauthorized)
 		return
 	}
-	title := request.FormValue("title")
-	date := request.FormValue("date")
-	description := request.FormValue("description")
-	for _, v := range fakeHomeTodoData {
-		if v.Id == id {
-			v.Title = title
-			v.Date = date
-			v.Description = description
-			break
-		}
-	}
-
-	tmpl, err := template.ParseFiles("./templates/htmx/todoTemplate.html")
+	value := request.FormValue("value")
+	deadline := request.FormValue("localDeadline")
+	tags := request.FormValue("tags")
+	tmpl, err := template.ParseFiles("./templates/htmx/taskEditModal.html")
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	tmpl.Execute(writer, Todo1{
-		Id:          id,
-		Title:       title,
-		Date:        date,
-		Description: description,
+	tmpl.Execute(writer, map[string]interface{}{
+		csrf.TemplateTag: csrf.TemplateField(request),
+		"Id":             id,
+		"Value":          value,
+		"HTMLDeadline":   deadline,
+		"DisplayTags": strings.TrimSuffix(
+			strings.TrimPrefix(tags, "["),
+			"]"),
+	})
+}
+
+/*
+
+
+   <div class="card-date-container">
+       <label>Deadline:</label>
+       <input type="text" name="deadline" value="{{ .DisplayDeadline }}" class="card-block-date"
+           readonly required></input>
+   </div>
+
+   <input type="text" name="tags" value="{{ .DisplayTags }}" class="card-block-notes" readonly
+       required></input>
+
+   <input type="hidden" name="localDeadline" value="{{ .HTMLDeadline }}" required></input>
+*/
+
+// /htmx/home/tasks "PUT"
+// Saves the edited information into this
+func htmxTaskSave(writer http.ResponseWriter,
+	request *http.Request) {
+
+	err := request.ParseForm()
+	if err != nil {
+		log.Println("dashboardHomeTask.go - htmxTaskSave()")
+		log.Println(err)
+		return
+	}
+	id, err := strconv.Atoi(request.FormValue("id"))
+	if err != nil {
+		http.Error(writer, "Mismatched data found in form.", http.StatusUnauthorized)
+		return
+	}
+
+	task := backend.Task{
+		Id:           id,
+		Value:        request.FormValue("value"),
+		HTMLDeadline: request.FormValue("deadline"),
+	}
+	task.DisplayDeadline = utils.PrettifyHTMLDateTime(task.HTMLDeadline)
+	newTags := strings.Split(request.FormValue("tags"), ",")
+	for i := 0; i < len(newTags); i++ {
+		newTags[i] = strings.TrimSpace(newTags[i])
+	}
+	log.Println(newTags)
+	task.Tags = newTags
+	task.DisplayTags = "[" + strings.Join(newTags, ", ") + "]"
+
+	// TODO: Update backend about latest data
+
+	tmpl, err := template.ParseFiles("./templates/htmx/taskTemplate.html")
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	tmpl.Execute(writer, map[string]interface{}{
+		csrf.TemplateTag:  csrf.TemplateField(request),
+		"Id":              task.Id,
+		"Value":           task.Value,
+		"Tags":            task.Tags,
+		"DisplayTags":     task.DisplayTags,
+		"HTMLDeadline":    task.HTMLDeadline,
+		"DisplayDeadline": task.DisplayDeadline,
 	})
 }

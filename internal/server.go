@@ -65,7 +65,7 @@ func (server *Server) Run() {
 	router.HandleFunc("/settings", server.authWrapper(server.dashboardSettings))
 
 	router.HandleFunc("/htmx/home", server.authWrapper(server.htmxHomePanel))
-	router.HandleFunc("/htmx/home/todoCard", server.authWrapper(server.htmxTodoCard))
+	router.HandleFunc("/htmx/home/tasks", server.authWrapper(server.htmxTasks))
 	router.HandleFunc("/htmx/home/events", server.authWrapper(server.htmxEvents))
 	router.HandleFunc("/htmx/home/summaryCard", server.authWrapper(server.htmxSummaryCard))
 	router.HandleFunc("/htmx/bots", server.authWrapper(server.htmxBots))
