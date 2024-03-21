@@ -7,7 +7,6 @@ import (
 	"os"
 )
 
-
 func NewRedisSessionStore() *redistore.RediStore {
 	store, err := redistore.NewRediStore(10, "tcp", os.Getenv("REDIS_ADDR"),
 		os.Getenv("REDIS_PASSWORD"), []byte(os.Getenv("REDIS_SECRET")))
@@ -16,7 +15,6 @@ func NewRedisSessionStore() *redistore.RediStore {
 		log.Fatal(err)
 	}
 	store.SetMaxAge(86400 * 30)
-	//store.Options.SameSite = http.SameSiteDefaultMode
 	store.Options.SameSite = http.SameSiteStrictMode
 	store.Options.Path = "/"
 	store.Options.HttpOnly = true

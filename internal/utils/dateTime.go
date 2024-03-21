@@ -6,8 +6,9 @@ import (
 )
 
 const (
-	ISO_8601_FORMAT       = "2015-01-27T05:57:31.399861+00:00"
-	DATETIME_LOCAL_FORMAT = "2024-10-30T17:45"
+	ISO_8601_FORMAT        = "2006-01-02T15:04:05.999999-07:00"
+	DATETIME_LOCAL_FORMAT  = "2006-01-02T15:04"
+	DATETIME_PRETTY_FORMAT = "02/01/2006 - 15:04"
 )
 
 var TIMEZONES = map[string]string{
@@ -29,11 +30,14 @@ func ParseISOString(dateTime string) *time.Time {
 
 // Returns the string converted into the specified
 // local timezone, in the format specified for
-// html input datetime-local tag. If timeFormat is not found,
+// html input datetime-local tag. If countryName is not found,
 // defaults to Singapore. Returns empty string
-// if error occurs.
-func GetLocalDateTime(dateTime *time.Time,
-	countryName string, timeFormat string) string {
+// if error occurs or if input dateTime is nil.
+func GetLocalDateTimeDatePicker(dateTime *time.Time,
+	countryName string) string {
+	if dateTime == nil {
+		return ""
+	}
 	timezone := TIMEZONES[countryName]
 	if timezone == "" {
 		// Defaults to Singapore timezone
@@ -42,9 +46,34 @@ func GetLocalDateTime(dateTime *time.Time,
 
 	localLocation, err := time.LoadLocation(timezone)
 	if err != nil {
-		log.Println("calendarApi.go - GetLocalDateTime(), load location")
+		log.Println("dateTime.go - GetLocalDateTimeDatePicker(), load location")
 		return ""
 	}
 
 	return dateTime.In(localLocation).Format(DATETIME_LOCAL_FORMAT)
+}
+
+// Returns the string converted into the specified
+// local timezone, in the format "DD/MM/YYYY - HH:MM" for
+// pretty displaying. If countryName is not found,
+// defaults to Singapore. Returns empty string
+// if error occurs or if input dateTime is nil.
+func GetLocalDateTimePretty(dateTime *time.Time,
+	countryName string) string {
+	if dateTime == nil {
+		return ""
+	}
+	timezone := TIMEZONES[countryName]
+	if timezone == "" {
+		// Defaults to Singapore timezone
+		timezone = TIMEZONES["Singapore"]
+	}
+
+	localLocation, err := time.LoadLocation(timezone)
+	if err != nil {
+		log.Println("dateTime.go - GetLocalDateTimePretty(), load location")
+		return ""
+	}
+
+	return dateTime.In(localLocation).Format(DATETIME_PRETTY_FORMAT)
 }

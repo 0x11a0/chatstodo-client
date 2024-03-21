@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/gorilla/csrf"
-	"github.com/gorilla/sessions"
 )
 
 /*
@@ -21,13 +20,6 @@ type Event struct {
 	Tags      []string `json:"tags"`
 }
 */
-
-// TODO: For internal use only. Returns the list of events from
-// backend using jwt.
-func (server *Server) getEvents(session *sessions.Session) {
-	//jwt := session.Values[COOKIE_JWT]
-
-}
 
 type Event1 struct {
 	Id          int

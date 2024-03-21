@@ -1,9 +1,102 @@
 <div id="tab-panel" role="tabpanel">
-    <div id="todo-card" class="card" hx-get="/htmx/home/todoCard" hx-target="this" hx-swap="innerHTML"
-        hx-trigger="load"></div>
-    <div id="event-card" class="card" hx-get="/htmx/home/events" hx-target="this" hx-swap="innerHTML"
-        hx-trigger="load"></div>
-    <div id="summary-card" class="card" hx-get="/htmx/home/summaryCard" hx-target="this" hx-swap="innerHTML"
-        hx-trigger="load"></div>
-</div>
+    <div id="event-card" class="card">
+        <p class="dots">...</p>
+        <div class="card-header">
+            <div style="flex: 1;"></div>
+            <h3 class="card-title">Events</h3>
+            <div class="export-div">
+                <img width="25" height="25" src="/static/exportYellow.png" />
+            </div>
+        </div>
+        <div class="card-content">
+            {{ range .events }}
 
+            <div id="event-{{ .Id }}" class="card-block">
+                <form hx-post="/htmx/home/events" hx-target="body" hx-swap="beforeend">
+                    <input type="hidden" name="id" value="{{ .Id }}"></input>
+                    <div class="card-container">
+                        <input type="text" name="value" value="{{ .Value }}" class="card-block-point" readonly></input>
+                        <input type="text" name="displayDateStart" value="{{ .DisplayDateStart }}"
+                            class="card-block-date" readonly></input>
+                        <input type="text" name="displayDateEnd" value="{{ .DisplayDateEnd }}" class="card-block-date"
+                            readonly></input>
+                        <input type="text" name="location" value="{{ .Location }}" class="card-block-notes"
+                            readonly></input>
+                        {{ range .Tags }}
+                        <p>{{ . }}</p>
+                        {{ end }}
+                        <input type="hidden" name="localDateStart" value="{{ .LocalDateStart }}"></input>
+                        <input type="hidden" name="localDateEnd" value="{{ .LocalDateStart }}"></input>
+                    </div>
+
+                    <div class="edit-container">
+                        <button type="submit">
+                            <img src="/static/editYellow.png" width="25" height="25" />
+                        </button>
+                    </div>
+                    {{ $.csrfField }}
+                </form>
+            </div>
+
+            {{ else }}
+
+            <span>No events.</span>
+
+            {{ end }}
+
+        </div>
+    </div>
+
+    <!--div id="summary-card" class="card">
+        <p class="dots">...</p>
+        <div class="card-header">
+            <div style="flex: 1;"></div>
+            <h3 class="card-title">Summary</h3>
+            <div class="export-div">
+                <img width="25" height="25" src="/static/exportYellow.png" />
+            </div>
+        </div>
+
+        <div class="card-content">
+            {{ range .summaries }}
+
+            <div class="card-summary-container">
+                <p class="card-block-point">{{ .Title }}</p>
+                <p class="card-block-date">{{ .Date }}</p>
+
+
+                <ul>
+                    {{ range .Points }}
+                    <div class="card-block-summary">
+                        <div class="card-container">
+                            <li>{{ . }}</li>
+                        </div>
+                    </div>
+                    {{ end }}
+                </ul>
+
+                <u class="card-block-point">Important Notes</u>
+
+                <ul>
+                    {{ range .ImportantPoints }}
+
+                    <div class="card-block-summary">
+                        <div class="card-container">
+                            <li>{{ . }}</li>
+                        </div>
+                    </div>
+
+                    {{ end }}
+                </ul>
+            </div>
+
+
+            {{ else }}
+
+            <span>No events.</span>
+
+            {{ end }}
+
+        </div>
+    </div-->
+</div>

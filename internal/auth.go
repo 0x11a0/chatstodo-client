@@ -1,24 +1,16 @@
 package internal
 
 import (
-	"github.com/golang-jwt/jwt/v5"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
 	"log"
 	"net/http"
 	"os"
 	"time"
-)
 
-// Constants for cookie naming scheme
-const (
-	COOKIE_NAME                 = "ctd-cookie"
-	COOKIE_GOOGLE_TOKEN_SOURCE  = "google_token_source"
-	COOKIE_GOOGLE_ACCESS_TOKEN  = "google_access_token"
-	COOKIE_GOOGLE_REFRESH_TOKEN = "google_refresh_token"
-	COOKIE_GOOGLE_EXPIRES_AT    = "google_expires_at"
-	COOKIE_EMAIL                = "email"
-	COOKIE_JWT                  = "jwt"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/lucasodra/chatstodo-client/internal/backend"
+	"github.com/lucasodra/chatstodo-client/internal/constants"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 )
 
 // Function prototype for the authWrapper below
@@ -88,7 +80,7 @@ func (server *Server) googleAuthCallback(writer http.ResponseWriter,
 
 	session, err := server.redisSessionStore.Get(
 		request,
-		COOKIE_NAME,
+		constants.COOKIE_NAME,
 	)
 	if err != nil {
 		log.Println("auth.go - authCallback(), get session")
@@ -106,10 +98,10 @@ func (server *Server) googleAuthCallback(writer http.ResponseWriter,
 		},
 	)
 
-	session.Values[COOKIE_GOOGLE_ACCESS_TOKEN] = token.AccessToken
-	session.Values[COOKIE_GOOGLE_REFRESH_TOKEN] = token.RefreshToken
-	session.Values[COOKIE_GOOGLE_EXPIRES_AT] = token.Expiry.Format(time.RFC3339)
-	session.Values[COOKIE_EMAIL] = claims["email"]
+	session.Values[constants.COOKIE_GOOGLE_ACCESS_TOKEN] = token.AccessToken
+	session.Values[constants.COOKIE_GOOGLE_REFRESH_TOKEN] = token.RefreshToken
+	session.Values[constants.COOKIE_GOOGLE_EXPIRES_AT] = token.Expiry.Format(time.RFC3339)
+	session.Values[constants.COOKIE_EMAIL] = claims["email"]
 
 	err = session.Save(request, writer)
 	if err != nil {
@@ -120,6 +112,12 @@ func (server *Server) googleAuthCallback(writer http.ResponseWriter,
 	}
 
 	log.Println("authCallback success")
+	statusCode := backend.GetJWT(writer, request, session)
+	if statusCode == http.StatusOK {
+		log.Println("Jwt set successfully")
+	} else {
+		log.Println("Error occured when getting jwt: ", statusCode)
+	}
 	server.dashboardHome(writer, request)
 }
 
@@ -127,7 +125,7 @@ func (server *Server) googleAuthCallback(writer http.ResponseWriter,
 func (server *Server) getGoogleOAuthToken(request *http.Request) *oauth2.Token {
 	session, err := server.redisSessionStore.Get(
 		request,
-		COOKIE_NAME,
+		constants.COOKIE_NAME,
 	)
 	if err != nil {
 		log.Println("auth.go - getGooleOAuthToken() get session")
@@ -135,7 +133,7 @@ func (server *Server) getGoogleOAuthToken(request *http.Request) *oauth2.Token {
 		return nil
 	}
 
-	googleExpiresAt := session.Values[COOKIE_GOOGLE_EXPIRES_AT]
+	googleExpiresAt := session.Values[constants.COOKIE_GOOGLE_EXPIRES_AT]
 
 	expireTime, err := time.Parse(time.RFC3339, googleExpiresAt.(string))
 	if err != nil {
@@ -145,8 +143,8 @@ func (server *Server) getGoogleOAuthToken(request *http.Request) *oauth2.Token {
 	}
 
 	return &oauth2.Token{
-		AccessToken:  session.Values[COOKIE_GOOGLE_ACCESS_TOKEN].(string),
-		RefreshToken: session.Values[COOKIE_GOOGLE_REFRESH_TOKEN].(string),
+		AccessToken:  session.Values[constants.COOKIE_GOOGLE_ACCESS_TOKEN].(string),
+		RefreshToken: session.Values[constants.COOKIE_GOOGLE_REFRESH_TOKEN].(string),
 		Expiry:       expireTime,
 		TokenType:    "Bearer",
 	}
@@ -186,14 +184,14 @@ func (server *Server) refreshGoogleAccessToken(writer http.ResponseWriter,
 	log.Println("newToken", newToken.AccessToken)
 	session, err := server.redisSessionStore.Get(
 		request,
-		COOKIE_NAME,
+		constants.COOKIE_NAME,
 	)
 	if err != nil {
 		log.Println("auth.go - refreshGoogleAccessToken() get session")
 		log.Println(err)
 		return nil
 	}
-	session.Values[COOKIE_GOOGLE_ACCESS_TOKEN] = newToken.AccessToken
+	session.Values[constants.COOKIE_GOOGLE_ACCESS_TOKEN] = newToken.AccessToken
 	session.Save(request, writer)
 	return nil
 }
@@ -203,7 +201,7 @@ func (server *Server) logout(writer http.ResponseWriter,
 	request *http.Request) {
 	session, err := server.redisSessionStore.Get(
 		request,
-		COOKIE_NAME,
+		constants.COOKIE_NAME,
 	)
 	if err != nil {
 		log.Println("auth.go - logout() get session")
@@ -239,12 +237,12 @@ func (server *Server) authHandler(writer http.ResponseWriter,
 }
 
 func (server *Server) isValidSession(request *http.Request) bool {
-	session, err := server.redisSessionStore.Get(request, COOKIE_NAME)
+	session, err := server.redisSessionStore.Get(request, constants.COOKIE_NAME)
 	if err != nil {
 		log.Println("auth.go - isValidSession, getSession")
 		log.Println(err)
 		return false
 	}
-	log.Println(COOKIE_EMAIL, session.Values[COOKIE_EMAIL])
-	return session.Values[COOKIE_EMAIL] != nil
+	log.Println(constants.COOKIE_EMAIL, session.Values[constants.COOKIE_EMAIL])
+	return session.Values[constants.COOKIE_EMAIL] != nil
 }
