@@ -1,6 +1,4 @@
 :root {
-
-
     /*
         fontFamily: {
             "primary": ["Roboto", "sans-serif"],
@@ -23,6 +21,8 @@ html {
 }
 
 body {
+    max-width: 100%;
+    overflow-x: hidden;
     background-color: var(--dark-background-primary);
     display: flex;
     flex-direction: column;
@@ -43,9 +43,19 @@ body {
     height: 6rem;
 }
 
+#error-header {
+    border-bottom: 1px solid var(--dark-border-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0rem 0.75rem;
+    height: 6rem;
+}
+
 #logo {
     color: var(--dark-font-primary);
-    text-align: start;
+    text-align: center;
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.5rem;
@@ -238,6 +248,7 @@ body {
     justify-content: start;
     align-items: start;
     padding: 0.5rem;
+
     input {
         width: 100%;
         font-size: 1rem;
@@ -461,15 +472,15 @@ body {
     border-radius: 50%;
 }
 
-input:checked + .settings-switch {
+input:checked+.settings-switch {
     background-color: #2196F3;
 }
 
-input:focus + .settings-switch {
+input:focus+.settings-switch {
     box-shadow: 0 0 1px #2196F3;
 }
 
-input:checked + .settings-switch:before {
+input:checked+.settings-switch:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
@@ -630,6 +641,11 @@ input:checked + .settings-switch:before {
         margin: 0.5rem 0rem;
         border: 1px solid var(--dark-border-primary);
         cursor: pointer;
+
+        .bot-modal-name {
+            font-size: 1.125rem;
+
+        }
     }
 
     .bot-modal-button:hover {
@@ -670,6 +686,18 @@ input:checked + .settings-switch:before {
     animation-name: zoomIn;
     animation-duration: 150ms;
     animation-timing-function: ease;
+
+    form {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        input,
+        textarea {
+            flex: 1;
+        }
+    }
 }
 
 #modal.closing {
@@ -732,6 +760,7 @@ input:checked + .settings-switch:before {
     line-height: 4rem;
 }
 
+#error-panel,
 #login-panel {
     width: 100%;
     min-height: 100vh;
@@ -763,4 +792,56 @@ input:checked + .settings-switch:before {
     margin-top: 0rem;
     margin-right: 0rem;
     margin-bottom: 0rem;
+}
+
+@media (max-width:1281px) {
+    /* hi-res laptops and desktops */
+
+    body {
+        background-color: red;
+    }
+
+}
+
+
+@media (max-width:1025px) {
+    /* big landscape tablets, laptops, and desktops */
+
+    body {
+        background-color: orange;
+    }
+}
+
+@media (max-width:961px) {
+    /* tablet, landscape iPad, lo-res laptops ands desktops */
+
+    body {
+        background-color: yellow;
+    }
+}
+
+
+@media (max-width:641px) {
+    /* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */
+
+    body {
+        background-color: green;
+    }
+}
+
+@media (max-width:481px) {
+    /* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide. */
+
+    body {
+        background-color: blue;
+    }
+}
+
+@media (max-width:320px) {
+    /* smartphones, iPhone, portrait 480x320 phones */
+
+
+    body {
+        background-color: whitesmoke;
+    }
 }

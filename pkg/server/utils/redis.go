@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"gopkg.in/boj/redistore.v1"
@@ -17,7 +17,8 @@ func newRedisSessionStore() *redistore.RediStore {
 		log.Fatal(err)
 	}
 	store.SetMaxAge(86400 * 30)
-	store.Options.SameSite = http.SameSiteDefaultMode
+	//store.Options.SameSite = http.SameSiteDefaultMode
+	store.Options.SameSite = http.SameSiteStrictMode
 	store.Options.Path = "/"
 	store.Options.HttpOnly = true
 	store.Options.Secure = os.Getenv("IS_PROD") == "true"

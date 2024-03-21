@@ -10,16 +10,23 @@
 <div class="card-content">
     {{ range .events }}
 
-    <div id="event-{{ .Id }}" class="card-block" data-todoid="{{ .Id }}">
+    <div id="event-{{ .Id }}" class="card-block">
+        <form hx-post="/htmx/home/events" hx-target="body" hx-swap="beforeend">
+            <input type="hidden" name="id" value="{{ .Id }}"></input>
+            <div class="card-container">
+                <input type="text" name="title" value="{{ .Title }}" class="card-block-point" readonly></input>
+                <input type="text" name="date" value="{{ .Date }}" class="card-block-date" readonly></input>
+                <input type="text" name="description" value="{{ .Description }}"
+                    class="card-block-notes" readonly></input>
+            </div>
 
-        <div class="card-container" data-hxpost="/htmx/home/eventCard" data-type="#event-">
-            <p name="title" class="card-block-point">{{ .Title }}</p>
-            <p name="date" class="card-block-date">{{ .Date }}</p>
-            <p name="description" class="card-block-notes">{{ .Description }}</p>
-        </div>
-        <div class="edit-container" onclick="getEditable(this)">
-            <img src="/static/editYellow.png" width="25" height="25" />
-        </div>
+            <div class="edit-container">
+                <button type="submit">
+                    <img src="/static/editYellow.png" width="25" height="25" />
+                </button>
+            </div>
+            {{ $.csrfField }}
+        </form>
     </div>
 
     {{ else }}

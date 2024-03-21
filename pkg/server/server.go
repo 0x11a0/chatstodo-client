@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"encoding/json"
@@ -31,7 +31,7 @@ func initServer(redisSessionStore *redistore.RediStore) *Server {
 		listenAddr:        listenAddr,
 		redisSessionStore: *redisSessionStore,
 		router:            router,
-		googleOAuthConfig: initAuth(),
+		googleOAuthConfig: initGoogleOAuth(),
 		oAuthVerifier:     oauth2.GenerateVerifier(),
 	}
 
@@ -53,24 +53,27 @@ func (server *Server) run() {
 		csrf.Secure(isProd == "true"))
 
 	router := server.router
-	router.HandleFunc("/", server.authWrapper(server.indexHome))
+	router.HandleFunc("/", server.authWrapper(server.dashboardHome))
 	router.HandleFunc("/login", server.loginPage)
 
 	router.HandleFunc("/auth/google", server.authHandler)
-	router.HandleFunc("/auth/google/callback", server.authCallback)
+	router.HandleFunc("/auth/google/callback", server.googleAuthCallback)
 	router.HandleFunc("/logout/google", server.logout)
 
-	router.HandleFunc("/home", server.authWrapper(server.indexHome))
-	router.HandleFunc("/bots", server.authWrapper(server.indexBots))
-	router.HandleFunc("/settings", server.authWrapper(server.indexSettings))
+	router.HandleFunc("/home", server.authWrapper(server.dashboardHome))
+	router.HandleFunc("/bots", server.authWrapper(server.dashboardBots))
+	router.HandleFunc("/settings", server.authWrapper(server.dashboardSettings))
 
 	router.HandleFunc("/htmx/home", server.authWrapper(server.htmxHomePanel))
 	router.HandleFunc("/htmx/home/todoCard", server.authWrapper(server.htmxTodoCard))
-	router.HandleFunc("/htmx/home/eventCard", server.authWrapper(server.htmxEventCard))
+	router.HandleFunc("/htmx/home/events", server.authWrapper(server.htmxEvents))
 	router.HandleFunc("/htmx/home/summaryCard", server.authWrapper(server.htmxSummaryCard))
 	router.HandleFunc("/htmx/bots", server.authWrapper(server.htmxBots))
-	router.HandleFunc("/htmx/botModal", server.authWrapper(server.htmxBotModal))
+	router.HandleFunc("/htmx/bots/modal", server.authWrapper(server.htmxBotModal))
 	router.HandleFunc("/htmx/settings", server.authWrapper(server.htmxSettings))
+
+	router.HandleFunc("/error/{code}", server.errorPageNotGeneric)
+	router.NotFoundHandler = http.HandlerFunc(server.errorPageNotFound)
 
 	server.addFileServer()
 

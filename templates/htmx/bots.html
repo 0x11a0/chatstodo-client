@@ -5,7 +5,7 @@
             <input id="bot-search" name="search" class="search-box" type="search" placeholder="Search for bots"
                 hx-post="/htmx/bots" hx-headers='{ "X-CSRF-Token": "{{ .csrfToken }}" }' hx-target="#search-results"
                 hx-swap="innerHTML" hx-trigger="input changed delay:500ms, search, load">
-            <button id="bot-new" hx-get="/htmx/botModal" hx-target="body" hx-swap="beforeend">
+            <button id="bot-new" hx-get="/htmx/bots/modal" hx-target="body" hx-swap="beforeend">
                 <img src="/static/plusYellow.png" width="25" height="25" />
                 <h3>Add bot</h3>
             </button>

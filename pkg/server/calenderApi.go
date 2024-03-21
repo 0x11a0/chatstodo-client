@@ -1,11 +1,10 @@
-package main
+package server
 
 import (
 	"google.golang.org/api/calendar/v3"
 	"google.golang.org/api/option"
 	"log"
 	"net/http"
-	"time"
 )
 
 func (server *Server) testAddEvent(writer http.ResponseWriter,
@@ -37,29 +36,6 @@ func (server *Server) testAddEvent(writer http.ResponseWriter,
 	server.addEvent(request, &event)
 }
 
-var TIMEZONES = map[string]string{
-	"Singapore": "Asia/Singapore",
-}
-
-// Converts a DateTime string from ISO/UTC to
-// local time. Returns the converted dateTime string
-// or empty string if errors.
-func DateTimeISOUTCToRFC3339(dateTime string, countryName string) string {
-	ISOUTCTime, err := time.Parse("2006-01-02T15:04:05Z07:00", dateTime)
-	if err != nil {
-		log.Println("calendarApi.go - DateTimeISOUTCToRFC3339(), parse time")
-		log.Println(err)
-		return ""
-	}
-
-	localLocation, err := time.LoadLocation(TIMEZONES[countryName])
-	if err != nil {
-		log.Println("calendarApi.go - DateTimeISOUTCToRFC3339(), load location")
-		log.Println(err)
-		return ""
-	}
-	return ISOUTCTime.In(localLocation).Format(time.RFC3339)
-}
 
 func (server *Server) addEvent(request *http.Request,
 	event *calendar.Event) {

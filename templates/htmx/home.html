@@ -1,59 +1,9 @@
 <div id="tab-panel" role="tabpanel">
     <div id="todo-card" class="card" hx-get="/htmx/home/todoCard" hx-target="this" hx-swap="innerHTML"
         hx-trigger="load"></div>
-    <div id="event-card" class="card" hx-get="/htmx/home/eventCard" hx-target="this" hx-swap="innerHTML"
+    <div id="event-card" class="card" hx-get="/htmx/home/events" hx-target="this" hx-swap="innerHTML"
         hx-trigger="load"></div>
     <div id="summary-card" class="card" hx-get="/htmx/home/summaryCard" hx-target="this" hx-swap="innerHTML"
         hx-trigger="load"></div>
 </div>
 
-
-<script>
-    function getEditable(e) {
-        const cardContainer = e.previousElementSibling;
-        const cardInfo = cardContainer.children;
-
-        const newContainer = document.createElement("div");
-        newContainer.className = cardContainer.className;
-        newContainer.style.backgroundColor = "darkred";
-        for (var i = 0; i < cardInfo.length; i++) {
-            let newInput = document.createElement("input");
-            newInput.type = "text";
-            newInput.className = cardInfo[i].className;
-            newInput.value = cardInfo[i].textContent;
-            newInput.setAttribute("name", cardInfo[i].getAttribute("name"));
-            newContainer.appendChild(newInput);
-        }
-        const id = cardContainer.parentElement.getAttribute("data-todoid");
-        const newForm = document.createElement("form");
-
-        const newId = document.createElement("input");
-        newId.type = "hidden";
-        newId.name = "id";
-        newId.value = id;
-        newForm.appendChild(newId);
-        newForm.appendChild(document.getElementsByName("gorilla.csrf.Token")[0].cloneNode(true));
-        newForm.appendChild(newContainer);
-
-        const newButton = document.createElement("button");
-
-        newButton.setAttribute("hx-target", cardContainer.getAttribute("data-type") + id);
-        newButton.className = "edit-container";
-        newButton.setAttribute("hx-post", cardContainer.getAttribute("data-hxpost"));
-        newButton.setAttribute("hx-swap", "outerHTML");
-
-        const saveImg = document.createElement("img");
-        saveImg.src = "/static/disketteYellow.png";
-        saveImg.height = "25";
-        saveImg.width = "25";
-        newButton.appendChild(saveImg);
-
-
-        htmx.process(newButton);
-        newForm.appendChild(newButton);
-        const todoBlock = cardContainer.parentElement;
-        todoBlock.textContent = "";
-        todoBlock.appendChild(newForm);
-    }
-
-</script>

@@ -1,0 +1,18 @@
+<div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
+    <div class="modal-underlay" _="on click trigger closeModal"></div>
+    <div class="modal-content">
+
+        <h1>Event modal</h1>
+        <form>
+            <input name="id" type="hidden" value="{{ .Id }}"></input>
+            <input name="title" type="text" value="{{ .Title }}"></input>
+            <input name="date" type="datetime-local" value="{{ .Date }}"></input>
+            <textarea name="description"
+                cols="40"
+                rows="5"
+            >{{ .Description }}</textarea>
+
+            <button _="on click trigger closeModal">Save</button>
+        </form>
+    </div>
+</div>

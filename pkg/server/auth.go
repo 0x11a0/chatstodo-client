@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"log"
@@ -11,8 +11,13 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
+
+// Function prototype for the authWrapper below
 type serverFunc func(http.ResponseWriter, *http.Request)
 
+// Wraps any http.HandleFunc functions. Requires the
+// browser to be logged in, else defaults to login page.
+// Used for ALL possible routes that are exposed.
 func (server *Server) authWrapper(function serverFunc) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		if !server.isValidSession(request) {
@@ -30,7 +35,10 @@ var (
 	}
 )
 
-func initAuth() *oauth2.Config {
+// Returns the oauth2.Config for Google. Requires
+// GOOGLE_KEY, GOOGLE_SECRET, GOOGLE_CALLBACK_URL
+// env variables to be set prior to calling this function.
+func initGoogleOAuth() *oauth2.Config {
 	clientID := os.Getenv("GOOGLE_KEY")
 	clientSecret := os.Getenv("GOOGLE_SECRET")
 	redirectURL := os.Getenv("GOOGLE_CALLBACK_URL")
@@ -51,16 +59,20 @@ func initAuth() *oauth2.Config {
 	}
 }
 
+// Constants for cookie naming scheme
 const (
-	COOKIE_GOOGLE_TOKEN_SOURCE  = "cookie_google_token_source"
-	COOKIE_GOOGLE_ACCESS_TOKEN  = "cookie_google_access_token"
-	COOKIE_GOOGLE_REFRESH_TOKEN = "cookie_google_refresh_token"
-	COOKIE_GOOGLE_EXPIRES_AT    = "cookie_google_expires_at"
-	COOKIE_EMAIL                = "cookie_email"
+	COOKIE_GOOGLE_TOKEN_SOURCE  = "google_token_source"
+	COOKIE_GOOGLE_ACCESS_TOKEN  = "google_access_token"
+	COOKIE_GOOGLE_REFRESH_TOKEN = "google_refresh_token"
+	COOKIE_GOOGLE_EXPIRES_AT    = "google_expires_at"
+	COOKIE_EMAIL                = "email"
+	COOKIE_JWT                  = "jwt"
 )
 
+// /auth/google/callback
+// Auth callback function for Google oauth.
 // Any errors during callback will redirect back to login
-func (server *Server) authCallback(writer http.ResponseWriter,
+func (server *Server) googleAuthCallback(writer http.ResponseWriter,
 	request *http.Request) {
 	googleOAuthCode := request.FormValue("code")
 	token, err := server.googleOAuthConfig.Exchange(
@@ -109,7 +121,7 @@ func (server *Server) authCallback(writer http.ResponseWriter,
 	}
 
 	log.Println("authCallback success")
-	server.indexHome(writer, request)
+	server.dashboardHome(writer, request)
 }
 
 // Returns the token if found, or nil if error
@@ -187,6 +199,7 @@ func (server *Server) refreshGoogleAccessToken(writer http.ResponseWriter,
 	return nil
 }
 
+// /logout/google/
 func (server *Server) logout(writer http.ResponseWriter,
 	request *http.Request) {
 	session, err := server.redisSessionStore.Get(
@@ -210,10 +223,11 @@ func (server *Server) logout(writer http.ResponseWriter,
 	http.Redirect(writer, request, "/login", http.StatusSeeOther)
 }
 
+// /auth/google
 func (server *Server) authHandler(writer http.ResponseWriter,
 	request *http.Request) {
 	if server.isValidSession(request) {
-		server.indexHome(writer, request)
+		server.dashboardHome(writer, request)
 		return
 	}
 

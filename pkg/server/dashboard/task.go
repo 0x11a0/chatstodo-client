@@ -1,4 +1,4 @@
-package main
+package dashboard
 
 import (
 	"html/template"
@@ -7,10 +7,9 @@ import (
 	"strconv"
 
 	"github.com/gorilla/csrf"
-	"github.com/markbates/goth/gothic"
 )
 
-type Todo struct {
+type Todo1 struct {
 	Id          int
 	Title       string
 	Date        string
@@ -18,7 +17,7 @@ type Todo struct {
 	Urgent      bool
 }
 
-var fakeHomeTodoData = []*Todo{
+var fakeHomeTodoData = []*Todo1{
 	{
 		Id:          0,
 		Title:       "Fill indemnity form",
@@ -72,13 +71,8 @@ func htmxTodoCardAll(writer http.ResponseWriter,
 
 func htmxTodoSave(writer http.ResponseWriter,
 	request *http.Request) {
-	_, err := gothic.GetFromSession("userId", request)
-	if err != nil {
-		http.Redirect(writer, request, "/login", http.StatusSeeOther)
-		return
-	}
 
-	err = request.ParseForm()
+	err := request.ParseForm()
 	if err != nil {
 		log.Println("todoCard.go - htmxTodoSave()")
 		log.Println(err)
@@ -106,7 +100,7 @@ func htmxTodoSave(writer http.ResponseWriter,
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	tmpl.Execute(writer, Todo{
+	tmpl.Execute(writer, Todo1{
 		Id:          id,
 		Title:       title,
 		Date:        date,

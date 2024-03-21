@@ -1,8 +1,7 @@
-package main
+package dashboard
 
 import (
 	"github.com/gorilla/csrf"
-	"github.com/markbates/goth/gothic"
 	"html/template"
 	"log"
 	"net/http"
@@ -31,6 +30,13 @@ var fakeBotData = []BotEntry{
 	},
 }
 
+// /bots
+func (server *Server) dashboardBots(writer http.ResponseWriter,
+	request *http.Request) {
+	dashboardHandler(writer, "/htmx/bots", "/bots")
+}
+
+// /htmx/bots for both tab panel and search functionality
 func (server *Server) htmxBots(writer http.ResponseWriter,
 	request *http.Request) {
 	if request.Method == "GET" {
@@ -42,6 +48,7 @@ func (server *Server) htmxBots(writer http.ResponseWriter,
 	}
 }
 
+// /htmx/bots "GET" for tab panel
 func htmxBotsPanel(writer http.ResponseWriter,
 	request *http.Request) {
 	tmpl, err := template.ParseFiles("./templates/htmx/bots.html")
@@ -54,17 +61,12 @@ func htmxBotsPanel(writer http.ResponseWriter,
 	})
 }
 
+// /htmx/bots "POST" for search engine
 func htmxBotsSearch(writer http.ResponseWriter,
 	request *http.Request) {
-	_, err := gothic.GetFromSession("userId", request)
+	err := request.ParseForm()
 	if err != nil {
-		http.Redirect(writer, request, "/login", http.StatusSeeOther)
-		return
-	}
-
-	err = request.ParseForm()
-	if err != nil {
-		log.Println("todoCard.go - htmxTodoSave()")
+		log.Println("bots.go - htmxBotsSearch(), parse form")
 		log.Println(err)
 		return
 	}
@@ -85,6 +87,7 @@ func htmxBotsSearch(writer http.ResponseWriter,
 	})
 }
 
+// /htmx/bots/modal
 func (server *Server) htmxBotModal(writer http.ResponseWriter,
 	request *http.Request) {
 	tmpl, err := template.ParseFiles("./templates/htmx/botModal.html")

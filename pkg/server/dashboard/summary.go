@@ -1,18 +1,18 @@
-package main
+package dashboard
 
 import (
 	"html/template"
 	"net/http"
 )
 
-type Summary struct {
+type Summary1 struct {
 	Title           string
 	Date            string
 	Points          []string
 	ImportantPoints []string
 }
 
-var fakeHomeSummaryData = []Summary{
+var fakeHomeSummaryData = []Summary1{
 	{
 		Title: "Validation Group 1",
 		Date:  "11/02/2024",
