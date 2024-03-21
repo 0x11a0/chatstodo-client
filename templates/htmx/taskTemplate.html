@@ -1,0 +1,26 @@
+<div id="task-{{ .Id }}" class="card-block">
+    <form hx-post="/htmx/home/tasks" hx-target="body" hx-swap="beforeend">
+        <input type="hidden" name="id" value="{{ .Id }}" required></input>
+        <div class="card-container">
+            <input type="text" name="value" value="{{ .Value }}" class="card-block-point" readonly required></input>
+
+            <div class="card-date-container">
+                <label>Deadline:</label>
+                <input type="text" name="deadline" value="{{ .DisplayDeadline }}" class="card-block-date" readonly
+                    required></input>
+            </div>
+
+            <input type="text" name="tags" value="{{ .DisplayTags }}" class="card-block-notes" readonly
+                required></input>
+
+            <input type="hidden" name="localDeadline" value="{{ .HTMLDeadline }}" required></input>
+        </div>
+
+        <div class="edit-container">
+            <button type="submit">
+                <img src="/static/editYellow.png" width="25" height="25" />
+            </button>
+        </div>
+        {{ $.csrfField }}
+    </form>
+</div>

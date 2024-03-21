@@ -1,0 +1,43 @@
+<div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
+    <div class="modal-underlay" _="on click trigger closeModal"></div>
+    <div class="modal-content">
+
+        <form id="modal-task-form" class="mui-form" hx-put="/htmx/home/tasks" hx-swap="outerhtml"
+            hx-target="#task-{{ .Id }}">
+            <legend>Edit Task</legend>
+            <input name="id" type="hidden" value="{{ .Id }}" required></input>
+
+            <div class="mui-textfield mui-textfield--float-label">
+                <input id="modal-task-value" name="value" type="text" value="{{ .Value }}" required></input>
+                <label>Task</label>
+            </div>
+
+            <div class="mui-textfield mui-textfield--float-label">
+                <input id="modal-task-deadline" name="deadline" type="datetime-local" value="{{ .HTMLDeadline }}"
+                    required></input>
+                <label>Deadline</label>
+            </div>
+
+            <div class="mui-textfield mui-textfield--float-label">
+                <input id="modal-task-tags" name="tags" type="text" value="{{ .DisplayTags }}" required></input>
+                <label>Tags</label>
+            </div>
+
+
+            {{ .csrfField }}
+
+            <button id="modal-task-submit-button" class="mui-btn mui-btn--raised"
+                _="on click trigger closeModal">Save</button>
+
+            <script>
+                var modalTaskValue = document.getElementById("modal-task-value");
+                var modalTaskSubmitButton = document.getElementById("modal-task-submit-button");
+
+                modalTaskValue.addEventListener("input", function () {
+                    modalTaskSubmitButton.disabled = modalTaskValue.value === ""
+                })
+
+            </script>
+        </form>
+    </div>
+</div>
