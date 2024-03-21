@@ -7,7 +7,8 @@ import (
 
 const (
 	ISO_8601_FORMAT        = "2006-01-02T15:04:05.999999-07:00"
-	DATETIME_LOCAL_FORMAT  = "2006-01-02T15:04"
+	DATETIME_HTML_FORMAT  = "2006-01-02T15:04"
+	// DD/MM/YYYY - HH:MM
 	DATETIME_PRETTY_FORMAT = "02/01/2006 - 15:04"
 )
 
@@ -50,7 +51,7 @@ func GetLocalDateTimeDatePicker(dateTime *time.Time,
 		return ""
 	}
 
-	return dateTime.In(localLocation).Format(DATETIME_LOCAL_FORMAT)
+	return dateTime.In(localLocation).Format(DATETIME_HTML_FORMAT)
 }
 
 // Returns the string converted into the specified
@@ -76,4 +77,18 @@ func GetLocalDateTimePretty(dateTime *time.Time,
 	}
 
 	return dateTime.In(localLocation).Format(DATETIME_PRETTY_FORMAT)
+}
+
+
+// Converts datetime string in html datetime-local
+// format to "DD/MM/YYYY - HH:MM" for pretty display.
+// Returns empty string if error occurs while parsing
+func PrettifyHTMLDateTime(htmlDateTime string) string{
+	dateTime , err := time.Parse(DATETIME_HTML_FORMAT, htmlDateTime)
+
+	if err != nil {
+		log.Println("dateTime.go - PrettifyHTMLDateTime(), parse time")
+		return ""
+	}
+	return dateTime.Format(DATETIME_PRETTY_FORMAT)
 }

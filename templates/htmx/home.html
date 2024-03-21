@@ -16,17 +16,23 @@
                     <input type="hidden" name="id" value="{{ .Id }}"></input>
                     <div class="card-container">
                         <input type="text" name="value" value="{{ .Value }}" class="card-block-point" readonly></input>
+
+                        <label>Start date:</label>
                         <input type="text" name="displayDateStart" value="{{ .DisplayDateStart }}"
                             class="card-block-date" readonly></input>
+
+                        <label>End date:</label>
                         <input type="text" name="displayDateEnd" value="{{ .DisplayDateEnd }}" class="card-block-date"
                             readonly></input>
+
                         <input type="text" name="location" value="{{ .Location }}" class="card-block-notes"
                             readonly></input>
-                        {{ range .Tags }}
-                        <p>{{ . }}</p>
-                        {{ end }}
-                        <input type="hidden" name="localDateStart" value="{{ .LocalDateStart }}"></input>
-                        <input type="hidden" name="localDateEnd" value="{{ .LocalDateStart }}"></input>
+
+                        <input type="text" name="tags" value="{{ .DisplayTags }}" class="card-block-notes"
+                            readonly></input>
+
+                        <input type="hidden" name="localDateStart" value="{{ .HTMLDateStart }}"></input>
+                        <input type="hidden" name="localDateEnd" value="{{ .HTMLDateEnd }}"></input>
                     </div>
 
                     <div class="edit-container">

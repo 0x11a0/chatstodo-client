@@ -27,10 +27,6 @@ func (server *Server) htmxHomePanel(writer http.ResponseWriter,
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	for _, event := range events {
-		log.Println(event.DisplayDateStart)
-		log.Println(event.DisplayDateEnd)
-	}
 	tmpl.Execute(writer, map[string]interface{}{
 		csrf.TemplateTag: csrf.TemplateField(request),
 		"tasks":          tasks,

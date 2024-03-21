@@ -88,20 +88,14 @@ body {
     flex-direction: column;
     justify-content: start;
     align-items: center;
-    z-index: 1;
+    z-index: 1000;
     top: 0;
     left: 0;
     overflow-x: hidden;
     transition: 0.5s;
+    padding: 2rem 0rem;
 }
 
-#tab-close {
-    color: var(--dark-font-primary);
-    align-self: flex-end;
-    font-size: 2rem;
-    cursor: pointer;
-    margin: 1rem;
-}
 
 .tab {
     display: block;
@@ -334,7 +328,11 @@ body {
 
     .edit-container {
         opacity: 1;
-        cursor: pointer;
+
+        img,
+        button {
+            cursor: pointer;
+        }
     }
 }
 
@@ -620,9 +618,6 @@ input:checked+.settings-switch:before {
     justify-content: center;
     align-items: center;
 
-    h1 {
-        color: var(--dark-font-primary);
-    }
 
     h2 {
         margin: 0.5rem;
@@ -682,20 +677,44 @@ input:checked+.settings-switch:before {
         background-color: red;
     }
 
+    button:disabled {
+        background-color: var(--dark-background-tertiary);
+    }
+
     /* Animate when opening */
     animation-name: zoomIn;
     animation-duration: 150ms;
     animation-timing-function: ease;
 
     form {
+        width: 80%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
 
-        input,
-        textarea {
-            flex: 1;
+        legend {
+            font-size: 1.5rem;
+            line-height: 1.75rem;
+            font-weight: 600;
+            text-align: center;
+            color: var(--dark-font-primary);
+        }
+    div {
+        width: 100%;
+        }
+        label {
+            color: var(--dark-font-secondary);
+            width: 100%;
+            font-size: 1rem;
+            line-height: 1.25rem;
+        
+        }
+        input {
+            color: var(--dark-font-tertiary);
+            width: 100%;
+            font-size: 1.125rem;
+            line-height: 1.5rem;
         }
     }
 }
@@ -844,4 +863,19 @@ input:checked+.settings-switch:before {
     body {
         background-color: whitesmoke;
     }
+}
+
+
+
+
+#tablist-underlay {
+    position: absolute;
+    z-index: -2;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    opacity: 0;
+    background-color: #111111;
+    transition: opacity 200ms ease-in;
 }

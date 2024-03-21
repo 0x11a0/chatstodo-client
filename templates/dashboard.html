@@ -3,7 +3,6 @@
 <div id="tab-list" role="tablist" hx-target="#tab-panel" _="on htmx:afterOnLoad set @aria-selected of 
         <[aria-selected=true]/> to false tell the 
         target take .selected set @aria-selected to true">
-    <h2 id="tab-close" onclick="closeSidebar()">&times;</h2>
 
     <h2 class="tab" hx-get="/htmx/home" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/home" }}
         aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML" hx-push-url="/home"
@@ -20,6 +19,7 @@
     <h2 id="logout-button" class="tab" onclick="window.location='/logout/google'">Logout
     </h2>
 </div>
+<div id="tablist-underlay" onclick=" closeSidebar()"></div>
 
 <div id="main">
     <div id="header">
@@ -38,14 +38,34 @@
     </div>
 
     <script>
+        var tablist = document.getElementById("tab-list");
+        var mainDiv = document.getElementById("main");
+        var tablistUnderlay = document.getElementById("tablist-underlay");
+        /*
+        var sidebarOverlayOptions = {
+            "onclose": function () {
+                tablist.style.width = "0px";
+                mainDiv.style.marginLeft = "0px";
+            }
+        };
+        */
+
         function openSidebar() {
-            document.getElementById("tab-list").style.width = "250px";
-            document.getElementById("main").style.marginLeft = "250px";
+            //mui.overlay("on", sidebarOverlayOptions, tablist);
+            tablist.style.width = "250px";
+            mainDiv.style.marginLeft = "250px";
+
+            tablistUnderlay.style.zIndex = 999;
+            tablistUnderlay.style.opacity = 0.8;
         }
 
         function closeSidebar() {
-            document.getElementById("tab-list").style.width = "0px";
-            document.getElementById("main").style.marginLeft = "0px";
+            //mui.overlay("off", sidebarOverlayOptions, tablist);
+            tablist.style.width = "0px";
+            mainDiv.style.marginLeft = "0px";
+
+            tablistUnderlay.style.zIndex = -2;
+            tablistUnderlay.style.opacity = 0;
         } 
     </script>
 
