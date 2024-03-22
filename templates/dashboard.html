@@ -4,17 +4,17 @@
         <[aria-selected=true]/> to false tell the 
         target take .selected set @aria-selected to true">
 
-    <h2 class="tab" hx-get="/htmx/home" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/home" }}
-        aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML" hx-push-url="/home"
+    <h2 id="tab-home" class="tab" hx-get="/htmx/home" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/home"
+        }} aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML" hx-push-url="/home"
         hx-replace-url="true" onclick="closeSidebar()">Home</h2>
 
-    <h2 class="tab" hx-get="/htmx/bots" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/bots" }}
-        aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML" hx-push-url="/bots"
+    <h2 id="tab-bots" class="tab" hx-get="/htmx/bots" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/bots"
+        }} aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML" hx-push-url="/bots"
         hx-replace-url="true" onclick="closeSidebar()">Bots</h2>
 
-    <h2 class="tab" hx-get="/htmx/settings" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/settings" }}
-        aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML" hx-push-url="/settings"
-        hx-replace-url="true" onclick="closeSidebar()">Settings</h2>
+    <h2 id="tab-settings" class="tab" hx-get="/htmx/settings" role="tab" aria-controls="tab-panel" {{ if eq
+        .redirectUrl "/settings" }} aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML"
+        hx-push-url="/settings" hx-replace-url="true" onclick="closeSidebar()">Settings</h2>
 
     <h2 id="logout-button" class="tab" onclick="window.location='/logout/google'">Logout
     </h2>
@@ -27,7 +27,7 @@
             <img onclick="openSidebar()" src="/static/menuYellow.png" width="35" height="35" />
         </div>
         <h1 hx-target="#tab-panel" hx-swap="outerHTML" hx-get="/htmx/home" id="logo" hx-replace-url="true"
-            hx-push-url="/home" onclick="closeSidebar()">ChatsToDo</h1>
+            hx-push-url="/home" onclick="logoButton()">ChatsToDo</h1>
         <div style="flex: 1;"></div>
     </div>
 
@@ -41,17 +41,9 @@
         var tablist = document.getElementById("tab-list");
         var mainDiv = document.getElementById("main");
         var tablistUnderlay = document.getElementById("tablist-underlay");
-        /*
-        var sidebarOverlayOptions = {
-            "onclose": function () {
-                tablist.style.width = "0px";
-                mainDiv.style.marginLeft = "0px";
-            }
-        };
-        */
+
 
         function openSidebar() {
-            //mui.overlay("on", sidebarOverlayOptions, tablist);
             tablist.style.width = "250px";
             mainDiv.style.marginLeft = "250px";
 
@@ -60,12 +52,19 @@
         }
 
         function closeSidebar() {
-            //mui.overlay("off", sidebarOverlayOptions, tablist);
             tablist.style.width = "0px";
             mainDiv.style.marginLeft = "0px";
 
             tablistUnderlay.style.zIndex = -2;
             tablistUnderlay.style.opacity = 0;
+        }
+
+        function logoButton() {
+            closeSidebar();
+            for (var i = 0; i < tablist.children.length; i++) {
+                tablist.children[i].setAttribute("aria-selected",
+                    tablist.children[i].id === "tab-home");
+            }
         } 
     </script>
 

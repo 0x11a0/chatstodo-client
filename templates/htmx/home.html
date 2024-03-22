@@ -16,19 +16,22 @@
                 <form hx-post="/htmx/home/tasks" hx-target="body" hx-swap="beforeend">
                     <input type="hidden" name="id" value="{{ .Id }}" required></input>
                     <div class="card-container">
-                        <input type="text" name="value" value="{{ .Value }}" class="card-block-point" readonly
-                            required></input>
+                        <b class="card-block-point">{{ .Value }}</b>
 
                         <div class="card-date-container">
                             <label>Deadline:</label>
-                            <input type="text" name="deadline" value="{{ .DisplayDeadline }}" class="card-block-date"
-                                readonly required></input>
+                            <b class="card-block-date">{{ .DisplayDeadline }}</b>
                         </div>
 
-                        <input type="text" name="tags" value="{{ .DisplayTags }}" class="card-block-notes" readonly
-                            required></input>
+                        <p class="card-block-notes">{{ .DisplayTags }}</p>
 
+
+                        <input type="hidden" name="value" value="{{ .Value }}" readonly required></input>
+                        <input type="hidden" name="deadline" value="{{ .DisplayDeadline }}" class="card-block-date"
+                            readonly required></input>
                         <input type="hidden" name="localDeadline" value="{{ .HTMLDeadline }}" required></input>
+                        <input type="hidden" name="tags" value="{{ .DisplayTags }}" class="card-block-notes" readonly
+                            required></input>
                     </div>
 
                     <div class="edit-container">
@@ -73,13 +76,13 @@
                             required></input>
 
                         <div class="card-date-container">
-                            <label>Start date:</label>
+                            <label>Start:</label>
                             <input type="text" name="displayDateStart" value="{{ .DisplayDateStart }}"
                                 class="card-block-date" readonly required></input>
                         </div>
 
                         <div class="card-date-container">
-                            <label>End date:&nbsp;&nbsp;</label>
+                            <label>End:&nbsp;&nbsp;</label>
                             <input type="text" name="displayDateEnd" value="{{ .DisplayDateEnd }}"
                                 class="card-block-date" readonly required></input>
                         </div>

@@ -191,7 +191,8 @@ func processBackendSummary(tasks []*Task, events []*Event, summaries []*Summary)
 	}
 }
 
-// Get all platforms linked from the backend
+// Get all platforms linked from the backend. Returns the
+// platform entries obtained or the appropriate http status code
 func GetAllPlatforms(session *sessions.Session) ([]PlatformEntry, int) {
 
 	// WARN: DUMMY IMPLEMENTATION

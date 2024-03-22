@@ -264,15 +264,14 @@ body {
         align-items: center;
         width: 100%;
 
-        input,
+        b,
         label {
             color: var(--dark-font-tertiary);
-            width: auto;
             font-size: 1.125rem;
             font-weight: 500;
         }
 
-        input {
+        b {
             margin-left: 1rem;
         }
     }
@@ -366,7 +365,6 @@ body {
 
 .edit-container {
     opacity: 0;
-    margin: 0rem 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -407,6 +405,9 @@ body {
     flex: 1;
     color: var(--dark-font-primary);
     text-align: center;
+    font-size: 1.5rem;
+    line-height: 1.75rem;
+    font-weight: 500;
 }
 
 #settings-panel,
@@ -418,53 +419,40 @@ body {
     align-items: center;
 }
 
-/*
-*
-    <div id="settings-panel">
-        <h3 id="settings-title">Settings</h3>
-
-        <h4 class="settings-subtitle">Accounts</h4>
-        <div class="settings-block">
-            <p class="settings-name">Telegram</p>
-            <p class="settings-active">Linked</p>
-        </div>
-        <div class="settings-block">
-            <p class="settings-name">Discord</p>
-            <p class="settings-inactive">Link Now</p>
-        </div>
-
-        <h4 class="settings-subtitle">Tasks</h4>
-        <div class="settings-block">
-            <p class="settings-name">Google Tasks</p>
-            <p class="settings-active">Linked</p>
-        </div>
-
-        <h4 class="settings-subtitle">Events</h4>
-        <div class="settings-block">
-            <p class="settings-name">Google Calendar</p>
-            <p class="settings-active">Linked</p>
-        </div>
-
-    </div>
-*
-*/
 
 .settings-block{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     width: 95%;
-    padding: 0rem 1rem;
+    padding: 1rem;
     margin-bottom: 2rem;
     border-bottom: 1px solid var(--dark-border-primary);
+
+
+    .settings-status{
+        width: 6rem;
+        border-radius: 9999px;
+        line-height: 1.5rem;
+        text-align: center;
+        background-color: var(--dark-background-tertiary);
+        margin: 0rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .settings-active{
+        color: var(--dark-font-primary);
+    }
+
+    .settings-inactive{
+        color: white;
+    }
 }
 
-.settings-name{
-    color: white;
-    font-size: 1.25rem;
-    font-weight: 500;
-    line-height: 1.75rem;
-}
 
 .settings-subtitle {
     align-self: flex-start;
@@ -475,23 +463,6 @@ body {
     line-height: 1.5rem;
 }
 
-.settings-active,
-.settings-inactive{
-    width: 6rem;
-    border-radius: 9999px;
-    line-height: 1.5rem;
-    cursor: pointer;
-    text-align: center;
-    background-color: var(--dark-background-tertiary);
-}
-
-.settings-active{
-    color: var(--dark-font-primary);
-}
-
-.settings-inactive{
-    color: white;
-}
 
 .settings-switch-container {
     display: inline-block;
@@ -539,6 +510,29 @@ input:checked+.settings-switch:before {
     -ms-transform: translateX(26px);
     transform: translateX(26px);
 }
+
+
+.settings-icon-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .settings-name{
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 500;
+        line-height: 1.75rem;
+        margin: 0rem;
+    }
+
+    img {
+        margin-left: 0.5rem;
+    }
+
+
+}
+
+
 
 #bot-new {
     background: none;
