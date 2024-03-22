@@ -10,3 +10,8 @@ const (
 	COOKIE_EMAIL                = "email"
 	COOKIE_JWT                  = "jwt"
 )
+
+const (
+	PLATFORM_TELEGRAM = "Telegram"
+	PLATFORM_DISCORD  = "Discord"
+)

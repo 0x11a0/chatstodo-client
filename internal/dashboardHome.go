@@ -27,13 +27,60 @@ func (server *Server) htmxHomePanel(writer http.ResponseWriter,
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	taskTags, eventTags, summaryTags := extractTags(tasks, events, summaries)
+
 	tmpl.Execute(writer, map[string]interface{}{
 		csrf.TemplateTag: csrf.TemplateField(request),
 		"tasks":          tasks,
-		"events":         events,
-		"summaries":      summaries,
+		"taskTags":       taskTags,
+
+		"events":    events,
+		"eventTags": eventTags,
+
+		"summaries":   summaries,
+		"summaryTags": summaryTags,
 	})
 	log.Println("served home")
+}
+
+func extractTags(tasks []*backend.Task, events []*backend.Event,
+	summaries []*backend.Summary) ([]string, []string, []string) {
+
+	tagsMap := map[string]struct{}{}
+	for _, task := range tasks {
+		for _, tag := range task.Tags {
+			tagsMap[tag] = struct{}{}
+		}
+	}
+	taskTagsArray := []string{}
+	for key := range tagsMap {
+		taskTagsArray = append(taskTagsArray, key)
+	}
+
+	tagsMap = map[string]struct{}{}
+	for _, event := range events {
+		for _, tag := range event.Tags {
+			tagsMap[tag] = struct{}{}
+		}
+	}
+	eventTagsArray := []string{}
+	for key := range tagsMap {
+		eventTagsArray = append(eventTagsArray, key)
+	}
+
+	tagsMap = map[string]struct{}{}
+	for _, summary := range summaries {
+		for _, tag := range summary.Tags {
+			tagsMap[tag] = struct{}{}
+		}
+	}
+	summaryTagsArray := []string{}
+	for key := range tagsMap {
+		summaryTagsArray = append(summaryTagsArray, key)
+	}
+
+	return taskTagsArray, eventTagsArray, summaryTagsArray
 }
 
 // /htmx/bots/modal

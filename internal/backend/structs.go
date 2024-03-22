@@ -15,7 +15,7 @@ type Task struct {
 	Id              int    `json:"id"`
 	Value           string `json:"value"`
 	Deadline        string `json:"deadline"`
-	HTMLDeadline   string
+	HTMLDeadline    string
 	DisplayDeadline string
 	Tags            []string `json:"tags"`
 	DisplayTags     string
@@ -27,16 +27,16 @@ type Event struct {
 	Location string `json:"location"`
 
 	// json
-	DateStart        string `json:"dateStart"`
+	DateStart string `json:"dateStart"`
 	// html
-	HTMLDateStart   string
+	HTMLDateStart string
 	// pretty
 	DisplayDateStart string
 
 	// json
-	DateEnd        string `json:"dateEnd"`
+	DateEnd string `json:"dateEnd"`
 	// html
-	HTMLDateEnd   string
+	HTMLDateEnd string
 	// pretty
 	DisplayDateEnd string
 
@@ -51,4 +51,19 @@ type PlatformEntry struct {
 
 type PlatformCredentials struct {
 	Token string `json:"token"`
+}
+
+type PlatformGroups struct {
+	Platform string  `json:"platform"`
+	Groups   []Group `json:"groups"`
+}
+
+type Group struct {
+	Id        int    `json:"_id"`
+	UserId    int    `json:"user_id"`
+	GroupId   int    `json:"group_id"`
+	GroupName string `json:"group_name"`
+	Platform  string `json:"platform"`
+	// json iso string
+	CreatedAt string `json:"created_at"`
 }

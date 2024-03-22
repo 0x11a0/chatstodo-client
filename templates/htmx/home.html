@@ -3,16 +3,32 @@
     <div id="task-card" class="card">
         <p class="dots">...</p>
         <div class="card-header">
-            <div style="flex: 1;"></div>
+            <div class="mui-dropdown" style="flex:1;">
+
+                <button data-mui-toggle="dropdown" style="background: none;
+                outline: none;
+                border: none;">
+                    <img width="30" height="30" src="/static/filterYellow.png" />
+                </button>
+
+                <ul class="mui-dropdown__menu">
+                    <li onclick="filterTasks()">No filter</li>
+                    {{ range .taskTags }}
+                    <li onclick="filterTasks('{{ . }}')">{{ . }}</li>
+                    {{ end }}
+                </ul>
+
+            </div>
+
             <h3 class="card-title">Task List</h3>
             <div class="export-div">
                 <img width="30" height="30" src="/static/exportYellow.png" />
             </div>
         </div>
-        <div class="card-content">
+        <div id="task-card-content" class="card-content">
             {{ range .tasks }}
 
-            <div id="task-{{ .Id }}" class="card-block">
+            <div id="task-{{ .Id }}" class="card-block" data-tags="{{ .DisplayTags }}">
                 <form hx-post="/htmx/home/tasks" hx-target="body" hx-swap="beforeend">
                     <input type="hidden" name="id" value="{{ .Id }}" required></input>
                     <div class="card-container">
@@ -49,13 +65,68 @@
 
             {{ end }}
         </div>
+
+        <script>
+            var taskCardContent = document.getElementById("task-card-content");
+
+            function filterTasks(target) {
+                if (!target) {
+                    for (var i = 0; i < taskCardContent.children.length; i++) {
+                        
+                        taskCardContent.children[i].style.display = "block";
+
+                        /*
+                        taskCardContent.children[i].style.height = "auto";
+                        taskCardContent.children[i].style.opacity = "1";
+                        */
+                    }
+                    return
+                }
+                for (var i = 0; i < taskCardContent.children.length; i++) {
+        /*
+                    if (taskCardContent.children[i].getAttribute("data-tags").includes(target)){
+                        taskCardContent.children[i].style.height = "auto";
+                        taskCardContent.children[i].style.opacity = "1";
+                    } else {
+                        taskCardContent.children[i].style.height = "0";
+                        taskCardContent.children[i].style.opacity = "0";
+                    }
+        */
+
+                    taskCardContent.children[i].style.display =
+                        taskCardContent.children[i].getAttribute("data-tags").includes(target) ?
+                            "block" : "none";
+
+
+                }
+            }
+
+
+
+        </script>
+
     </div>
 
 
     <div id="event-card" class="card">
         <p class="dots">...</p>
         <div class="card-header">
-            <div style="flex: 1;"></div>
+            <div class="mui-dropdown" style="flex:1;">
+
+                <button data-mui-toggle="dropdown" style="background: none;
+                outline: none;
+                border: none;">
+                    <img width="30" height="30" src="/static/filterYellow.png" />
+                </button>
+
+                <ul class="mui-dropdown__menu">
+                    <li onclick="filterEvents()">No filter</li>
+                    {{ range .eventTags }}
+                    <li onclick="filterEvents('{{ . }}')">{{ . }}</li>
+                    {{ end }}
+                </ul>
+
+            </div>
             <h3 class="card-title">Events</h3>
             <div class="export-div">
                 <img id="export-yellow" width="30" height="30" style="display:block;" onclick="toggleExport()"
@@ -65,10 +136,10 @@
             </div>
 
         </div>
-        <div class="card-content">
+        <div id="event-card-content" class="card-content">
             {{ range .events }}
 
-            <div id="event-{{ .Id }}" class="card-block">
+            <div id="event-{{ .Id }}" class="card-block" data-tags="{{ .DisplayTags }}">
                 <form hx-post="/htmx/home/events" hx-target="body" hx-swap="beforeend">
                     <input type="hidden" name="id" value="{{ .Id }}" required></input>
                     <div class="card-container">
@@ -130,6 +201,23 @@
                 } else {
                     exportBlue.style.display = "none";
                     exportYellow.style.display = "block";
+                }
+            }
+
+
+            var eventCardContent = document.getElementById("event-card-content");
+
+            function filterEvents(target) {
+                if (!target) {
+                    for (var i = 0; i < eventCardContent.children.length; i++) {
+                        eventCardContent.children[i].style.display = "block";
+                    }
+                    return
+                }
+                for (var i = 0; i < eventCardContent.children.length; i++) {
+                    eventCardContent.children[i].style.display =
+                        eventCardContent.children[i].getAttribute("data-tags").includes(target) ?
+                            "block" : "none";
                 }
             }
         </script>

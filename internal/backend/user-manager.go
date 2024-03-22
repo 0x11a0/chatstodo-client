@@ -3,14 +3,13 @@ package backend
 import (
 	_ "bytes"
 	_ "encoding/json"
+	"github.com/gorilla/sessions"
+	_ "github.com/lucasodra/chatstodo-client/internal/constants"
+	"github.com/lucasodra/chatstodo-client/internal/utils"
 	"log"
 	"net/http"
 	"strings"
-	_ "strings"
 	_ "time"
-
-	"github.com/gorilla/sessions"
-	"github.com/lucasodra/chatstodo-client/internal/utils"
 )
 
 // URLs for the backend calls
@@ -20,6 +19,9 @@ const (
 	BACKEND_GET_ALL_PLATFORM_URL = ""
 	BACKEND_ADD_PLATFORM_URL     = ""
 	BACKEND_REMOVE_PLATFORM_URL  = ""
+
+	BACKEND_GET_ALL_GROUPS_URL = ""
+	BACKEND_DELETE_GROUP_URL   = ""
 )
 
 // Get the summaries from the backend
@@ -218,9 +220,20 @@ func GetAllPlatforms(session *sessions.Session) ([]PlatformEntry, int) {
 			log.Println("user-manager.go - GetAllPlatforms(), response")
 			log.Println(err)
 			return nil, http.StatusInternalServerError
-		} else if backendResponse.StatusCode == http.StatusUnauthorized {
-			log.Println("user-manager.go - GetAllPlatforms(), unauthorized")
-			return nil, http.StatusUnauthorized
+		} else if backendResponse.StatusCode != http.StatusOK {
+			type responseBody struct {
+				Error string `json:"error"`
+			}
+			var backendResponseBody responseBody
+			err = json.NewDecoder(backendResponse.Body).Decode(&backendResponseBody)
+			if err != nil {
+				log.Println("user-manager.go - GetAllPlatforms(), decode")
+				log.Println(err)
+				return nil, http.StatusInternalServerError
+			}
+			log.Println("user-manager.go - GetAllPlatforms(), backend server error")
+			log.Println(backendResponseBody.error)
+			return nil, backendResponse.StatusCode
 		}
 	*/
 
@@ -257,64 +270,62 @@ func GetAllPlatforms(session *sessions.Session) ([]PlatformEntry, int) {
 // Remove a linked platform account from the backend.
 // Returns the appropriate http status code
 func RemovePlatform(session *sessions.Session,
-	verificationCode string) int {
+	platformId int) int {
 
 	// WARN: DUMMY IMPLEMENTATION
 	// UNCOMMENT CODE BELOW FOR PROPER IMPLEMENTATION
 
 	/*
-		type PostBody struct {
-			VerificationCode string `json:"verificationCode"`
-		}
-		postBody := PostBody{
-			VerificationCode: verificationCode,
-		}
+			type DeleteBody struct {
+				PlatformId int `json:"platformId"`
+			}
+			deleteBody := DeleteBody{
+				PlatformId: platformId,
+			}
 
-		jsonBody, err := json.Marshal(postBody)
-		if err != nil {
-			log.Println("user-manager.go - RemovePlatform(), marshal")
-			log.Println(err)
-			return http.StatusInternalServerError
-		}
+			jsonBody, err := json.Marshal(deleteBody)
+			if err != nil {
+				log.Println("user-manager.go - RemovePlatform(), marshal")
+				log.Println(err)
+				return http.StatusInternalServerError
+			}
 
-		backendRequest, err := http.NewRequest(
-			http.MethodPost,
-			BACKEND_ADD_PLATFORM_URL,
-			bytes.NewReader(jsonBody),
-		)
-		if err != nil {
-			log.Println("user-manager.go - RemovePlatform(), request")
-			log.Println(err)
-			return http.StatusInternalServerError
-		}
-		backendRequest.Header.Set(
-			"Authorization", session.Values[constants.COOKIE_JWT].(string),
-		)
+			backendRequest, err := http.NewRequest(
+				http.MethodDelete,
+				BACKEND_REMOVE_PLATFORM_URL,
+				bytes.NewReader(jsonBody),
+			)
+			if err != nil {
+				log.Println("user-manager.go - RemovePlatform(), request")
+				log.Println(err)
+				return http.StatusInternalServerError
+			}
+			backendRequest.Header.Set(
+				"Authorization", session.Values[constants.COOKIE_JWT].(string),
+			)
 
-		backendResponse, err := http.DefaultClient.Do(backendRequest)
-		if err != nil {
-			log.Println("user-manager.go - RemovePlatform(), response")
-			log.Println(err)
-			return http.StatusInternalServerError
-		}
-
+			backendResponse, err := http.DefaultClient.Do(backendRequest)
+			if err != nil {
+				log.Println("user-manager.go - RemovePlatform(), response")
+				log.Println(err)
+				return http.StatusInternalServerError
+			}
 		type ResponseBody struct {
 			Message string `json:"message"`
 			Error   string `json:"error"`
 		}
 		var responseBody ResponseBody
-		err = json.NewDecoder(backendResponse.Body).Decode(&responseBody)
-		if err != nil {
-			log.Println("user-manager.go - RemovePlatform(), decode")
-			log.Println(err)
-			return http.StatusInternalServerError
-		} else if backendResponse.StatusCode != http.StatusCreated {
-			log.Println("user-manager.go - AddPlatform(), backend response")
-			log.Println(backendResponse.Status, responseBody.Error)
-			return backendResponse.StatusCode
-		}
+			err = json.NewDecoder(backendResponse.Body).Decode(&responseBody)
+			if err != nil {
+				log.Println("user-manager.go - RemovePlatform(), decode")
+				log.Println(err)
+				return http.StatusInternalServerError
+			} else if backendResponse.StatusCode != http.StatusCreated {
+				log.Println("user-manager.go - RemovePlatform(), backend response")
+				log.Println(backendResponse.Status, responseBody.Error)
+				return backendResponse.StatusCode
+			}
 	*/
-
 	return http.StatusOK
 }
 
@@ -381,4 +392,179 @@ func AddPlatform(session *sessions.Session,
 	*/
 
 	return http.StatusOK
+}
+
+// Gets all the groups which the user is in.
+// Returns the groups found and the appropriate
+// http status code.
+func GetAllGroups(writer http.ResponseWriter,
+	request *http.Request) ([]PlatformGroups, int) {
+
+	// WARN: DUMMY IMPLEMENTATION
+	// UNCOMMENT CODE BELOW FOR PROPER IMPLEMENTATION
+
+	/*
+		backendRequest, err := http.NewRequest(
+			http.MethodGet,
+			BACKEND_GET_ALL_GROUPS_URL,
+			nil,
+		)
+		if err != nil {
+			log.Println("user-manager.go - GetAllGroups(), request")
+			log.Println(err)
+			return nil, http.StatusInternalServerError
+		}
+		backendRequest.Header.Set(
+			"Authorization", session.Values[constants.COOKIE_JWT].(string),
+		)
+
+		backendResponse, err := http.DefaultClient.Do(backendRequest)
+		if err != nil {
+			log.Println("user-manager.go - GetAllGroups(), response")
+			log.Println(err)
+			return nil, http.StatusInternalServerError
+		} else if backendResponse.StatusCode != http.StatusOK {
+			type responseBody struct {
+				Error string `json:"error"`
+			}
+			var backendResponseBody responseBody
+			err = json.NewDecoder(backendResponse.Body).Decode(&backendResponseBody)
+			if err != nil {
+				log.Println("user-manager.go - GetAllGroups(), decode")
+				log.Println(err)
+				return nil, http.StatusInternalServerError
+			}
+
+			log.Println("user-manager.go - GetAllGroups() backend error")
+			log.Println(backendResponseBody.Error)
+			return nil, backendResponse.StatusCode
+		}
+	*/
+
+	var platformGroups []PlatformGroups
+
+	/*
+		err = json.NewDecoder(backendResponse.Body).Decode(&platformGroups)
+		if err != nil {
+			log.Println("user-manager.go - GetAllGroups(), decode")
+			log.Println(err)
+			return nil, http.StatusInternalServerError
+		}
+	*/
+	// WARN: DUMMY DATA
+	platformGroups = []PlatformGroups{
+		{
+			Platform: "Telegram",
+			Groups: []Group{
+				{
+					Id:        0,
+					UserId:    0,
+					GroupId:   0,
+					GroupName: "ProductDevvo",
+					Platform:  "Telegram",
+					CreatedAt: "2024-02-22T09:35:08.778659+00:00",
+				},
+				{
+					Id:        1,
+					UserId:    0,
+					GroupId:   1,
+					GroupName: "Scrum Masters",
+					Platform:  "Telegram",
+					CreatedAt: "2023-04-22T09:45:08.778659+00:00",
+				},
+			},
+		},
+		{
+			Platform: "Discord",
+			Groups: []Group{
+				{
+					Id:        3,
+					UserId:    0,
+					GroupId:   3,
+					GroupName: "CS205",
+					Platform:  "Discord",
+					CreatedAt: "2024-02-01T05:35:08.778659+00:00",
+				},
+				{
+					Id:        5,
+					UserId:    0,
+					GroupId:   2,
+					GroupName: "Scrum Masters",
+					Platform:  "Discord",
+					CreatedAt: "2023-10-21T10:35:08.778659+00:00",
+				},
+			},
+		},
+	}
+
+	return platformGroups, http.StatusOK
+}
+
+// Removes a group in which the
+// Returns the groups found and the appropriate
+// http status code. Expected: http.StatusNoContent
+func DeleteGroup(session *sessions.Session,
+	groupId int, platform string) int {
+
+	// WARN: DUMMY IMPLEMENTATION
+	// UNCOMMENT CODE BELOW FOR PROPER IMPLEMENTATION
+
+	return http.StatusNoContent
+
+	/*
+		type DeleteBody struct {
+			GroupId  int    `json:"groupId"`
+			Platform string `json:"platform"`
+		}
+		deleteBody := DeleteBody{
+			GroupId:  groupId,
+			Platform: platform,
+		}
+
+		jsonBody, err := json.Marshal(deleteBody)
+		if err != nil {
+			log.Println("user-manager.go - DeleteGroup(), marshal")
+			log.Println(err)
+			return http.StatusInternalServerError
+		}
+
+		backendRequest, err := http.NewRequest(
+			http.MethodDelete,
+			BACKEND_DELETE_GROUP_URL,
+			bytes.NewReader(jsonBody),
+		)
+		if err != nil {
+			log.Println("user-manager.go - DeleteGroup(), request")
+			log.Println(err)
+			return http.StatusInternalServerError
+		}
+		backendRequest.Header.Set(
+			"Authorization", session.Values[constants.COOKIE_JWT].(string),
+		)
+
+		backendResponse, err := http.DefaultClient.Do(backendRequest)
+		if err != nil {
+			log.Println("user-manager.go - DeleteGroup(), response")
+			log.Println(err)
+			return http.StatusInternalServerError
+		} else if backendResponse.StatusCode == http.StatusNoContent {
+			// NOTE: Successful return here
+			return http.StatusNoContent
+		}
+
+		type ResponseBody struct {
+			Error string `json:"error"`
+		}
+		var responseBody ResponseBody
+		err = json.NewDecoder(backendResponse.Body).Decode(&responseBody)
+		if err != nil {
+			log.Println("user-manager.go - DeleteGroup(), decode")
+			log.Println(err)
+			return http.StatusInternalServerError
+		}
+
+		log.Println("user-manager.go - DeleteGroup(), backend response")
+		log.Println(backendResponse.Status, responseBody.Error)
+		return backendResponse.StatusCode
+	*/
 }

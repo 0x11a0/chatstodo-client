@@ -304,8 +304,8 @@ body {
     line-height: 1.5rem;
     border-bottom: 1px solid var(--dark-border-primary);
     width: 100%;
-    transition: 0.5s;
-
+    /*transition: 0.5s;*/
+    transition: opacity 500ms ease-in, height 500ms ease-in;
     ul {
         padding: 0rem 1rem;
     }
@@ -766,6 +766,7 @@ input:checked+.settings-switch:before {
         input {
             color: var(--dark-font-tertiary);
             width: 100%;
+            
             font-size: 1.125rem;
             line-height: 1.5rem;
         }
