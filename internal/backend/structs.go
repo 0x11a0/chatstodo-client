@@ -5,7 +5,7 @@ type User struct {
 }
 
 type Summary struct {
-	Id          int      `json:"id"`
+	Id          string   `json:"id"`
 	Value       string   `json:"value"`
 	Tags        []string `json:"tags"`
 	DisplayTags string
@@ -45,12 +45,15 @@ type Event struct {
 }
 
 type PlatformEntry struct {
-	Platform    string              `json:"platform"`
-	Credentials PlatformCredentials `json:"credentials"`
-}
+	Id           int    `json:"id"`
+	PlatformName string `json:"platformName"`
+	CredentialId string `json:"credentialId"`
 
-type PlatformCredentials struct {
-	Token string `json:"token"`
+	LastProcessed string `json:"lastProcessed"`
+	CreatedAt     string `json:"createdAt"`
+	UpdatedAt     string `json:"updatedAt"`
+
+	UserId string `json:"UserId"`
 }
 
 type PlatformGroups struct {
@@ -59,9 +62,9 @@ type PlatformGroups struct {
 }
 
 type Group struct {
-	Id        int    `json:"_id"`
-	UserId    int    `json:"user_id"`
-	GroupId   int    `json:"group_id"`
+	Id        string `json:"_id"`
+	UserId    string `json:"user_id"`
+	GroupId   string `json:"group_id"`
 	GroupName string `json:"group_name"`
 	Platform  string `json:"platform"`
 	// json iso string

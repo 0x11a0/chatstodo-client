@@ -12,7 +12,12 @@ import (
 
 func (server *Server) dashboardHome(writer http.ResponseWriter,
 	request *http.Request) {
-	dashboardHandler(writer, "/htmx/home", "/home")
+	dashboardHandler(writer, TabListEntry{
+		Id:          "tab-home",
+		Title:       "home",
+		RedirectUrl: "/home",
+		HtmxPath:    "/htmx/home",
+	})
 }
 
 // Dashboard home panel, lazy loading

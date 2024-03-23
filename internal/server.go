@@ -61,18 +61,20 @@ func (server *Server) Run() {
 	router.HandleFunc("/logout/google", server.logout)
 
 	router.HandleFunc("/home", server.authWrapper(server.dashboardHome))
-	router.HandleFunc("/bots", server.authWrapper(server.dashboardBots))
+	//router.HandleFunc("/bots", server.authWrapper(server.dashboardBots))
+	router.HandleFunc("/groups", server.authWrapper(server.dashboardGroups))
 	router.HandleFunc("/settings", server.authWrapper(server.dashboardSettings))
 
 	router.HandleFunc("/htmx/home", server.authWrapper(server.htmxHomePanel))
 	router.HandleFunc("/htmx/home/tasks", server.authWrapper(server.htmxTasks))
 	router.HandleFunc("/htmx/home/events", server.authWrapper(server.htmxEvents))
 	router.HandleFunc("/htmx/home/summaryCard", server.authWrapper(server.htmxSummaryCard))
-	router.HandleFunc("/htmx/bots", server.authWrapper(server.htmxBots))
-	router.HandleFunc("/htmx/bots/modal", server.authWrapper(server.htmxBotModal))
+	//router.HandleFunc("/htmx/bots", server.authWrapper(server.htmxBots))
+	//router.HandleFunc("/htmx/bots/modal", server.authWrapper(server.htmxBotModal))
+	router.HandleFunc("/htmx/groups", server.authWrapper(server.htmxGroups))
 	router.HandleFunc("/htmx/settings", server.authWrapper(server.htmxSettings))
 
-	router.HandleFunc("/error/{code}", server.errorPageNotGeneric)
+	router.HandleFunc("/error/{code}", server.errorPageGeneric)
 	router.NotFoundHandler = http.HandlerFunc(server.errorPageNotFound)
 
 	server.addFileServer()

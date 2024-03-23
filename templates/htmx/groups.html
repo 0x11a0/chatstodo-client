@@ -1,29 +1,23 @@
 <div id="tab-panel">
-    <div id="bots-panel">
-        <div id="bots-header">
-
-            <input id="bot-search" name="search" class="search-box" type="search" placeholder="Search for bots"
-                hx-post="/htmx/bots" hx-headers='{ "X-CSRF-Token": "{{ .csrfToken }}" }' hx-target="#search-results"
-                hx-swap="innerHTML" hx-trigger="input changed delay:500ms, search, load">
-            <button id="bot-new" hx-get="/htmx/bots/modal" hx-target="body" hx-swap="beforeend">
-                <img src="/static/plusYellow.png" width="25" height="25" />
-                <h3>Add bot</h3>
-            </button>
+    <div id="groups-panel">
+        <div id="groups-header">
+            <input id="groups-search" name="search" class="search-box" type="search" placeholder="Search for groups"
+                hx-post="/htmx/groups" hx-headers='{ "X-CSRF-Token": "{{ .csrfToken }}" }'
+                hx-target="#groups-search-results" hx-swap="innerHTML"
+                hx-trigger="input changed delay:500ms, search, load">
         </div>
 
-        <table id="bot-table">
-            <thead id="bot-table-header">
-                <tr class="bot-row">
-                    <th class="bot-table-header-row">Name</th>
-                    <th class="bot-table-header-row">Platform</th>
-                    <th class="bot-table-header-row">Status</th>
-                    <th class="bot-table-header-row">Switch</th>
+        <table id="groups-table">
+            <thead id="groups-table-header">
+                <tr class="groups-row">
+                    <th class="groups-table-header-row">Name</th>
+                    <th class="groups-table-header-row">Platform</th>
                 </tr>
             </thead>
 
-            <tbody id="search-results" class="bot-table-body">
+            <tbody id="groups-search-results" class="groups-table-body">
             </tbody>
         </table>
-
     </div>
+
 </div>

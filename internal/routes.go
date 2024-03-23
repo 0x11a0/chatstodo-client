@@ -9,19 +9,59 @@ import (
 	"github.com/gorilla/mux"
 )
 
+/*
+    <h4 id="tab-home" class="tab"
+hx-get="/htmx/home" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/home"
+        }} aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML" hx-push-url="/home"
+        hx-replace-url="true" onclick="closeSidebar()">Home</h2>
+*/
+
+type TabListEntry struct {
+	// html id
+	Id          string
+	Title       string
+	HtmxPath    string
+	RedirectUrl string
+}
+
+var (
+	tabListEntries = []TabListEntry{
+		{
+			Id:          "tab-home",
+			Title:       "Home",
+			HtmxPath:    "/htmx/home",
+			RedirectUrl: "/home",
+		},
+		{
+			Id:          "tab-groups",
+			Title:       "Groups",
+			HtmxPath:    "/htmx/groups",
+			RedirectUrl: "/groups",
+		},
+		{
+			Id:          "tab-settings",
+			Title:       "Settings",
+			HtmxPath:    "/htmx/settings",
+			RedirectUrl: "/settings",
+		},
+	}
+)
+
+// Renders the dashboard html once.
+// E.g. for base/htmx/home, htmxPath is "/htmx/home"
 func dashboardHandler(writer http.ResponseWriter,
-	htmxPath string, redirectUrl string) {
+	tabListEntry TabListEntry) {
 	tmpl, err := template.ParseFiles("./templates/index.html", "./templates/dashboard.html")
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	tmpl.ExecuteTemplate(writer, "base", map[string]interface{}{
-		"htmxPath":    htmxPath,
-		"redirectUrl": redirectUrl,
+		"tabListEntries": tabListEntries,
+		"htmxPath":       tabListEntry.HtmxPath,
+		"redirectUrl":    tabListEntry.RedirectUrl,
 	})
 }
-
 
 func (server *Server) loginPage(writer http.ResponseWriter,
 	request *http.Request) {
@@ -38,7 +78,6 @@ func (server *Server) loginPage(writer http.ResponseWriter,
 	tmpl.ExecuteTemplate(writer, "base", nil)
 }
 
-
 var (
 	ERROR_MAP = map[int]string{
 
@@ -48,7 +87,7 @@ var (
 	}
 )
 
-func (server *Server) errorPageNotGeneric(writer http.ResponseWriter,
+func (server *Server) errorPageGeneric(writer http.ResponseWriter,
 	request *http.Request) {
 
 	params := mux.Vars(request)

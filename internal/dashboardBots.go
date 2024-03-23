@@ -33,7 +33,7 @@ var fakeBotData = []BotEntry{
 // /bots
 func (server *Server) dashboardBots(writer http.ResponseWriter,
 	request *http.Request) {
-	dashboardHandler(writer, "/htmx/bots", "/bots")
+	//dashboardHandler(writer, "/htmx/bots", "/bots")
 }
 
 // /htmx/bots for both tab panel and search functionality

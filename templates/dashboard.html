@@ -4,17 +4,12 @@
         <[aria-selected=true]/> to false tell the 
         target take .selected set @aria-selected to true">
 
-    <h2 id="tab-home" class="tab" hx-get="/htmx/home" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/home"
-        }} aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML" hx-push-url="/home"
-        hx-replace-url="true" onclick="closeSidebar()">Home</h2>
+    {{ range .tabListEntries }}
+    <h2 id="{{ .Id }}" class="tab" hx-get="{{ .HtmxPath }}" role="tab" aria-controls="tab-panel" {{ if eq $.redirectUrl
+        .RedirectUrl }} aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML"
+        hx-push-url="{{ .RedirectUrl }}" hx-replace-url="true" onclick="closeSidebar()">{{ .Title }}</h2>
 
-    <h2 id="tab-bots" class="tab" hx-get="/htmx/bots" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/bots"
-        }} aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML" hx-push-url="/bots"
-        hx-replace-url="true" onclick="closeSidebar()">Bots</h2>
-
-    <h2 id="tab-settings" class="tab" hx-get="/htmx/settings" role="tab" aria-controls="tab-panel" {{ if eq
-        .redirectUrl "/settings" }} aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML"
-        hx-push-url="/settings" hx-replace-url="true" onclick="closeSidebar()">Settings</h2>
+    {{ end }}
 
     <h2 id="logout-button" class="tab" onclick="window.location='/logout/google'">Logout
     </h2>

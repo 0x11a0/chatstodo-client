@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func SetEnv() {
+func SetEnv() map[string]bool{
 	readFile, err := os.Open("./.env")
 	if err != nil {
 		log.Fatal(err)
@@ -17,6 +17,7 @@ func SetEnv() {
 	log.Print()
 	scanner := bufio.NewScanner(readFile)
 	scanner.Split(bufio.ScanLines)
+	envMap := map[string]bool{}
 	i := 0
 	for scanner.Scan() {
 		strArr := strings.Split(scanner.Text(), "=")
@@ -30,7 +31,9 @@ func SetEnv() {
 		i++
 		i %= 3
 		os.Setenv(strArr[0], strArr[1])
+		envMap[strArr[0]] = true
 	}
 	fmt.Println()
 	log.Println("Environmental variables have been set.")
+	return envMap
 }

@@ -3,26 +3,17 @@
     <div id="task-card" class="card">
         <p class="dots">...</p>
         <div class="card-header">
-            <div class="mui-dropdown" style="flex:1;">
-
-                <button data-mui-toggle="dropdown" style="background: none;
-                outline: none;
-                border: none;">
-                    <img width="30" height="30" src="/static/filterYellow.png" />
-                </button>
-
-                <ul class="mui-dropdown__menu">
-                    <li onclick="filterTasks()">No filter</li>
+            <div style="flex:1;">
+                <select class="card-filter">
+                    <option onclick="filterTasks()"></option>
                     {{ range .taskTags }}
-                    <li onclick="filterTasks('{{ . }}')">{{ . }}</li>
+                    <option onclick="filterTasks('{{ . }}')">{{ . }}</option>
                     {{ end }}
-                </ul>
-
+                </select>
             </div>
-
             <h3 class="card-title">Task List</h3>
             <div class="export-div">
-                <img width="30" height="30" src="/static/exportYellow.png" />
+                <img width="25" height="25" src="/static/exportYellow.png" />
             </div>
         </div>
         <div id="task-card-content" class="card-content">
@@ -72,7 +63,7 @@
             function filterTasks(target) {
                 if (!target) {
                     for (var i = 0; i < taskCardContent.children.length; i++) {
-                        
+
                         taskCardContent.children[i].style.display = "block";
 
                         /*
@@ -83,15 +74,15 @@
                     return
                 }
                 for (var i = 0; i < taskCardContent.children.length; i++) {
-        /*
-                    if (taskCardContent.children[i].getAttribute("data-tags").includes(target)){
-                        taskCardContent.children[i].style.height = "auto";
-                        taskCardContent.children[i].style.opacity = "1";
-                    } else {
-                        taskCardContent.children[i].style.height = "0";
-                        taskCardContent.children[i].style.opacity = "0";
-                    }
-        */
+                    /*
+                                if (taskCardContent.children[i].getAttribute("data-tags").includes(target)){
+                                    taskCardContent.children[i].style.height = "auto";
+                                    taskCardContent.children[i].style.opacity = "1";
+                                } else {
+                                    taskCardContent.children[i].style.height = "0";
+                                    taskCardContent.children[i].style.opacity = "0";
+                                }
+                    */
 
                     taskCardContent.children[i].style.display =
                         taskCardContent.children[i].getAttribute("data-tags").includes(target) ?
@@ -111,27 +102,20 @@
     <div id="event-card" class="card">
         <p class="dots">...</p>
         <div class="card-header">
-            <div class="mui-dropdown" style="flex:1;">
 
-                <button data-mui-toggle="dropdown" style="background: none;
-                outline: none;
-                border: none;">
-                    <img width="30" height="30" src="/static/filterYellow.png" />
-                </button>
-
-                <ul class="mui-dropdown__menu">
-                    <li onclick="filterEvents()">No filter</li>
+            <div style="flex:1;">
+                <select class="card-filter">
+                    <option onclick="filterEvents()"></option>
                     {{ range .eventTags }}
-                    <li onclick="filterEvents('{{ . }}')">{{ . }}</li>
+                    <option onclick="filterEvents('{{ . }}')">{{ . }}</option>
                     {{ end }}
-                </ul>
-
+                </select>
             </div>
             <h3 class="card-title">Events</h3>
             <div class="export-div">
-                <img id="export-yellow" width="30" height="30" style="display:block;" onclick="toggleExport()"
+                <img id="export-yellow" width="25" height="25" style="display:block;" onclick="toggleExport()"
                     src="/static/exportYellow.png" />
-                <img id="export-blue" width="30" height="30" style="display: none;" onclick="toggleExport()"
+                <img id="export-blue" width="25" height="25" style="display: none;" onclick="toggleExport()"
                     src="/static/exportBlue.png" />
             </div>
 

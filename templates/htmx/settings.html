@@ -2,17 +2,36 @@
     <div id="settings-panel">
         <h3 id="settings-title">Settings</h3>
 
-        <h4 class="settings-subtitle">Accounts</h4>
+        <h4 class="settings-subtitle">Platforms</h4>
 
-        {{ range .platformEntries }}
+
+        <form method="post">
+            <div class="mui-textfield mui-textfield--float-label">
+                <input name="search" class="search-box" type="search">
+                <label>Verification code</label>
+            </div>
+            <button type="submit">Submit</button>
+
+        </form>
+
+        {{ range $key, $value := .platforms }}
 
         <div class="settings-block">
             <div class="settings-icon-container">
-                <p class="settings-name">{{ .Platform }}</p>
-                <img src="/static/{{ .Platform }}.png" height="30" width="30" />
+                <p class="settings-name">{{ $key }}</p>
+                <img src="/static/{{ $key }}.png" height="30" width="30" />
             </div>
 
+            {{ if $value }}
+
             <p class="settings-status settings-active">Linked</p>
+
+            {{ else }}
+
+            <p class="settings-status settings-inactive">Unlinked</p>
+
+            {{ end }}
+
         </div>
 
         {{ end }}

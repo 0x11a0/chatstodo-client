@@ -1,46 +1,53 @@
 package internal
 
 import (
-	"github.com/gorilla/csrf"
 	"html/template"
+	"log"
 	"net/http"
+
+	"github.com/gorilla/csrf"
+	"github.com/lucasodra/chatstodo-client/internal/backend"
+	"github.com/lucasodra/chatstodo-client/internal/constants"
 )
 
 /*
-type BotEntry struct {
-	Id       int
-	Name     string
-	Platform string
-	Status   string
-}
+	type BotEntry struct {
+		Id       int
+		Name     string
+		Platform string
+		Status   string
+	}
 
-var fakeBotData = []BotEntry{
-	{
-		Id:       0,
-		Name:     "Product Devvo",
-		Platform: "Telegram",
-		Status:   "Active",
-	},
-	{
-		Id:       1,
-		Name:     "Scrum Masters",
-		Platform: "Discord",
-		Status:   "Inactive",
-	},
-}
-
-// /bots
-func (server *Server) dashboardBots(writer http.ResponseWriter,
-	request *http.Request) {
-	dashboardHandler(writer, "/htmx/bots", "/bots")
-}
+	var fakeBotData = []BotEntry{
+		{
+			Id:       0,
+			Name:     "Product Devvo",
+			Platform: "Telegram",
+			Status:   "Active",
+		},
+		{
+			Id:       1,
+			Name:     "Scrum Masters",
+			Platform: "Discord",
+			Status:   "Inactive",
+		},
+	}
 */
+func (server *Server) dashboardGroups(writer http.ResponseWriter,
+	request *http.Request) {
+	dashboardHandler(writer, TabListEntry{
+		Id:          "tab-groups",
+		Title:       "Groups",
+		RedirectUrl: "/groups",
+		HtmxPath:    "/htmx/groups",
+	})
+}
 
 // /htmx/groups for both tab panel and search functionality
 func (server *Server) htmxGroups(writer http.ResponseWriter,
 	request *http.Request) {
 	if request.Method == "GET" {
-		//htmxBotsPanel(writer, request)
+		server.htmxGroupsPanel(writer, request)
 	} else if request.Method == "POST" {
 		//htmxBotsSearch(writer, request)
 	} else {
@@ -48,54 +55,25 @@ func (server *Server) htmxGroups(writer http.ResponseWriter,
 	}
 }
 
-// /htmx/bots "GET" for tab panel
-func htmxGroupsPanel(writer http.ResponseWriter,
+// /htmx/groups "GET" for tab panel
+func (server *Server) htmxGroupsPanel(writer http.ResponseWriter,
 	request *http.Request) {
-	tmpl, err := template.ParseFiles("./templates/htmx/bots.html")
+	tmpl, err := template.ParseFiles("./templates/htmx/groups.html")
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	session, _ := server.redisSessionStore.Get(request, constants.COOKIE_NAME)
+	groups, statusCode := backend.GetAllGroups(*session)
+	if statusCode != http.StatusOK {
+		log.Println("dashboardGroups.go htmxGroupsPanel(), backend error status ")
+		log.Println(statusCode)
+		return
+	}
+	log.Println(groups)
+
 	tmpl.Execute(writer, map[string]interface{}{
 		"csrfToken": csrf.Token(request),
 	})
 }
-
-/*
-// /htmx/bots "POST" for search engine
-func htmxBotsSearch(writer http.ResponseWriter,
-	request *http.Request) {
-	err := request.ParseForm()
-	if err != nil {
-		log.Println("bots.go - htmxBotsSearch(), parse form")
-		log.Println(err)
-		return
-	}
-	search := request.FormValue("search")
-	var botData []BotEntry
-	for _, bot := range fakeBotData {
-		if strings.Contains(strings.ToLower(bot.Name), search) {
-			botData = append(botData, bot)
-		}
-	}
-	tmpl, err := template.ParseFiles("./templates/htmx/botSearch.html")
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	tmpl.Execute(writer, map[string]interface{}{
-		"bots": botData,
-	})
-}
-
-// /htmx/bots/modal
-func (server *Server) htmxBotModal(writer http.ResponseWriter,
-	request *http.Request) {
-	tmpl, err := template.ParseFiles("./templates/htmx/botModal.html")
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	tmpl.Execute(writer, map[string]interface{}{})
-}
-*/

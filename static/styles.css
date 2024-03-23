@@ -200,6 +200,7 @@ body {
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    margin-bottom: 1rem;
 
     .card-export {
         flex: 1;
@@ -212,6 +213,7 @@ body {
         flex: 1;
         font-size: 1.5rem;
         line-height: 1.75rem;
+        margin: 0rem;
     }
 
     .export-div {
@@ -304,8 +306,9 @@ body {
     line-height: 1.5rem;
     border-bottom: 1px solid var(--dark-border-primary);
     width: 100%;
-    /*transition: 0.5s;*/
     transition: opacity 500ms ease-in, height 500ms ease-in;
+
+
     ul {
         padding: 0rem 1rem;
     }
@@ -346,10 +349,6 @@ body {
         color: var(--dark-font-secondary);
     }
 }
-
-/*
-* .card-block-summary:hover,
-*/
 .card-block:hover {
     background-color: var(--dark-background-tertiary);
 
@@ -360,6 +359,25 @@ body {
         button {
             cursor: pointer;
         }
+    }
+}
+
+.card-filter {
+    /*
+    background-color: var(--dark-background-tertiary);
+*/
+    appearance: none;
+    background: url("./filterYellow.png");
+    background-size: 25px;
+    height: 25px;
+    width: 25px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    color: transparent;
+
+    option {
+        color: var(--dark-font-tertiary);
     }
 }
 
