@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
@@ -12,21 +13,121 @@ import (
 	"github.com/lucasodra/chatstodo-client/internal/backend"
 	"github.com/lucasodra/chatstodo-client/internal/constants"
 	"github.com/lucasodra/chatstodo-client/internal/utils"
+	"google.golang.org/api/calendar/v3"
 )
 
 // /htmx/home/tasks/export
 func (server *Server) htmxTasksExport(writer http.ResponseWriter,
 	request *http.Request) {
 	if request.Method == "GET" {
-		server.htmxHomeTasks(writer, request)
+		//server.htmxHomeTasks(writer, request)
 	} else if request.Method == "POST" {
-		htmxTaskModal(writer, request)
+		htmxTaskExportModal(writer, request)
 	} else if request.Method == "PUT" {
-		htmxTaskSave(writer, request)
+		server.htmxTaskExport(writer, request)
 	} else {
 		http.Error(writer, "Method not allowed.", http.StatusMethodNotAllowed)
 	}
 }
+
+// /htmx/home/tasks/export "POST"
+// Spawns the modal for exporting
+func htmxTaskExportModal(writer http.ResponseWriter,
+	request *http.Request) {
+
+	err := request.ParseForm()
+	if err != nil {
+		log.Println("dashboardHomeTask.go - htmxTaskModal(), parse form")
+		log.Println(err)
+		return
+	}
+
+	type TaskEntry struct {
+		Value    string
+		Deadline string
+		Pretty   string
+	}
+
+	taskMap := map[string]*TaskEntry{}
+	for key := range request.Form {
+		if strings.HasPrefix(key, "value-") {
+			taskId, _ := strings.CutPrefix(key, "value-")
+			if taskMap[taskId] == nil {
+				taskMap[taskId] = &TaskEntry{}
+			}
+			taskMap[taskId].Value = request.FormValue(key)
+		} else if strings.HasPrefix(key, "deadline-") {
+			taskId, _ := strings.CutPrefix(key, "deadline-")
+			if taskMap[taskId] == nil {
+				taskMap[taskId] = &TaskEntry{}
+			}
+			taskMap[taskId].Deadline = request.FormValue(key)
+		} else if strings.HasPrefix(key, "pretty-") {
+			taskId, _ := strings.CutPrefix(key, "pretty-")
+			if taskMap[taskId] == nil {
+				taskMap[taskId] = &TaskEntry{}
+			}
+			taskMap[taskId].Pretty = request.FormValue(key)
+		}
+	}
+	tmpl, err := template.ParseFiles("./templates/htmx/taskExportModal.html")
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	tmpl.Execute(writer, map[string]interface{}{
+		"csrfToken":      csrf.Token(request),
+		csrf.TemplateTag: csrf.TemplateField(request),
+		"taskMap":        taskMap,
+	})
+}
+
+// /htmx/home/tasks/export "PUT"
+// Exports to external calendar.
+// WARN: Currently hardcoded for Google
+// calendar and for Singapore timezone
+func (server *Server) htmxTaskExport(_ http.ResponseWriter,
+	request *http.Request) {
+	err := request.ParseForm()
+	if err != nil {
+		log.Println("dashboardHomeTask.go - htmxTaskExport(), parse form")
+		log.Println(err)
+		return
+	}
+	type TaskEntry struct {
+		Value    string `json:"value"`
+		Deadline string `json:"deadline"`
+	}
+	var tasks []*TaskEntry
+	err = json.NewDecoder(request.Body).Decode(&tasks)
+	if err != nil {
+		log.Println("dashboardHomeTask.go - htmxTaskExport(), decode")
+		log.Println(err)
+		return
+
+	}
+
+	for _, task := range tasks {
+		deadlineStr := utils.HTMLToGCalendar(task.Deadline)
+		calendarEvent := &calendar.Event{
+			Summary:     task.Value,
+			Location:    "",
+			Description: "",
+			Start: &calendar.EventDateTime{
+				DateTime: deadlineStr,
+				TimeZone: "Asia/Singapore",
+			},
+			End: &calendar.EventDateTime{
+				DateTime: deadlineStr,
+				TimeZone: "Asia/Singapore",
+			},
+			Recurrence: []string{},
+			Attendees:  []*calendar.EventAttendee{},
+		}
+		server.exportEvent(request, calendarEvent)
+	}
+}
+
 // /htmx/home/tasks
 func (server *Server) htmxTasks(writer http.ResponseWriter,
 	request *http.Request) {
@@ -68,6 +169,7 @@ func (server *Server) htmxHomeTasks(writer http.ResponseWriter,
 	}
 
 	tmpl.Execute(writer, map[string]interface{}{
+		"csrfToken":      csrf.Token(request),
 		csrf.TemplateTag: csrf.TemplateField(request),
 		"tasks":          tasks,
 		"taskTags":       taskTags,

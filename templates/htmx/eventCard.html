@@ -8,12 +8,23 @@
         </select>
     </div>
     <h3 class="card-title">Events</h3>
-    <div class="export-div">
-        <img id="export-yellow" width="25" height="25" style="display:block;" onclick="toggleExport()"
-            src="/static/exportYellow.png" />
-        <img id="export-blue" width="25" height="25" style="display: none;" onclick="toggleExport()"
-            src="/static/exportBlue.png" />
-    </div>
+    <form class="export-div" hx-post="/htmx/home/events/export" hx-target="body" hx-swap="beforeend">
+        {{ range .events }}
+
+        <input type="hidden" name="value-{{ .Id }}" value="{{ .Value }}">
+        <input type="hidden" name="location-{{ .Id }}" value="{{ .Location }}">
+        <input type="hidden" name="startDate-{{ .Id }}" value="{{ .HTMLDateStart }}">
+        <input type="hidden" name="prettyStart-{{ .Id }}" value="{{ .DisplayDateStart }}">
+        <input type="hidden" name="endDate-{{ .Id }}" value="{{ .HTMLDateEnd }}">
+        <input type="hidden" name="prettyEnd-{{ .Id }}" value="{{ .DisplayDateEnd }}">
+
+        {{ end }}
+
+        <button type="submit">
+            <img width="25" height="25" src="/static/exportYellow.png" />
+        </button>
+        {{ .csrfField }}
+    </form>
 
 </div>
 

@@ -8,15 +8,27 @@
         </select>
     </div>
     <h3 class="card-title">Tasks</h3>
-    <div class="export-div">
-        <img width="25" height="25" src="/static/exportYellow.png" />
-    </div>
+
+    <form class="export-div" hx-post="/htmx/home/tasks/export" hx-target="body" hx-swap="beforeend">
+        {{ range .tasks }}
+
+        <input type="hidden" name="value-{{ .Id }}" value="{{ .Value }}">
+        <input type="hidden" name="deadline-{{ .Id }}" value="{{ .HTMLDeadline }}">
+        <input type="hidden" name="pretty-{{ .Id }}" value="{{ .DisplayDeadline }}">
+
+        {{ end }}
+
+        <button type="submit">
+            <img width="25" height="25" src="/static/exportYellow.png" />
+        </button>
+        {{ .csrfField }}
+    </form>
 </div>
 
 <div id="task-card-content" class="card-content">
     {{ range .tasks }}
 
-    <div id="task-{{ .Id }}" class="card-block" data-tags="{{ .DisplayTags }}">
+    <div id="task-{{ .Id }}" class="task-card-block card-block" data-tags="{{ .DisplayTags }}">
         <form hx-post="/htmx/home/tasks" hx-target="body" hx-swap="beforeend">
             <input type="hidden" name="id" value="{{ .Id }}" required></input>
             <div class="card-container">
@@ -70,4 +82,5 @@
                     "block" : "none";
         }
     }
+
 </script>

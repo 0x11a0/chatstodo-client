@@ -67,7 +67,11 @@ func (server *Server) Run() {
 
 	router.HandleFunc("/htmx/home", server.authWrapper(server.htmxHomePanel))
 	router.HandleFunc("/htmx/home/tasks", server.authWrapper(server.htmxTasks))
+	router.HandleFunc("/htmx/home/tasks/export", server.authWrapper(server.htmxTasksExport))
+
 	router.HandleFunc("/htmx/home/events", server.authWrapper(server.htmxEvents))
+	router.HandleFunc("/htmx/home/events/export", server.authWrapper(server.htmxEventsExport))
+
 	router.HandleFunc("/htmx/home/summaries", server.authWrapper(server.htmxSummaries))
 	//router.HandleFunc("/htmx/bots", server.authWrapper(server.htmxBots))
 	//router.HandleFunc("/htmx/bots/modal", server.authWrapper(server.htmxBotModal))

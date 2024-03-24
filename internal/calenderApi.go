@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+/*
 func (server *Server) testAddEvent(writer http.ResponseWriter,
 	request *http.Request) {
 	event := calendar.Event{
@@ -22,28 +23,26 @@ func (server *Server) testAddEvent(writer http.ResponseWriter,
 			TimeZone: "Asia/Singapore",
 		},
 		Recurrence: []string{
-			/*
 				"RRULE:FREQ=DAILY;COUNT=2",
-			*/
 		},
 		Attendees: []*calendar.EventAttendee{
-			/*
 				&calendar.EventAttendee{Email: "lpage@example.com"},
 				&calendar.EventAttendee{Email: "sbrin@example.com"},
-			*/
 		},
 	}
 	server.addEvent(request, &event)
 }
+*/
 
-
-func (server *Server) addEvent(request *http.Request,
-	event *calendar.Event) {
+// Returns a boolean value representing whether
+// the event has been successfully added
+func (server *Server) exportEvent(request *http.Request,
+	event *calendar.Event) bool {
 
 	googleOAuthToken := server.getGoogleOAuthToken(request)
 	if googleOAuthToken == nil {
 		log.Println("token missing")
-		return
+		return false
 	}
 
 	googleClient := server.googleOAuthConfig.Client(
@@ -57,7 +56,7 @@ func (server *Server) addEvent(request *http.Request,
 	if err != nil {
 		log.Println("calendarApi.go - addEvent(), calendarService")
 		log.Println(err)
-		return
+		return false
 	}
 
 	calendarId := "primary"
@@ -65,7 +64,8 @@ func (server *Server) addEvent(request *http.Request,
 	if err != nil {
 		log.Println("calendarApi.go - addEvent(), do")
 		log.Println(err)
-		return
+		return false
 	}
 	log.Println("add success")
+	return true
 }

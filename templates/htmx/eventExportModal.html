@@ -1,0 +1,97 @@
+<div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
+    <div class="modal-underlay" _="on click trigger closeModal"></div>
+    <div class="modal-content">
+        <h3>Export Events</h3>
+
+        <div class="export-options-button">
+            <select class="">
+                <option>Google Calendar</option>
+            </select>
+            <button onclick="selectAll()">Select all</button>
+            <button onclick="deselectAll()">Clear</button>
+        </div>
+
+        <table class="mui-table">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Event</th>
+                    <th>Location</th>
+                    <th>Start</th>
+                    <th>End</th>
+                </tr>
+            </thead>
+
+            <tbody id="event-export-table">
+                {{ range $key, $value := .eventMap }}
+                <tr>
+                    <td>
+                        <input type="checkbox" class="export-checkbox">
+                    </td>
+                    <td class="export-value">{{$value.Value }}</td>
+                    <td>{{ $value.Location }}</td>
+                    <td>{{ $value.PrettyStart }}</td>
+                    <td>{{ $value.PrettyEnd }}</td>
+                    <input type="hidden" name="startDate-{{ $key }}" value="{{ $value.StartDate }}" readonly>
+                    <input type="hidden" name="endDate-{{ $key }}" value="{{ $value.EndDate }}" readonly>
+                </tr>
+                {{ end }}
+            </tbody>
+
+        </table>
+        <input type="hidden" class="csrfField" name="csrf_token" value="{{ .csrfToken }}">
+
+        <button id="modal-event-export-button" class="mui-btn mui-btn--raised" onclick="exportEvents()"
+            _="on click trigger closeModal">Export</button>
+
+        <script>
+            var eventExportTable = document.getElementById("event-export-table");
+
+            function selectAll() {
+                for (var i = 0; i < eventExportTable.children.length; i++) {
+                    eventExportTable.children[i].children[0].children[0].checked = true;
+                }
+            }
+            function deselectAll() {
+                for (var i = 0; i < eventExportTable.children.length; i++) {
+                    eventExportTable.children[i].children[0].children[0].checked = false;
+                }
+            }
+
+            function exportEvents() {
+                var selectedEvents = [];
+                const checkboxes = document.querySelectorAll('.export-checkbox:checked');
+
+                checkboxes.forEach(function (checkbox) {
+                    const eventRow = checkbox.closest('tr');
+                    const eventName = eventRow.querySelector('.export-value').textContent;
+                    const location = eventRow.querySelectorAll('td')[2].textContent;
+                    const startDate = eventRow.querySelector('input[name^="startDate-"]').value;
+                    const endDate = eventRow.querySelector('input[name^="endDate-"]').value;
+                    selectedEvents.push({
+                        value: eventName,
+                        location: location,
+                        startDate: startDate,
+                        endDate: endDate
+                    });
+                });
+
+                const jsonData = JSON.stringify(selectedEvents);
+                const csrfToken = document.querySelector('.csrfField').value;
+                console.log(jsonData);
+                fetch("/htmx/home/events/export", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-Token": csrfToken
+                    },
+                    body: jsonData
+                }).catch(err => console.error(err));
+
+
+            }
+
+
+        </script>
+    </div>
+</div>

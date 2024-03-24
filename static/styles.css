@@ -222,10 +222,15 @@ body {
         flex-direction: row;
         justify-content: end;
         align-items: center;
+        button {
+            border: none;
+            background: none;
+            outline: none;
+
+        }
 
         img {
             cursor: pointer;
-
         }
     }
 }
@@ -889,7 +894,7 @@ input:checked+.settings-switch:before {
     margin-right: 0rem;
     margin-bottom: 0rem;
 }
- 
+
 #tablist-underlay {
     position: absolute;
     z-index: -2;
@@ -910,56 +915,52 @@ input:checked+.settings-switch:before {
     transition: opacity 150ms ease-in, height 150ms ease-in;
 }
 
-@media (max-width:1281px) {
-    /* hi-res laptops and desktops */
+.export-form{
 
-    body {
-        background-color: red;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.export-container{
+    display: flex;
+    flex-direction: row;
+
+
+    .export-value {
+        background: none;
+        border: none;
+        outline: none;
+        color: var(--dark-font-secondary);
     }
-
+    b {
+         color: var(--dark-font-tertiary);
+    }
 }
 
 
+@media (max-width:1281px) {
+    /* hi-res laptops and desktops */
+}
+
 @media (max-width:1025px) {
     /* big landscape tablets, laptops, and desktops */
-
-    body {
-        background-color: orange;
-    }
 }
 
 @media (max-width:961px) {
     /* tablet, landscape iPad, lo-res laptops ands desktops */
-
-    body {
-        background-color: yellow;
-    }
 }
-
 
 @media (max-width:641px) {
     /* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */
-
-    body {
-        background-color: green;
-    }
 }
 
 @media (max-width:481px) {
     /* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide. */
-
-    body {
-        background-color: blue;
-    }
 }
 
 @media (max-width:320px) {
     /* smartphones, iPhone, portrait 480x320 phones */
-
-
-    body {
-        background-color: whitesmoke;
-    }
 }
 
 

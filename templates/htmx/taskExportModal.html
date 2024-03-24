@@ -1,23 +1,88 @@
 <div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
     <div class="modal-underlay" _="on click trigger closeModal"></div>
     <div class="modal-content">
+        <h3>Export Tasks</h3>
 
-        <form id="modal-task-form" class="mui-form">
-            <legend>Export Tasks</legend>
+        <div class="export-options-button">
+            <select class="">
+                <option>Google Calendar</option>
+            </select>
+            <button onclick="selectAll()">Select all</button>
+            <button onclick="deselectAll()">Clear</button>
+        </div>
 
-            <div class="mui-checkbox">
-                <label>
-                    <input type="checkbox" checked>
-                    Task 1
+        <table class="mui-table">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Task</th>
+                    <th>Deadline</th>
+                </tr>
+            </thead>
 
-                </label>
-            </div>
+            <tbody id="task-export-table">
+                {{ range $key, $value := .taskMap }}
+                <tr>
+                    <td>
+                        <input type="checkbox" class="export-checkbox">
+                    </td>
+                    <td class="export-value">{{$value.Value }}</td>
+                    <td>{{ $value.Pretty }}</td>
+                    <input type="hidden" name="id-{{ $key }}" value="{{ $key }}" readonly>
+                    <input type="hidden" name="deadline-{{ $key }}" value="{{ $value.Deadline }}" readonly>
+                </tr>
+                {{ end }}
+            </tbody>
 
-            {{ .csrfField }}
+        </table>
+        <input type="hidden" class="csrfField" name="csrf_token" value="{{ .csrfToken }}">
 
-            <button id="modal-task-submit-button" class="mui-btn mui-btn--raised"
-                _="on click trigger closeModal">Export</button>
+        <button id="modal-task-export-button" class="mui-btn mui-btn--raised" onclick="exportTasks()"
+            _="on click trigger closeModal">Export</button>
 
-        </form>
+        <script>
+            var taskExportTable = document.getElementById("task-export-table");
+
+            function selectAll() {
+                for (var i = 0; i < taskExportTable.children.length; i++) {
+                    taskExportTable.children[i].children[0].children[0].checked = true;
+                }
+            }
+            function deselectAll() {
+                for (var i = 0; i < taskExportTable.children.length; i++) {
+                    taskExportTable.children[i].children[0].children[0].checked = false;
+                }
+            }
+
+            function exportTasks() {
+                var selectedTasks = [];
+                const checkboxes = document.querySelectorAll('.export-checkbox:checked');
+
+                checkboxes.forEach(function (checkbox) {
+                    const taskRow = checkbox.closest('tr');
+                    const taskName = taskRow.querySelector('.export-value').textContent;
+                    const deadline = taskRow.querySelector('input[name^="deadline-"]').value;
+                    selectedTasks.push({
+                        value: taskName,
+                        deadline: deadline
+                    });
+                });
+
+                const jsonData = JSON.stringify(selectedTasks);
+                const csrfToken = document.querySelector('.csrfField').value;
+                console.log(jsonData);
+                fetch("/htmx/home/tasks/export", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-Token": csrfToken
+                    },
+                    body: jsonData
+                }).catch(err => console.error(err));
+
+
+            }
+
+        </script>
     </div>
 </div>

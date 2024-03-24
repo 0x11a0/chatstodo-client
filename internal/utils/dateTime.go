@@ -6,14 +6,35 @@ import (
 )
 
 const (
-	BACKEND_FORMAT        = "2006-01-02T15:04:05.000Z"
-	DATETIME_HTML_FORMAT  = "2006-01-02T15:04"
+	GOOGLE_CALENDAR_FORMAT = "2006-01-02T15:04:05+08:00"
+	BACKEND_FORMAT         = "2006-01-02T15:04:05.000Z"
+	DATETIME_HTML_FORMAT   = "2006-01-02T15:04"
 	// DD/MM/YYYY - HH:MM
 	DATETIME_PRETTY_FORMAT = "02/01/2006 - 15:04"
 )
 
 var TIMEZONES = map[string]string{
 	"Singapore": "Asia/Singapore",
+}
+
+func HTMLToTime(dateTime string) *time.Time {
+	resultTime, err := time.Parse(DATETIME_HTML_FORMAT, dateTime)
+	if err != nil {
+		log.Println("dateTime.go - HTMLToGCalendar()")
+		log.Println(err)
+		return nil
+	}
+	return &resultTime
+}
+
+func HTMLToGCalendar(dateTime string) string {
+	resultTime, err := time.Parse(DATETIME_HTML_FORMAT, dateTime)
+	if err != nil {
+		log.Println("dateTime.go - HTMLToGCalendar()")
+		log.Println(err)
+		return ""
+	}
+	return resultTime.Format(GOOGLE_CALENDAR_FORMAT)
 }
 
 // Parses a date in ISO8601 format.
@@ -79,12 +100,11 @@ func GetLocalDateTimePretty(dateTime *time.Time,
 	return dateTime.In(localLocation).Format(DATETIME_PRETTY_FORMAT)
 }
 
-
 // Converts datetime string in html datetime-local
 // format to "DD/MM/YYYY - HH:MM" for pretty display.
 // Returns empty string if error occurs while parsing
-func PrettifyHTMLDateTime(htmlDateTime string) string{
-	dateTime , err := time.Parse(DATETIME_HTML_FORMAT, htmlDateTime)
+func PrettifyHTMLDateTime(htmlDateTime string) string {
+	dateTime, err := time.Parse(DATETIME_HTML_FORMAT, htmlDateTime)
 
 	if err != nil {
 		log.Println("dateTime.go - PrettifyHTMLDateTime(), parse time")
