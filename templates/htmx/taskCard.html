@@ -1,0 +1,73 @@
+<div class="card-header">
+    <div style="flex:1;">
+        <select class="card-filter">
+            <option onclick="filterTasks()"></option>
+            {{ range .taskTags }}
+            <option onclick="filterTasks('{{ . }}')">{{ . }}</option>
+            {{ end }}
+        </select>
+    </div>
+    <h3 class="card-title">Tasks</h3>
+    <div class="export-div">
+        <img width="25" height="25" src="/static/exportYellow.png" />
+    </div>
+</div>
+
+<div id="task-card-content" class="card-content">
+    {{ range .tasks }}
+
+    <div id="task-{{ .Id }}" class="card-block" data-tags="{{ .DisplayTags }}">
+        <form hx-post="/htmx/home/tasks" hx-target="body" hx-swap="beforeend">
+            <input type="hidden" name="id" value="{{ .Id }}" required></input>
+            <div class="card-container">
+                <b class="card-block-point">{{ .Value }}</b>
+
+                <div class="card-date-container">
+                    <label>Deadline:</label>
+                    <b class="card-block-date">{{ .DisplayDeadline }}</b>
+                </div>
+
+                <p class="card-block-notes">{{ .DisplayTags }}</p>
+
+
+                <input type="hidden" name="value" value="{{ .Value }}" readonly required></input>
+                <input type="hidden" name="deadline" value="{{ .DisplayDeadline }}" class="card-block-date" readonly
+                    required></input>
+                <input type="hidden" name="localDeadline" value="{{ .HTMLDeadline }}" required></input>
+                <input type="hidden" name="tags" value="{{ .DisplayTags }}" class="card-block-notes" readonly
+                    required></input>
+            </div>
+
+            <div class="edit-container">
+                <button type="submit">
+                    <img src="/static/editYellow.png" width="25" height="25" />
+                </button>
+            </div>
+            {{ $.csrfField }}
+        </form>
+    </div>
+
+    {{ else }}
+
+    <span>No other tasks.</span>
+
+    {{ end }}
+</div>
+
+<script>
+    var taskCardContent = document.getElementById("task-card-content");
+
+    function filterTasks(target) {
+        if (!target) {
+            for (var i = 0; i < taskCardContent.children.length; i++) {
+                taskCardContent.children[i].style.display = "block";
+            }
+            return
+        }
+        for (var i = 0; i < taskCardContent.children.length; i++) {
+            taskCardContent.children[i].style.display =
+                taskCardContent.children[i].getAttribute("data-tags").includes(target) ?
+                    "block" : "none";
+        }
+    }
+</script>

@@ -471,6 +471,11 @@ body {
     }
 }
 
+        #settings-platforms {
+        margin: none;
+    padding: none;
+    width: 100%;
+}
 
 .settings-subtitle {
     align-self: flex-start;

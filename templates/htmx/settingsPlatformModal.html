@@ -1,0 +1,22 @@
+<div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
+    <div class="modal-underlay" _="on click trigger closeModal"></div>
+    <div class="modal-content">
+        <h3>{{ .platform }}</h3>
+
+        <p>insert platform details here </p>
+
+        <form hx-delete="/htmx/settings/platform" hx-target="#modal" hx-swap="outerHTML">
+            {{ if .errorMessage }}
+
+            <p>{{ .errorMessage }}</p>
+
+            {{ end }}
+
+            <button type="submit">Submit</button>
+
+            {{ .csrfField }}
+        </form>
+
+        <!--button _="on click trigger closeModal">Close</button-->
+    </div>
+</div>

@@ -9,13 +9,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-/*
-    <h4 id="tab-home" class="tab"
-hx-get="/htmx/home" role="tab" aria-controls="tab-panel" {{ if eq .redirectUrl "/home"
-        }} aria-selected="true" {{ else }} aria-selected="false" {{ end }} hx-swap="outerHTML" hx-push-url="/home"
-        hx-replace-url="true" onclick="closeSidebar()">Home</h2>
-*/
-
 type TabListEntry struct {
 	// html id
 	Id          string

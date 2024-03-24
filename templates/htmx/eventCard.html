@@ -1,23 +1,53 @@
-<p class="dots">...</p>
 <div class="card-header">
-    <div style="flex: 1;"></div>
+    <div style="flex:1;">
+        <select id="events-filter" class="card-filter">
+            <option onclick="filterEvents()"></option>
+            {{ range .eventTags }}
+            <option onclick="filterEvents('{{ . }}')">{{ . }}</option>
+            {{ end }}
+        </select>
+    </div>
     <h3 class="card-title">Events</h3>
     <div class="export-div">
-        <img width="25" height="25" src="/static/exportYellow.png" />
+        <img id="export-yellow" width="25" height="25" style="display:block;" onclick="toggleExport()"
+            src="/static/exportYellow.png" />
+        <img id="export-blue" width="25" height="25" style="display: none;" onclick="toggleExport()"
+            src="/static/exportBlue.png" />
     </div>
+
 </div>
 
-<div class="card-content">
+<div id="event-card-content" class="card-content">
     {{ range .events }}
 
-    <div id="event-{{ .Id }}" class="card-block">
+    <div id="event-{{ .Id }}" class="card-block" data-tags="{{ .DisplayTags }}">
         <form hx-post="/htmx/home/events" hx-target="body" hx-swap="beforeend">
-            <input type="hidden" name="id" value="{{ .Id }}"></input>
+            <input type="hidden" name="id" value="{{ .Id }}" required></input>
             <div class="card-container">
-                <input type="text" name="title" value="{{ .Title }}" class="card-block-point" readonly></input>
-                <input type="text" name="date" value="{{ .Date }}" class="card-block-date" readonly></input>
-                <input type="text" name="description" value="{{ .Description }}"
-                    class="card-block-notes" readonly></input>
+                <input type="text" name="value" value="{{ .Value }}" class="card-block-point" readonly required></input>
+
+                <div class="card-date-container">
+                    <label>Start:</label>
+                    <b class="card-block-date">{{ .DisplayDateStart }}</b>
+                </div>
+
+                <div class="card-date-container">
+                    <label>End:&nbsp;&nbsp;</label>
+                    <b class="card-block-date">{{ .DisplayDateEnd }}</b>
+                </div>
+
+                {{ if .Location }}
+
+                <input type="text" name="location" value="{{ .Location }}" class="card-block-notes" readonly
+                    required></input>
+
+                {{ end }}
+
+                <input type="text" name="tags" value="{{ .DisplayTags }}" class="card-block-notes" readonly
+                    required></input>
+
+                <input type="hidden" name="localDateStart" value="{{ .HTMLDateStart }}" required></input>
+                <input type="hidden" name="localDateEnd" value="{{ .HTMLDateEnd }}" required></input>
             </div>
 
             <div class="edit-container">
@@ -36,3 +66,35 @@
     {{ end }}
 
 </div>
+
+
+<script>
+    var exportYellow = document.getElementById("export-yellow");
+    var exportBlue = document.getElementById("export-blue");
+
+    function toggleExport() {
+        if (exportYellow.style.display === "block") {
+            exportYellow.style.display = "none";
+            exportBlue.style.display = "block";
+        } else {
+            exportBlue.style.display = "none";
+            exportYellow.style.display = "block";
+        }
+    }
+
+    var eventCardContent = document.getElementById("event-card-content");
+
+    function filterEvents(target) {
+        if (!target) {
+            for (var i = 0; i < eventCardContent.children.length; i++) {
+                eventCardContent.children[i].style.display = "block";
+            }
+            return
+        }
+        for (var i = 0; i < eventCardContent.children.length; i++) {
+            eventCardContent.children[i].style.display =
+                eventCardContent.children[i].getAttribute("data-tags").includes(target) ?
+                    "block" : "none";
+        }
+    }
+</script>

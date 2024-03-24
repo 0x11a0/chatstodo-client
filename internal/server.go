@@ -68,11 +68,13 @@ func (server *Server) Run() {
 	router.HandleFunc("/htmx/home", server.authWrapper(server.htmxHomePanel))
 	router.HandleFunc("/htmx/home/tasks", server.authWrapper(server.htmxTasks))
 	router.HandleFunc("/htmx/home/events", server.authWrapper(server.htmxEvents))
-	router.HandleFunc("/htmx/home/summaryCard", server.authWrapper(server.htmxSummaryCard))
+	router.HandleFunc("/htmx/home/summaries", server.authWrapper(server.htmxSummaries))
 	//router.HandleFunc("/htmx/bots", server.authWrapper(server.htmxBots))
 	//router.HandleFunc("/htmx/bots/modal", server.authWrapper(server.htmxBotModal))
 	router.HandleFunc("/htmx/groups", server.authWrapper(server.htmxGroups))
+
 	router.HandleFunc("/htmx/settings", server.authWrapper(server.htmxSettings))
+	router.HandleFunc("/htmx/settings/platform", server.authWrapper(server.htmxSettingsPlatform))
 
 	router.HandleFunc("/error/{code}", server.errorPageGeneric)
 	router.NotFoundHandler = http.HandlerFunc(server.errorPageNotFound)

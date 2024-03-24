@@ -4,23 +4,22 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 
 	"github.com/gorilla/csrf"
 	"github.com/lucasodra/chatstodo-client/internal/backend"
+	"github.com/lucasodra/chatstodo-client/internal/constants"
 	"github.com/lucasodra/chatstodo-client/internal/utils"
 )
 
 // /htmx/home/events
 func (server *Server) htmxEvents(writer http.ResponseWriter,
 	request *http.Request) {
-	/*
-		if request.Method == "GET" {
-			htmxEventCard(writer, request)
-		} else
-	*/
-	if request.Method == "POST" {
+	if request.Method == "GET" {
+		server.htmxEventCard(writer, request)
+	} else if request.Method == "POST" {
 		htmxEventModal(writer, request)
 	} else if request.Method == "PUT" {
 		htmxEventSave(writer, request)
@@ -29,22 +28,39 @@ func (server *Server) htmxEvents(writer http.ResponseWriter,
 	}
 }
 
-// DEPRECATED
-/*
 // /htmx/home/events "GET"
-func htmxEventCard(writer http.ResponseWriter,
+func (server *Server) htmxEventCard(writer http.ResponseWriter,
 	request *http.Request) {
+	// Error ignored due to auth wrapper taking care of it
+	session, _ := server.redisSessionStore.Get(request, constants.COOKIE_NAME)
+	// TODO: Error handling
+	events, _ := backend.GetEvents(writer, request, session)
+
+	eventsMap := map[string]struct{}{}
+	for _, task := range events {
+		for _, tag := range task.Tags {
+			eventsMap[tag] = struct{}{}
+		}
+	}
+	eventTags := []string{}
+	for key := range eventsMap {
+		eventTags = append(eventTags, key)
+	}
+	slices.Sort(eventTags)
+
 	tmpl, err := template.ParseFiles("./templates/htmx/eventCard.html")
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	tmpl.Execute(writer, map[string]interface{}{
-		"events":         fakeHomeEventsData,
 		csrf.TemplateTag: csrf.TemplateField(request),
+		"events":         events,
+		"eventTags":      eventTags,
 	})
+
 }
-*/
 
 // /htmx/home/events "POST"
 // Spawns the modal for editing of event details

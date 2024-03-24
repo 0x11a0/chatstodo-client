@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	ISO_8601_FORMAT        = "2006-01-02T15:04:05.999999-07:00"
+	BACKEND_FORMAT        = "2006-01-02T15:04:05.000Z"
 	DATETIME_HTML_FORMAT  = "2006-01-02T15:04"
 	// DD/MM/YYYY - HH:MM
 	DATETIME_PRETTY_FORMAT = "02/01/2006 - 15:04"
@@ -20,7 +20,7 @@ var TIMEZONES = map[string]string{
 // Returns the Time object if valid or nil if
 // an error occurs
 func ParseISOString(dateTime string) *time.Time {
-	resultTime, err := time.Parse(ISO_8601_FORMAT, dateTime)
+	resultTime, err := time.Parse(BACKEND_FORMAT, dateTime)
 	if err != nil {
 		log.Println("dateTime.go - ParseISO()")
 		log.Println(err)

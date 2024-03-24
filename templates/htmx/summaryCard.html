@@ -1,56 +1,52 @@
-<p class="dots">...</p>
 <div class="card-header">
-    <div style="flex: 1;"></div>
-    <h3 class="card-title">Summary</h3>
-    <div class="export-div">
-        <img width="25" height="25" src="/static/exportYellow.png" />
+    <div style="flex:1;">
+        <select class="card-filter">
+            <option onclick="filterSummaries()"></option>
+            {{ range .summaryTags }}
+            <option onclick="filterSummaries({{ . }})">{{ . }}</option>
+            {{ end }}
+        </select>
     </div>
+    <h3 class="card-title">Summary</h3>
+    <div style="flex:1;"></div>
 </div>
 
-<div class="card-content">
+<div id="summary-card-content" class="card-content">
+
     {{ range .summaries }}
 
-    <div class="card-summary-container">
-        <p class="card-block-point">{{ .Title }}</p>
-        <p class="card-block-date">{{ .Date }}</p>
-
-
-        <ul>
-            {{ range .Points }}
-            <div class="card-block-summary">
-                <div class="card-container">
-                    <li>{{ . }}</li>
-                </div>
-                <!--div class="edit-container" onclick="console.log('edit')">
-                    <img src="/static/editYellow.png" width="25" height="25" />
-                </div-->
-            </div>
-            {{ end }}
-        </ul>
-
-        <u class="card-block-point">Important Notes</u>
-
-        <ul>
-            {{ range .ImportantPoints }}
-
-            <div class="card-block-summary">
-                <div class="card-container">
-                    <li>{{ . }}</li>
-                </div>
-                <!--div class="edit-container" onclick="console.log('edit')">
-                    <img src="/static/editYellow.png" width="25" height="25" />
-                </div-->
-            </div>
-
-            {{ end }}
-        </ul>
+    <div id="summary={{ .Id }}" class="card-block" data-tags="{{ .DisplayTags }}">
+        <div style="display: flex; flex-direction: column; justify-content: center; align-items: start;">
+            <p>{{ .Value }}</p>
+            <p class="card-block-notes">{{ .DisplayTags }}</p>
+        </div>
     </div>
+
+
 
 
     {{ else }}
 
-    <span>No events.</span>
+    <span>No summaries found.</span>
 
     {{ end }}
 
 </div>
+
+<script>
+    var summaryCardContent = document.getElementById("summary-card-content");
+
+    function filterSummaries(target) {
+        if (!target) {
+            for (var i = 0; i < summaryCardContent.children.length; i++) {
+                summaryCardContent.children[i].style.display = "block";
+            }
+            return
+        }
+        for (var i = 0; i < summaryCardContent.children.length; i++) {
+            summaryCardContent.children[i].style.display =
+                summaryCardContent.children[i].getAttribute("data-tags").includes(target) ?
+                    "block" : "none";
+        }
+    }
+</script>

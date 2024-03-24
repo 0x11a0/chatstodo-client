@@ -1,19 +1,17 @@
-<div id="event-{{ .Id }}" class="card-block">
+<div id="event-{{ .Id }}" class="card-block" data-tags="{{ .DisplayTags }}">
     <form hx-post="/htmx/home/events" hx-target="body" hx-swap="beforeend">
         <input type="hidden" name="id" value="{{ .Id }}" required></input>
         <div class="card-container">
             <input type="text" name="value" value="{{ .Value }}" class="card-block-point" readonly required></input>
 
             <div class="card-date-container">
-                <label>Start date:</label>
-                <input type="text" name="displayDateStart" value="{{ .DisplayDateStart }}" class="card-block-date"
-                    readonly required></input>
+                <label>Start:</label>
+                <b class="card-block-date">{{ .DisplayDateStart }}</b>
             </div>
 
             <div class="card-date-container">
-                <label>End date:&nbsp;&nbsp;</label>
-                <input type="text" name="displayDateEnd" value="{{ .DisplayDateEnd }}" class="card-block-date" readonly
-                    required></input>
+                <label>End:&nbsp;&nbsp;</label>
+                <b class="card-block-date">{{ .DisplayDateEnd }}</b>
             </div>
 
             {{ if .Location }}

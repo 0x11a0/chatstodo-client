@@ -3,47 +3,52 @@ package internal
 import (
 	"html/template"
 	"net/http"
+	"slices"
+	"github.com/gorilla/csrf"
+	"github.com/lucasodra/chatstodo-client/internal/backend"
+	"github.com/lucasodra/chatstodo-client/internal/constants"
 )
 
-type Summary1 struct {
-	Title           string
-	Date            string
-	Points          []string
-	ImportantPoints []string
-}
-
-var fakeHomeSummaryData = []Summary1{
-	{
-		Title: "Validation Group 1",
-		Date:  "11/02/2024",
-		Points: []string{
-			`The group chat discussion revolved around planning two outings
-            - one for the IDP group and another to celebrate with a friend
-            named Antoine.`,
-			`A supper outing at Swee Choon was also mentioned.`,
-			`The conversation included logistical questions about fetching,
-            sleeping schedules, and venue preferences.`,
-			`Tasks were delegated for researching places and making reservations.`,
-			`Two specific events were finalised with dates and times.`,
-		},
-		ImportantPoints: []string{
-			`Prioritise CS202 meeting and CS420 research proposal.`,
-			`Review CS206 code before Tuesday.`,
-			`Collaborate on CS205 exam prep.`,
-			`Attend Samba Masala practices for upcoming open house gig.`,
-		},
-	},
-}
-
-func (server *Server) htmxSummaryCard(writer http.ResponseWriter,
+// /htmx/home/summaries
+func (server *Server) htmxSummaries(writer http.ResponseWriter,
 	request *http.Request) {
+	if request.Method == "GET" {
+		server.htmxHomeSummaries(writer, request)
+	} else {
+		http.Error(writer, "Method not allowed.", http.StatusMethodNotAllowed)
+	}
+}
+
+// /htmx/home/summaries "GET"
+func (server *Server) htmxHomeSummaries(writer http.ResponseWriter,
+	request *http.Request) {
+	// Error ignored due to auth wrapper taking care of it
+	session, _ := server.redisSessionStore.Get(request, constants.COOKIE_NAME)
+	// TODO: Error handling
+	summaries, _ := backend.GetSummaries(writer, request, session)
+
+	summariesMap := map[string]struct{}{}
+	for _, task := range summaries {
+		for _, tag := range task.Tags {
+			summariesMap[tag] = struct{}{}
+		}
+	}
+	summaryTags := []string{}
+	for key := range summariesMap {
+		summaryTags = append(summaryTags, key)
+	}
+	slices.Sort(summaryTags)
 
 	tmpl, err := template.ParseFiles("./templates/htmx/summaryCard.html")
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	tmpl.Execute(writer, map[string]interface{}{
-		"summaries": fakeHomeSummaryData,
+		csrf.TemplateTag: csrf.TemplateField(request),
+		"summaries":      summaries,
+		"summaryTags":    summaryTags,
 	})
+
 }

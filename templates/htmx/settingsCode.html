@@ -1,0 +1,31 @@
+<div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
+    <div class="modal-underlay" _="on click trigger closeModal"></div>
+    <div class="modal-content">
+        <h3>Add platform</h3>
+
+        <p>The verification code is a 6-digit code issued by the bots
+            from each platform. Unsure of how to get one? Head over to
+            the guide tab to learn more!</p>
+
+        <form hx-post="/htmx/settings/platform" hx-target="#modal" hx-swap="outerHTML">
+            <div class="mui-textfield mui-textfield--float-label">
+                <input name="verificationCode" class="platform-code" type="text" required 
+            value="{{ .inputValue }}"
+                />
+                <label>Verification code</label>
+            </div>
+
+            {{ if .errorMessage }}
+        
+            <p>{{ .errorMessage }}</p>
+
+            {{ end }}
+
+            <button type="submit">Submit</button>
+
+            {{ .csrfField }}
+        </form>
+
+        <!--button _="on click trigger closeModal">Close</button-->
+    </div>
+</div>

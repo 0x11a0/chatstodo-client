@@ -5,10 +5,18 @@ type User struct {
 }
 
 type Summary struct {
-	Id          string   `json:"id"`
+	Id          int      `json:"id"`
 	Value       string   `json:"value"`
 	Tags        []string `json:"tags"`
 	DisplayTags string
+
+	CreatedAt        string `json:"createdAt"`
+	HTMLCreatedAt    string
+	DisplayCreatedAt string
+
+	UpdatedAt        string `json:"updatedAt"`
+	HTMLUpdatedAt    string
+	DisplayUpdatedAt string
 }
 
 type Task struct {
@@ -19,6 +27,14 @@ type Task struct {
 	DisplayDeadline string
 	Tags            []string `json:"tags"`
 	DisplayTags     string
+
+	CreatedAt        string `json:"createdAt"`
+	HTMLCreatedAt    string
+	DisplayCreatedAt string
+
+	UpdatedAt        string `json:"updatedAt"`
+	HTMLUpdatedAt    string
+	DisplayUpdatedAt string
 }
 
 type Event struct {
@@ -42,6 +58,14 @@ type Event struct {
 
 	Tags        []string `json:"tags"`
 	DisplayTags string
+
+	CreatedAt        string `json:"createdAt"`
+	HTMLCreatedAt    string
+	DisplayCreatedAt string
+
+	UpdatedAt        string `json:"updatedAt"`
+	HTMLUpdatedAt    string
+	DisplayUpdatedAt string
 }
 
 type PlatformEntry struct {

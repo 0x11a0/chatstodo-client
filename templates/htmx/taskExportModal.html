@@ -1,0 +1,23 @@
+<div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
+    <div class="modal-underlay" _="on click trigger closeModal"></div>
+    <div class="modal-content">
+
+        <form id="modal-task-form" class="mui-form">
+            <legend>Export Tasks</legend>
+
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" checked>
+                    Task 1
+
+                </label>
+            </div>
+
+            {{ .csrfField }}
+
+            <button id="modal-task-submit-button" class="mui-btn mui-btn--raised"
+                _="on click trigger closeModal">Export</button>
+
+        </form>
+    </div>
+</div>

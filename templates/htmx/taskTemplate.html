@@ -1,19 +1,23 @@
-<div id="task-{{ .Id }}" class="card-block">
+<div id="task-{{ .Id }}" class="card-block" data-tags="{{ .DisplayTags }}">
     <form hx-post="/htmx/home/tasks" hx-target="body" hx-swap="beforeend">
         <input type="hidden" name="id" value="{{ .Id }}" required></input>
         <div class="card-container">
-            <input type="text" name="value" value="{{ .Value }}" class="card-block-point" readonly required></input>
+            <b class="card-block-point">{{ .Value }}</b>
 
             <div class="card-date-container">
                 <label>Deadline:</label>
-                <input type="text" name="deadline" value="{{ .DisplayDeadline }}" class="card-block-date" readonly
-                    required></input>
+                <b class="card-block-date">{{ .DisplayDeadline }}</b>
             </div>
 
-            <input type="text" name="tags" value="{{ .DisplayTags }}" class="card-block-notes" readonly
-                required></input>
+            <p class="card-block-notes">{{ .DisplayTags }}</p>
 
+
+            <input type="hidden" name="value" value="{{ .Value }}" readonly required></input>
+            <input type="hidden" name="deadline" value="{{ .DisplayDeadline }}" class="card-block-date" readonly
+                required></input>
             <input type="hidden" name="localDeadline" value="{{ .HTMLDeadline }}" required></input>
+            <input type="hidden" name="tags" value="{{ .DisplayTags }}" class="card-block-notes" readonly
+                required></input>
         </div>
 
         <div class="edit-container">

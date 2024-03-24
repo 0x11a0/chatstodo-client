@@ -3,128 +3,96 @@ package backend
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/gorilla/sessions"
-	"github.com/lucasodra/chatstodo-client/internal/constants"
-	"github.com/lucasodra/chatstodo-client/internal/utils"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/gorilla/sessions"
+	"github.com/lucasodra/chatstodo-client/internal/constants"
+	"github.com/lucasodra/chatstodo-client/internal/utils"
 )
 
-// Get the summaries from the backend
-// Returns the list of tasks, events, an summaries
-// if successful. Otherwise returns all nil
-func GetSummary(writer http.ResponseWriter,
-	request *http.Request, session *sessions.Session) ([]*Task, []*Event, []*Summary) {
+// Get the summaries from the backend.
+// Also returns the appropriate http status code.
+// Expected: http.StatusOK
+func GetSummaries(writer http.ResponseWriter,
+	request *http.Request, session *sessions.Session) ([]*Summary, int) {
 
 	backendRequest, err := http.NewRequest(
-		http.MethodPost,
+		http.MethodGet,
 		os.Getenv("BACKEND_GET_SUMMARY_URL"),
 		nil,
 	)
 	if err != nil {
-		log.Println("user-manager.go - getSummary(), request")
+		log.Println("user-manager.go - GetSummaries(), request")
 		log.Println(err)
-		return nil, nil, nil
+		return nil, http.StatusInternalServerError
 	}
+
+	backendRequest.Header.Set(
+		"Authorization", session.Values[constants.COOKIE_JWT].(string),
+	)
 
 	backendResponse, err := http.DefaultClient.Do(backendRequest)
 	_, err = http.DefaultClient.Do(backendRequest)
 	if err != nil {
-		log.Println("user-manager.go - getSummary(), response")
+		log.Println("user-manager.go - GetSummaries(), response")
 		log.Println(err)
-		return nil, nil, nil
+		return nil, http.StatusInternalServerError
 	}
-	type ResponseBody struct {
-		Tasks     []*Task    `json:"tasks"`
-		Events    []*Event   `json:"events"`
-		Summaries []*Summary `json:"summaries"`
-	}
-	var responseBody ResponseBody
+	var responseBody []*Summary
 	err = json.NewDecoder(backendResponse.Body).Decode(&responseBody)
 	if err != nil {
-		log.Println("user-manager.go - getSummary(), decode")
+		log.Println("user-manager.go - GetSummaries(), decode")
 		log.Println(err)
-		return nil, nil, nil
+		return nil, http.StatusInternalServerError
 	}
 
-	// WARN: DUMMY DATA
-	responseBody.Tasks = []*Task{
-		{
-			Id:       0,
-			Value:    "Fill indemnity form",
-			Deadline: "2024-03-28T13:00:00.000000+00:00",
-			Tags: []string{
-				"CS123",
-				"SMU",
-			},
-		},
-		{
-			Id:       1,
-			Value:    "Research places with gin tonic",
-			Deadline: "2024-03-29T14:30:25.000000+00:00",
-			Tags: []string{
-				"tag1",
-				"tag2",
-			},
-		},
-		{
-			Id:       2,
-			Value:    "Make reservation for LAVO on April 1, 3pm",
-			Deadline: "2024-03-28T12:00:25.000000+00:00",
-			Tags: []string{
-				"tag2",
-				"tag3",
-			},
-		},
-		{
-			Id:       3,
-			Value:    "Bring cake for the celebration",
-			Deadline: "2024-04-01T15:00:00.000000+00:00",
-			Tags: []string{
-				"tag2",
-				"tag3",
-			},
-		},
+	for _, summary := range responseBody {
+		summary.DisplayTags = "[" + strings.Join(summary.Tags, ", ") + "]"
 	}
 
-	// WARN: DUMMY DATA
-	responseBody.Events = []*Event{
-		{
-			Id:        0,
-			Value:     "IDP outing at KSTAR",
-			Location:  "KSTAR",
-			DateStart: "2024-04-02T09:00:00.000000+00:00",
-			DateEnd:   "2024-04-02T17:00:00.000000+00:00",
-			Tags: []string{
-				"IDP",
-				"Tag1",
-				"Tag3",
-			},
-		},
-		{
-			Id:        1,
-			Value:     "Antoine outing at LAVO",
-			Location:  "LAVO",
-			DateStart: "2024-04-03T13:00:00.000000+00:00",
-			DateEnd:   "2024-04-03T19:00:00.000000+00:00",
-			Tags: []string{
-				"CS103",
-				"Tag2",
-				"Tag3",
-			},
-		},
-	}
-
-	processBackendSummary(responseBody.Tasks, responseBody.Events, responseBody.Summaries)
-
-	return responseBody.Tasks, responseBody.Events, responseBody.Summaries
+	return responseBody, http.StatusOK
 }
 
-// Formats all the time to localtime meant for html
-func processBackendSummary(tasks []*Task, events []*Event, summaries []*Summary) {
-	for _, task := range tasks {
+// Get the tasks from the backend.
+// Also returns the appropriate http status code.
+// Expected: http.StatusOK
+func GetTasks(writer http.ResponseWriter,
+	request *http.Request, session *sessions.Session) ([]*Task, int) {
+
+	backendRequest, err := http.NewRequest(
+		http.MethodGet,
+		os.Getenv("BACKEND_GET_TASKS_URL"),
+		nil,
+	)
+	if err != nil {
+		log.Println("user-manager.go - getTasks(), request")
+		log.Println(err)
+		return nil, http.StatusInternalServerError
+	}
+
+	backendRequest.Header.Set(
+		"Authorization", session.Values[constants.COOKIE_JWT].(string),
+	)
+
+	backendResponse, err := http.DefaultClient.Do(backendRequest)
+	_, err = http.DefaultClient.Do(backendRequest)
+	if err != nil {
+		log.Println("user-manager.go - getTasks(), response")
+		log.Println(err)
+		return nil, http.StatusInternalServerError
+	}
+	var responseBody []*Task
+	err = json.NewDecoder(backendResponse.Body).Decode(&responseBody)
+	if err != nil {
+		log.Println("user-manager.go - getTasks(), decode")
+		log.Println(err)
+		return nil, http.StatusInternalServerError
+	}
+
+	for _, task := range responseBody {
 		deadlineTime := utils.ParseISOString(task.Deadline)
 		task.HTMLDeadline = utils.GetLocalDateTimeDatePicker(
 			deadlineTime,
@@ -140,7 +108,46 @@ func processBackendSummary(tasks []*Task, events []*Event, summaries []*Summary)
 		task.DisplayTags = "[" + strings.Join(task.Tags, ", ") + "]"
 	}
 
-	for _, event := range events {
+	return responseBody, http.StatusOK
+}
+
+// Get the tasks from the backend.
+// Also returns the appropriate http status code.
+// Expected: http.StatusOK
+func GetEvents(writer http.ResponseWriter,
+	request *http.Request, session *sessions.Session) ([]*Event, int) {
+
+	backendRequest, err := http.NewRequest(
+		http.MethodGet,
+		os.Getenv("BACKEND_GET_EVENTS_URL"),
+		nil,
+	)
+	if err != nil {
+		log.Println("user-manager.go - getEvents(), request")
+		log.Println(err)
+		return nil, http.StatusInternalServerError
+	}
+
+	backendRequest.Header.Set(
+		"Authorization", session.Values[constants.COOKIE_JWT].(string),
+	)
+
+	backendResponse, err := http.DefaultClient.Do(backendRequest)
+	_, err = http.DefaultClient.Do(backendRequest)
+	if err != nil {
+		log.Println("user-manager.go - getEvents(), response")
+		log.Println(err)
+		return nil, http.StatusInternalServerError
+	}
+	var responseBody []*Event
+	err = json.NewDecoder(backendResponse.Body).Decode(&responseBody)
+	if err != nil {
+		log.Println("user-manager.go - getEvents(), decode")
+		log.Println(err)
+		return nil, http.StatusInternalServerError
+	}
+
+	for _, event := range responseBody {
 		startTime := utils.ParseISOString(event.DateStart)
 		event.HTMLDateStart = utils.GetLocalDateTimeDatePicker(
 			startTime,
@@ -170,9 +177,7 @@ func processBackendSummary(tasks []*Task, events []*Event, summaries []*Summary)
 		event.DisplayTags = "[" + strings.Join(event.Tags, ", ") + "]"
 	}
 
-	for _, summary := range summaries {
-		summary.DisplayTags = "[" + strings.Join(summary.Tags, ", ") + "]"
-	}
+	return responseBody, http.StatusOK
 }
 
 // Get all platforms linked from the backend. Returns the
@@ -316,6 +321,7 @@ func AddPlatform(session *sessions.Session,
 		log.Println(err)
 		return http.StatusInternalServerError
 	}
+
 	backendRequest.Header.Set(
 		"Authorization", session.Values[constants.COOKIE_JWT].(string),
 	)
@@ -338,7 +344,7 @@ func AddPlatform(session *sessions.Session,
 		log.Println("user-manager.go - AddPlatform(), decode")
 		log.Println(err)
 		return http.StatusInternalServerError
-	} else if backendResponse.StatusCode != http.StatusCreated {
+	} else if backendResponse.StatusCode != http.StatusOK {
 		log.Println("user-manager.go - AddPlatform(), backend response")
 		log.Println(backendResponse.Status, responseBody.Error)
 		return backendResponse.StatusCode
