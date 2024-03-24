@@ -105,7 +105,7 @@ func htmxEventsExportModal(writer http.ResponseWriter,
 // Exports to external calendar.
 // WARN: Currently hardcoded for Google
 // calendar and for Singapore timezone
-func (server *Server) htmxEventExport(_ http.ResponseWriter,
+func (server *Server) htmxEventExport(writer http.ResponseWriter,
 	request *http.Request) {
 
 	// NOTE: Might be redundant
@@ -148,7 +148,7 @@ func (server *Server) htmxEventExport(_ http.ResponseWriter,
 			Recurrence: []string{},
 			Attendees:  []*calendar.EventAttendee{},
 		}
-		server.exportEvent(request, calendarEvent)
+		server.exportEvent(writer, request, calendarEvent)
 	}
 }
 

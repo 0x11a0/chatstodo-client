@@ -233,7 +233,7 @@ func (server *Server) authHandler(writer http.ResponseWriter,
 		oauth2.AccessTypeOffline,
 		oauth2.S256ChallengeOption(server.oAuthVerifier),
 	)
-	http.Redirect(writer, request, url, http.StatusTemporaryRedirect)
+	http.Redirect(writer, request, url, http.StatusSeeOther)
 }
 
 func (server *Server) isValidSession(request *http.Request) bool {

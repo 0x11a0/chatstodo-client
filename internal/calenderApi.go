@@ -36,8 +36,13 @@ func (server *Server) testAddEvent(writer http.ResponseWriter,
 
 // Returns a boolean value representing whether
 // the event has been successfully added
-func (server *Server) exportEvent(request *http.Request,
-	event *calendar.Event) bool {
+func (server *Server) exportEvent(writer http.ResponseWriter,
+	request *http.Request, event *calendar.Event) bool {
+
+	err := server.refreshGoogleAccessToken(writer, request)
+	if err != nil {
+		log.Println("trouble refreshing token")
+	}
 
 	googleOAuthToken := server.getGoogleOAuthToken(request)
 	if googleOAuthToken == nil {
