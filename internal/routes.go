@@ -73,10 +73,8 @@ func (server *Server) loginPage(writer http.ResponseWriter,
 
 var (
 	ERROR_MAP = map[int]string{
-
 		http.StatusUnauthorized: "Unauthorized!",              // 401
 		http.StatusNotFound:     "Page or content not found!", // 404
-
 	}
 )
 

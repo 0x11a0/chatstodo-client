@@ -310,7 +310,7 @@ func AddPlatform(session *sessions.Session,
 		log.Println(err)
 		return http.StatusInternalServerError
 	}
-
+	log.Println("jsonBody", string(jsonBody))
 	backendRequest, err := http.NewRequest(
 		http.MethodPost,
 		os.Getenv("BACKEND_ADD_PLATFORM_URL"),
@@ -324,6 +324,9 @@ func AddPlatform(session *sessions.Session,
 
 	backendRequest.Header.Set(
 		"Authorization", session.Values[constants.COOKIE_JWT].(string),
+	)
+	backendRequest.Header.Set(
+		"Content-Type", "application/json",
 	)
 
 	backendResponse, err := http.DefaultClient.Do(backendRequest)

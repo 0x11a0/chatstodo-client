@@ -21,9 +21,14 @@
         <div id="menu-icon">
             <img onclick="openSidebar()" src="/static/menuYellow.png" width="35" height="35" />
         </div>
+        
         <h1 hx-target="#tab-panel" hx-swap="outerHTML" hx-get="/htmx/home" id="logo" hx-replace-url="true"
             hx-push-url="/home" onclick="logoButton()">ChatsToDo</h1>
-        <div style="flex: 1;"></div>
+
+        <div id="sync-container" hx-get="/htmx/reload"
+        hx-target="body" hx-swap="beforeend">
+            <img src="/static/syncYellow.png" width="35" height="35" />
+        </div>
     </div>
 
     <div id="tab-panel" hx-get="{{ .htmxPath }}" hx-swap="outerHTML" hx-target="this" role="tabpanel" hx-trigger="load"

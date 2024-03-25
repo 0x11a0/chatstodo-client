@@ -1,10 +1,11 @@
 package internal
 
 import (
-	"github.com/gorilla/csrf"
 	"html/template"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/csrf"
 )
 
 func (server *Server) dashboardHome(writer http.ResponseWriter,
@@ -30,4 +31,12 @@ func (server *Server) htmxHomePanel(writer http.ResponseWriter,
 		csrf.TemplateTag: csrf.TemplateField(request),
 	})
 	log.Println("served home")
+}
+
+// /htmx/reload
+func (server *Server) htmxReloadData(writer http.ResponseWriter,
+	request *http.Request) {
+	writer.Header().Set("Hx-Trigger", "reloadData")
+	writer.WriteHeader(http.StatusOK)
+	writer.Write([]byte(""))
 }

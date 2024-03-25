@@ -2,7 +2,16 @@
     <form hx-post="/htmx/home/events" hx-target="body" hx-swap="beforeend">
         <input type="hidden" name="id" value="{{ .Id }}" required></input>
         <div class="card-container">
-            <input type="text" name="value" value="{{ .Value }}" class="card-block-point" readonly required></input>
+            <b class="card-block-value">{{ .Value }}</b>
+
+            {{ if .Location }}
+            <div class="card-date-container">
+                <label>Location:</label>
+                <b class="card-block-notes">{{ .Location }}</b>
+            </div>
+
+
+            {{ end }}
 
             <div class="card-date-container">
                 <label>Start:</label>
@@ -14,18 +23,25 @@
                 <b class="card-block-date">{{ .DisplayDateEnd }}</b>
             </div>
 
-            {{ if .Location }}
 
-            <input type="text" name="location" value="{{ .Location }}" class="card-block-notes" readonly
-                required></input>
 
-            {{ end }}
+            <div class="card-block-tags">
 
-            <input type="text" name="tags" value="{{ .DisplayTags }}" class="card-block-notes" readonly
-                required></input>
+                {{ range .Tags }}
+                <div class="card-tag" onclick="filterEvents('{{ . }}')">
+                    <b>{{ . }}</b>
+                </div>
 
+                {{ end }}
+
+            </div>
+
+
+            <input type="hidden" name="value" value="{{ .Value }}" readonly required>
+            <input type="hidden" name="location" value="{{ .Location }}" readonly required>
             <input type="hidden" name="localDateStart" value="{{ .HTMLDateStart }}" required></input>
             <input type="hidden" name="localDateEnd" value="{{ .HTMLDateEnd }}" required></input>
+            <input type="hidden" name="tags" value="{{ .DisplayTags }}" class="card-hidden-tags" readonly required>
         </div>
 
         <div class="edit-container">

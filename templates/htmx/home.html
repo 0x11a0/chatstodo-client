@@ -3,32 +3,32 @@
     <div id="task-card" class="card">
         <p class="dots">...</p>
 
-        <div id="task-card-container" hx-get="/htmx/home/tasks" hx-target="this" hx-swap="innerHTML" hx-trigger="load"
-            hxindicator="#task-card-indicator" style="margin: none; padding: none; width: 100%; flex: 1;">
+        <div id="task-card-container" class="card-card" hx-get="/htmx/home/tasks" hx-target="this" hx-swap="innerHTML"
+            hx-trigger="reloadData from:body" hxindicator="#task-card-indicator">
 
             <div class="card-header">
-                <div style="flex:1;">
+                <div class="card-filter-button" disabled>
                     <select class="card-filter">
-                        <option onclick="filterTasks()"></option>
-                        {{ range .taskTags }}
-                        <option onclick="filterTasks('{{ . }}')">{{ . }}</option>
-                        {{ end }}
+                        <option></option>
                     </select>
                 </div>
-                <h3 class="card-title">Task List</h3>
+
+                <h3 class="card-title">Tasks</h3>
+
                 <div class="export-div">
-                    <img width="25" height="25" src="/static/exportYellow.png" />
+                    <button class="card-export-button" disabled>
+                        <img width="25" height="25" src="/static/exportYellow.png" />
+                    </button>
                 </div>
             </div>
-            <div id="task-card-content" class="card-content" hx-get="/htmx/home/tasks" hx-target="this"
-                hx-swap="innerHTML" hx-trigger="load" hxindicator="#event-card-indicator">
 
-                <div
-                    style="flex:1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <div id="task-card-content" class="card-content">
+                <div class="card-indicator">
                     <img id="event-card-indicator" src="/static/SVG-Loaders-master/svg-loaders/bars.svg" height="30"
                         width="30" />
                 </div>
             </div>
+
         </div>
 
     </div>
@@ -36,64 +36,59 @@
 
     <div id="event-card" class="card">
         <p class="dots">...</p>
-        <div id="event-card-container" hx-get="/htmx/home/events" hx-target="this" hx-swap="innerHTML" hx-trigger="load"
-            hxindicator="#event-card-indicator" style="margin: none; padding: none; width: 100%; flex: 1;">
+        <div id="event-card-container" class="card-card" hx-get="/htmx/home/events" hx-target="this" hx-swap="innerHTML"
+            hx-trigger="reloadData from:body" hxindicator="#event-card-indicator">
 
             <div class="card-header">
-                <div style="flex:1;">
-                    <select id="events-filter" class="card-filter">
-                        <option onclick="filterEvents()"></option>
-                        {{ range .eventTags }}
-                        <option onclick="filterEvents('{{ . }}')">{{ . }}</option>
-                        {{ end }}
+                <div class="card-filter-button" disabled>
+                    <select class="card-filter">
+                        <option></option>
                     </select>
                 </div>
+
                 <h3 class="card-title">Events</h3>
+
                 <div class="export-div">
-                    <img id="export-yellow" width="25" height="25" style="display:block;" onclick="toggleExport()"
-                        src="/static/exportYellow.png" />
-                    <img id="export-blue" width="25" height="25" style="display: none;" onclick="toggleExport()"
-                        src="/static/exportBlue.png" />
+                    <button class="card-export-button" disabled>
+                        <img width="25" height="25" src="/static/exportYellow.png" />
+                    </button>
                 </div>
 
             </div>
 
             <div id="event-card-content" class="card-content">
-                <div
-                    style="flex:1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <div class="card-indicator">
                     <img id="event-card-indicator" src="/static/SVG-Loaders-master/svg-loaders/bars.svg" height="30"
                         width="30" />
                 </div>
             </div>
+
         </div>
     </div>
 
     <div id="summary-card" class="card">
         <p class="dots">...</p>
-        <div id="summary-card-container" hx-get="/htmx/home/summaries" hx-target="this" hx-swap="innerHTML" hx-trigger="load"
-            hxindicator="#event-card-indicator" style="margin: none; padding: none; width: 100%; flex: 1;">
+        <div id="summary-card-container" class="card-card" hx-get="/htmx/home/summaries" hx-target="this"
+            hx-swap="innerHTML" hx-trigger="reloadData from:body" hxindicator="#event-card-indicator">
 
             <div class="card-header">
-                <div style="flex:1;">
-                    <select id="events-filter" class="card-filter">
-                        <option onclick="filterEvents()"></option>
-                        {{ range .eventTags }}
-                        <option onclick="filterEvents('{{ . }}')">{{ . }}</option>
-                        {{ end }}
+                <div class="card-filter-button" disabled>
+                    <select class="card-filter">
+                        <option></option>
                     </select>
                 </div>
-                <h3 class="card-title">Events</h3>
+
+                <h3 class="card-title">Summary</h3>
+
                 <div class="export-div">
-                    <img id="export-yellow" width="25" height="25" style="display:block;" onclick="toggleExport()"
-                        src="/static/exportYellow.png" />
-                    <img id="export-blue" width="25" height="25" style="display: none;" onclick="toggleExport()"
-                        src="/static/exportBlue.png" />
+                    <button class="card-export-button" disabled>
+                        <img width="25" height="25" src="/static/exportYellow.png" />
+                    </button>
                 </div>
             </div>
 
             <div id="summary-card-content" class="card-content">
-                <div
-                    style="flex:1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <div class="card-indicator">
                     <img id="summary-card-indicator" src="/static/SVG-Loaders-master/svg-loaders/bars.svg" height="30"
                         width="30" />
                 </div>

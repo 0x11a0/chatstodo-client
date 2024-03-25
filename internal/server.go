@@ -80,6 +80,8 @@ func (server *Server) Run() {
 	router.HandleFunc("/htmx/settings", server.authWrapper(server.htmxSettings))
 	router.HandleFunc("/htmx/settings/platform", server.authWrapper(server.htmxSettingsPlatform))
 
+	router.HandleFunc("/htmx/reload", server.authWrapper(server.htmxReloadData))
+
 	router.HandleFunc("/error/{code}", server.errorPageGeneric)
 	router.NotFoundHandler = http.HandlerFunc(server.errorPageNotFound)
 

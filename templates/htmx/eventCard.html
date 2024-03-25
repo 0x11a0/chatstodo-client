@@ -1,13 +1,15 @@
 <div class="card-header">
-    <div style="flex:1;">
-        <select id="events-filter" class="card-filter">
+    <div class="card-filter-button">
+        <select class="card-filter">
             <option onclick="filterEvents()"></option>
             {{ range .eventTags }}
             <option onclick="filterEvents('{{ . }}')">{{ . }}</option>
             {{ end }}
         </select>
     </div>
+
     <h3 class="card-title">Events</h3>
+
     <form class="export-div" hx-post="/htmx/home/events/export" hx-target="body" hx-swap="beforeend">
         {{ range .events }}
 
@@ -20,7 +22,7 @@
 
         {{ end }}
 
-        <button type="submit">
+        <button type="submit" class="card-export-button">
             <img width="25" height="25" src="/static/exportYellow.png" />
         </button>
         {{ .csrfField }}
@@ -35,7 +37,16 @@
         <form hx-post="/htmx/home/events" hx-target="body" hx-swap="beforeend">
             <input type="hidden" name="id" value="{{ .Id }}" required></input>
             <div class="card-container">
-                <input type="text" name="value" value="{{ .Value }}" class="card-block-point" readonly required></input>
+                <b class="card-block-value">{{ .Value }}</b>
+
+                {{ if .Location }}
+                <div class="card-date-container">
+                    <label>Location:</label>
+                    <b class="card-block-notes">{{ .Location }}</b>
+                </div>
+
+
+                {{ end }}
 
                 <div class="card-date-container">
                     <label>Start:</label>
@@ -47,18 +58,25 @@
                     <b class="card-block-date">{{ .DisplayDateEnd }}</b>
                 </div>
 
-                {{ if .Location }}
 
-                <input type="text" name="location" value="{{ .Location }}" class="card-block-notes" readonly
-                    required></input>
 
-                {{ end }}
+                <div class="card-block-tags">
 
-                <input type="text" name="tags" value="{{ .DisplayTags }}" class="card-block-notes" readonly
-                    required></input>
+                    {{ range .Tags }}
+                    <div class="card-tag" onclick="filterEvents('{{ . }}')">
+                        <b>{{ . }}</b>
+                    </div>
 
+                    {{ end }}
+
+                </div>
+
+
+                <input type="hidden" name="value" value="{{ .Value }}" readonly required>
+                <input type="hidden" name="location" value="{{ .Location }}" readonly required>
                 <input type="hidden" name="localDateStart" value="{{ .HTMLDateStart }}" required></input>
                 <input type="hidden" name="localDateEnd" value="{{ .HTMLDateEnd }}" required></input>
+                <input type="hidden" name="tags" value="{{ .DisplayTags }}" class="card-hidden-tags" readonly required>
             </div>
 
             <div class="edit-container">
@@ -72,7 +90,7 @@
 
     {{ else }}
 
-    <span>No events.</span>
+    <p>No events.</p>
 
     {{ end }}
 
@@ -80,31 +98,19 @@
 
 
 <script>
-    var exportYellow = document.getElementById("export-yellow");
-    var exportBlue = document.getElementById("export-blue");
-
-    function toggleExport() {
-        if (exportYellow.style.display === "block") {
-            exportYellow.style.display = "none";
-            exportBlue.style.display = "block";
-        } else {
-            exportBlue.style.display = "none";
-            exportYellow.style.display = "block";
-        }
-    }
-
-    var eventCardContent = document.getElementById("event-card-content");
+    var eventCardTags = document.getElementById("event-card-content")
+        .querySelectorAll(".card-hidden-tags");
 
     function filterEvents(target) {
         if (!target) {
-            for (var i = 0; i < eventCardContent.children.length; i++) {
-                eventCardContent.children[i].style.display = "block";
+            for (var i = 0; i < eventCardTags.length; i++) {
+                eventCardTags[i].closest(".card-block").style.display = "block";
             }
             return
         }
-        for (var i = 0; i < eventCardContent.children.length; i++) {
-            eventCardContent.children[i].style.display =
-                eventCardContent.children[i].getAttribute("data-tags").includes(target) ?
+        for (var i = 0; i < eventCardTags.length; i++) {
+            eventCardTags[i].closest(".card-block").style.display =
+                eventCardTags[i].value.includes(target) ?
                     "block" : "none";
         }
     }

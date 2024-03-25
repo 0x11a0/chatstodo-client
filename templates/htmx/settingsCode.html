@@ -1,31 +1,44 @@
 <div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
     <div class="modal-underlay" _="on click trigger closeModal"></div>
     <div class="modal-content">
-        <h3>Add platform</h3>
+        <h3 id="platform-code-title">Add platform</h3>
 
-        <p>The verification code is a 6-digit code issued by the bots
+        <p id="platform-code-text">The verification code is a 6-digit code issued by the bots
             from each platform. Unsure of how to get one? Head over to
             the guide tab to learn more!</p>
 
         <form hx-post="/htmx/settings/platform" hx-target="#modal" hx-swap="outerHTML">
             <div class="mui-textfield mui-textfield--float-label">
-                <input name="verificationCode" class="platform-code" type="text" required 
-            value="{{ .inputValue }}"
-                />
+                <input name="verificationCode" class="platform-code" type="text" required value="{{ .inputValue }}"
+                    oninput="validateVerificationCode(this)" />
                 <label>Verification code</label>
             </div>
 
-            {{ if .errorMessage }}
-        
-            <p>{{ .errorMessage }}</p>
+            <p id="platform-error-text">{{ .errorMessage }}</p>
 
-            {{ end }}
-
-            <button type="submit">Submit</button>
+            <button id="platform-code-submit" type="submit" class="mui-btn mui-btn--raised">Submit</button>
 
             {{ .csrfField }}
         </form>
+        <script>
+            var errorText = document.getElementById("platform-error-text");
+            var platformCodeSubmitButton = document.getElementById("platform-code-submit");
 
+            function validateVerificationCode(input) {
+                const code = input.value.trim();
+
+                if (code === "" || /^\d{6}$/.test(code)) {
+                    errorText.textContent = "";
+                    platformCodeSubmitButton.disabled = false;
+                } else {
+                    errorText.textContent = "Verification code must be a 6-digit number";
+                    platformCodeSubmitButton.disabled = true;
+                }
+
+
+            }
+
+        </script>
         <!--button _="on click trigger closeModal">Close</button-->
     </div>
 </div>

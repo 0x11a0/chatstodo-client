@@ -6,12 +6,13 @@
         <h1 onclick="location.href='/'" id="logo">ChatsToDo</h1>
     </div>
 
-    <h1>Error {{ .statusCode }}!</h1>
-    <h3>{{ .errorMessage }}</h3>
+    <img height="120" width="120" src="/static/computerYellow.png" />
 
+    <h1 id="error-status-code">Error {{ .statusCode }}!</h1>
+    <p id="error-status-message">{{ .errorMessage }}</p>
 
-    <button id="error-button" onclick="location.href='/'">
-        <h2 id="error-text">Return</h2>
+    <button id="error-button" class="mui-btn" onclick="location.href='/'">
+        Return home
     </button>
 </div>
 

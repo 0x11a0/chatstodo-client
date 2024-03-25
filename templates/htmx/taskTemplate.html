@@ -1,23 +1,29 @@
-<div id="task-{{ .Id }}" class="card-block" data-tags="{{ .DisplayTags }}">
+<div id="task-{{ .Id }}" class="task-card-block card-block">
     <form hx-post="/htmx/home/tasks" hx-target="body" hx-swap="beforeend">
         <input type="hidden" name="id" value="{{ .Id }}" required></input>
         <div class="card-container">
-            <b class="card-block-point">{{ .Value }}</b>
+            <b class="card-block-value">{{ .Value }}</b>
 
             <div class="card-date-container">
                 <label>Deadline:</label>
                 <b class="card-block-date">{{ .DisplayDeadline }}</b>
             </div>
 
-            <p class="card-block-notes">{{ .DisplayTags }}</p>
+            <div class="card-block-tags">
 
+                {{ range .Tags }}
+                <div class="card-tag" onclick="filterTasks('{{ . }}')">
+                    <b>{{ . }}</b>
+                </div>
 
-            <input type="hidden" name="value" value="{{ .Value }}" readonly required></input>
-            <input type="hidden" name="deadline" value="{{ .DisplayDeadline }}" class="card-block-date" readonly
-                required></input>
-            <input type="hidden" name="localDeadline" value="{{ .HTMLDeadline }}" required></input>
-            <input type="hidden" name="tags" value="{{ .DisplayTags }}" class="card-block-notes" readonly
-                required></input>
+                {{ end }}
+
+            </div>
+
+            <input type="hidden" name="value" value="{{ .Value }}" readonly required>
+            <input type="hidden" name="deadline" value="{{ .DisplayDeadline }}" readonly required>
+            <input type="hidden" name="localDeadline" value="{{ .HTMLDeadline }}" readonly required>
+            <input type="hidden" name="tags" value="{{ .DisplayTags }}" class="card-hidden-tags" readonly required>
         </div>
 
         <div class="edit-container">
