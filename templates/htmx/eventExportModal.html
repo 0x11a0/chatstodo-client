@@ -1,14 +1,14 @@
 <div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
     <div class="modal-underlay" _="on click trigger closeModal"></div>
     <div class="modal-content">
-        <h3>Export Events</h3>
+        <h3 class="export-title">Export Events</h3>
 
-        <div class="export-options-button">
+        <div class="export-options">
             <select class="">
                 <option>Google Calendar</option>
             </select>
-            <button onclick="selectAll()">Select all</button>
-            <button onclick="deselectAll()">Clear</button>
+            <button class="export-options-select-all" onclick="selectAll()">Select all</button>
+            <button class="export-options-clear" onclick="deselectAll()">Clear</button>
         </div>
 
         <table class="mui-table">
@@ -24,7 +24,7 @@
 
             <tbody id="event-export-table">
                 {{ range $key, $value := .eventMap }}
-                <tr>
+                <tr class="export-row-unchecked">
                     <td>
                         <input type="checkbox" class="export-checkbox">
                     </td>
@@ -46,16 +46,45 @@
 
         <script>
             var eventExportTable = document.getElementById("event-export-table");
+            var exportSubmitButton = document.querySelector(".modal-export-submit-button")
+
+            function enableExport() {
+                var count = 0;
+                for (var i = 0; i < eventExportTable.children.length; i++) {
+                    count += eventExportTable.children[i].children[0].children[0].checked == true
+                        ? 1 : 0;
+                }
+                exportSubmitButton.disabled = count == 0;
+            }
+
+            document.querySelectorAll('.export-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    const row = this.closest('tr');
+                    if (this.checked) {
+                        row.classList.add('export-row-checked');
+                        row.classList.remove('export-row-unchecked');
+                    } else {
+                        row.classList.add('export-row-unchecked');
+                        row.classList.remove('export-row-checked');
+                    }
+
+                    enableExport();
+                });
+            });
+
+
 
             function selectAll() {
                 for (var i = 0; i < eventExportTable.children.length; i++) {
                     eventExportTable.children[i].children[0].children[0].checked = true;
                 }
+                enableExport();
             }
             function deselectAll() {
                 for (var i = 0; i < eventExportTable.children.length; i++) {
                     eventExportTable.children[i].children[0].children[0].checked = false;
                 }
+                enableExport();
             }
 
             function exportEvents() {

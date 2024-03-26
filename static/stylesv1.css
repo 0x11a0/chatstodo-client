@@ -327,6 +327,14 @@ body {
         justify-content: center;
         align-items: center;
     }
+
+    p {
+        border-bottom: 1px solid var(--dark-border-primary);
+        padding: 1rem 0rem;
+        align-self: center;
+        text-align: center;
+        color: var(--dark-font-tertiary);
+    }
 }
 
 .card-subtitle {
