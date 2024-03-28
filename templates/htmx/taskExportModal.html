@@ -41,6 +41,7 @@
             onclick="exportTasks()" _="on click trigger closeModal" disabled>Export</button>
 
         <script>
+            var taskExportTable = document.getElementById("task-export-table");
             var exportSubmitButton = document.querySelector(".modal-export-submit-button")
 
             function enableExport() {
@@ -67,7 +68,7 @@
                 });
             });
 
-            var taskExportTable = document.getElementById("task-export-table");
+            
 
             function selectAll() {
                 for (var i = 0; i < taskExportTable.children.length; i++) {

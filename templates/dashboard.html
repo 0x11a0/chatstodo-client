@@ -21,12 +21,11 @@
         <div id="menu-icon">
             <img onclick="openSidebar()" src="/static/menuYellow.png" width="35" height="35" />
         </div>
-        
-        <h1 hx-target="#tab-panel" hx-swap="outerHTML" hx-get="/htmx/home" id="logo" hx-replace-url="true"
-            hx-push-url="/home" onclick="logoButton()">ChatsToDo</h1>
 
-        <div id="sync-container" hx-get="/htmx/reload"
-        hx-target="body" hx-swap="beforeend">
+        <h1 hx-target="#tab-panel" hx-swap="outerHTML" hx-get="/htmx/home" id="logo" hx-replace-url="true"
+            hx-push-url="/home" onclick="logoButton()">ChatsTodo</h1>
+
+        <div id="sync-container" hx-get="/htmx/reload" hx-target="body" hx-swap="beforeend" onclick="reloadClick()">
             <img src="/static/syncYellow.png" width="35" height="35" />
         </div>
     </div>
@@ -38,6 +37,15 @@
     </div>
 
     <script>
+
+        function reloadClick() {
+            const cardIndicators = document.querySelectorAll(".card-indicator");
+            for (var i = 0; i < cardIndicators.length; i++) {
+                cardIndicators[i].closest("p").style.display = "none";
+                cardIndicators[i].style.display = "flex";
+            }
+        }
+
         var tablist = document.getElementById("tab-list");
         var mainDiv = document.getElementById("main");
         var tablistUnderlay = document.getElementById("tablist-underlay");

@@ -72,6 +72,33 @@
             });
 
             var eventExportTable = document.getElementById("event-export-table");
+            var exportSubmitButton = document.querySelector(".modal-export-submit-button")
+
+            function enableExport() {
+                var count = 0;
+                for (var i = 0; i < eventExportTable.children.length; i++) {
+                    count += eventExportTable.children[i].children[0].children[0].checked == true
+                        ? 1 : 0;
+                }
+                exportSubmitButton.disabled = count == 0;
+            }
+
+            document.querySelectorAll('.export-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    const row = this.closest('tr');
+                    if (this.checked) {
+                        row.classList.add('export-row-checked');
+                        row.classList.remove('export-row-unchecked');
+                    } else {
+                        row.classList.add('export-row-unchecked');
+                        row.classList.remove('export-row-checked');
+                    }
+
+                    enableExport();
+                });
+            });
+
+
 
             function selectAll() {
                 for (var i = 0; i < eventExportTable.children.length; i++) {
