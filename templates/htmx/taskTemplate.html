@@ -4,10 +4,12 @@
         <div class="card-container">
             <b class="card-block-value">{{ .Value }}</b>
 
+            {{ if .DisplayDeadline }}
             <div class="card-date-container">
                 <label>Deadline:</label>
                 <b class="card-block-date">{{ .DisplayDeadline }}</b>
             </div>
+            {{ end }}
 
             <div class="card-block-tags">
 

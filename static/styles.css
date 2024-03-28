@@ -492,7 +492,7 @@ body {
     line-height: 1.5rem;
     width: 100%;
     transition: 0.5s;
-
+    text-align: start;
 
     color: var(--dark-font-tertiary);
 

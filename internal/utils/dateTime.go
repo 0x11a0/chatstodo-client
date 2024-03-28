@@ -44,6 +44,7 @@ func ParseISOString(dateTime string) *time.Time {
 	resultTime, err := time.Parse(BACKEND_FORMAT, dateTime)
 	if err != nil {
 		log.Println("dateTime.go - ParseISO()")
+		log.Println("PROBLEM DATE", dateTime)
 		log.Println(err)
 		return nil
 	}

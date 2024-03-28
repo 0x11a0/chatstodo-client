@@ -38,7 +38,7 @@ func RefreshData(session *sessions.Session) int {
 	}
 
 	type ResponseBody struct {
-		Success string `json:"success"`
+		Success bool   `json:"success"`
 		Message string `json:"message"`
 		Error   string `json:"error"`
 	}
@@ -130,18 +130,21 @@ func GetTasks(session *sessions.Session) ([]*Task, int) {
 	}
 
 	for _, task := range responseBody {
-		deadlineTime := utils.ParseISOString(task.Deadline)
-		task.HTMLDeadline = utils.GetLocalDateTimeDatePicker(
-			deadlineTime,
-			"Singapore",
-		)
-		task.DisplayDeadline = utils.GetLocalDateTimePretty(
-			deadlineTime,
-			"Singapore",
-		)
-		if task.HTMLDeadline == "" {
-			log.Println("DateTime format error for task: ", task)
+		if task.Deadline != "" {
+			deadlineTime := utils.ParseISOString(task.Deadline)
+			task.HTMLDeadline = utils.GetLocalDateTimeDatePicker(
+				deadlineTime,
+				"Singapore",
+			)
+			task.DisplayDeadline = utils.GetLocalDateTimePretty(
+				deadlineTime,
+				"Singapore",
+			)
+			if task.HTMLDeadline == "" {
+				log.Println("DateTime format error for task: ", task)
+			}
 		}
+
 		task.DisplayTags = "[" + strings.Join(task.Tags, ", ") + "]"
 	}
 

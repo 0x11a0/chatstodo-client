@@ -332,7 +332,7 @@ body {
         border-bottom: 1px solid var(--dark-border-primary);
         padding: 1rem 0rem;
         align-self: center;
-        text-align: center;
+        text-align: start;
         color: var(--dark-font-tertiary);
     }
 }
