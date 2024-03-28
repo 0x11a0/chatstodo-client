@@ -21,6 +21,7 @@ var requiredEnv = []string{
 	"BACKEND_REMOVE_PLATFORM_URL",
 	"BACKEND_GET_ALL_GROUPS_URL",
 	"BACKEND_DELETE_GROUP_URL",
+	"BACKEND_REFRESH_DATA_URL",
 }
 
 func main() {

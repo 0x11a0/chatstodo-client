@@ -1,14 +1,14 @@
 <div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
     <div class="modal-underlay" _="on click trigger closeModal"></div>
-    <div class="modal-content">
-        <h3>Export Events</h3>
+    <div class="modal-content export-modal">
+        <h3 class="export-title">Export Events</h3>
 
-        <div class="export-options-button">
-            <select class="">
+        <div class="export-options">
+            <select class="export-options-selector">
                 <option>Google Calendar</option>
             </select>
-            <button onclick="selectAll()">Select all</button>
-            <button onclick="deselectAll()">Clear</button>
+            <button class="export-options-select-all" onclick="selectAll()">Select all</button>
+            <button class="export-options-clear" onclick="deselectAll()">Clear</button>
         </div>
 
         <table class="mui-table">
@@ -24,7 +24,7 @@
 
             <tbody id="event-export-table">
                 {{ range $key, $value := .eventMap }}
-                <tr>
+                <tr class="export-row-unchecked">
                     <td>
                         <input type="checkbox" class="export-checkbox">
                     </td>
@@ -41,21 +41,53 @@
         </table>
         <input type="hidden" class="csrfField" name="csrf_token" value="{{ .csrfToken }}">
 
-        <button id="modal-event-export-button" class="mui-btn mui-btn--raised" onclick="exportEvents()"
-            _="on click trigger closeModal">Export</button>
+        <button id="modal-task-export-button" class="mui-btn mui-btn--raised modal-export-submit-button"
+            onclick="exportTasks()" _="on click trigger closeModal" disabled>Export</button>
 
         <script>
+            var exportSubmitButton = document.querySelector(".modal-export-submit-button")
+
+            function enableExport() {
+                var count = 0;
+                for (var i = 0; i < eventExportTable.children.length; i++) {
+                    count += eventExportTable.children[i].children[0].children[0].checked == true
+                        ? 1 : 0;
+                }
+                exportSubmitButton.disabled = count == 0;
+            }
+
+            document.querySelectorAll('.export-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    const row = this.closest('tr');
+                    if (this.checked) {
+                        row.classList.add('export-row-checked');
+                        row.classList.remove('export-row-unchecked');
+                    } else {
+                        row.classList.add('export-row-unchecked');
+                        row.classList.remove('export-row-checked');
+                    }
+
+                    enableExport();
+                });
+            });
+
             var eventExportTable = document.getElementById("event-export-table");
 
             function selectAll() {
                 for (var i = 0; i < eventExportTable.children.length; i++) {
                     eventExportTable.children[i].children[0].children[0].checked = true;
+                    eventExportTable.children[i].classList.add('export-row-checked');
+                    eventExportTable.children[i].classList.remove('export-row-unchecked');
                 }
+                exportSubmitButton.disabled = false;
             }
             function deselectAll() {
                 for (var i = 0; i < eventExportTable.children.length; i++) {
                     eventExportTable.children[i].children[0].children[0].checked = false;
+                    eventExportTable.children[i].classList.add('export-row-unchecked');
+                    eventExportTable.children[i].classList.remove('export-row-checked');
                 }
+                exportSubmitButton.disabled = true;
             }
 
             function exportEvents() {

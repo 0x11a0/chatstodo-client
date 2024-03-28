@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/csrf"
+	"github.com/lucasodra/chatstodo-client/internal/backend"
+	"github.com/lucasodra/chatstodo-client/internal/constants"
 )
 
 func (server *Server) dashboardHome(writer http.ResponseWriter,
@@ -36,6 +38,9 @@ func (server *Server) htmxHomePanel(writer http.ResponseWriter,
 // /htmx/reload
 func (server *Server) htmxReloadData(writer http.ResponseWriter,
 	request *http.Request) {
+	session, _ := server.redisSessionStore.Get(request, constants.COOKIE_NAME)
+	log.Println(backend.RefreshData(session))
+
 	writer.Header().Set("Hx-Trigger", "reloadData")
 	writer.WriteHeader(http.StatusOK)
 	writer.Write([]byte(""))

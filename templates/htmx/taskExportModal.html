@@ -72,12 +72,18 @@
             function selectAll() {
                 for (var i = 0; i < taskExportTable.children.length; i++) {
                     taskExportTable.children[i].children[0].children[0].checked = true;
+                    taskExportTable.children[i].classList.add('export-row-checked');
+                    taskExportTable.children[i].classList.remove('export-row-unchecked');
                 }
+                exportSubmitButton.disabled = false;
             }
             function deselectAll() {
                 for (var i = 0; i < taskExportTable.children.length; i++) {
                     taskExportTable.children[i].children[0].children[0].checked = false;
+                    taskExportTable.children[i].classList.add('export-row-unchecked');
+                    taskExportTable.children[i].classList.remove('export-row-checked');
                 }
+                exportSubmitButton.disabled = true;
             }
 
             function exportTasks() {

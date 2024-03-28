@@ -4,7 +4,7 @@
         <p class="dots">...</p>
 
         <div id="task-card-container" class="card-card" hx-get="/htmx/home/tasks" hx-target="this" hx-swap="innerHTML"
-            hx-trigger="reloadData from:body" hxindicator="#task-card-indicator">
+            hx-trigger="load, reloadData from:body" hxindicator="#task-card-indicator">
 
             <div class="card-header">
                 <div class="card-filter-button" disabled>
@@ -37,7 +37,7 @@
     <div id="event-card" class="card">
         <p class="dots">...</p>
         <div id="event-card-container" class="card-card" hx-get="/htmx/home/events" hx-target="this" hx-swap="innerHTML"
-            hx-trigger="reloadData from:body" hxindicator="#event-card-indicator">
+            hx-trigger="load, reloadData from:body" hxindicator="#event-card-indicator">
 
             <div class="card-header">
                 <div class="card-filter-button" disabled>
@@ -69,7 +69,7 @@
     <div id="summary-card" class="card">
         <p class="dots">...</p>
         <div id="summary-card-container" class="card-card" hx-get="/htmx/home/summaries" hx-target="this"
-            hx-swap="innerHTML" hx-trigger="reloadData from:body" hxindicator="#event-card-indicator">
+            hx-swap="innerHTML" hx-trigger="load, reloadData from:body" hxindicator="#event-card-indicator">
 
             <div class="card-header">
                 <div class="card-filter-button" disabled>

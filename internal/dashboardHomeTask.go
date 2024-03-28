@@ -148,7 +148,7 @@ func (server *Server) htmxHomeTasks(writer http.ResponseWriter,
 	// Error ignored due to auth wrapper taking care of it
 	session, _ := server.redisSessionStore.Get(request, constants.COOKIE_NAME)
 	// TODO: Error handling
-	tasks, _ := backend.GetTasks(writer, request, session)
+	tasks, _ := backend.GetTasks(session)
 
 	tagsMap := map[string]struct{}{}
 	for _, task := range tasks {

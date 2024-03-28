@@ -172,7 +172,7 @@ func (server *Server) htmxEventCard(writer http.ResponseWriter,
 	// Error ignored due to auth wrapper taking care of it
 	session, _ := server.redisSessionStore.Get(request, constants.COOKIE_NAME)
 	// TODO: Error handling
-	events, _ := backend.GetEvents(writer, request, session)
+	events, _ := backend.GetEvents(session)
 
 	eventsMap := map[string]struct{}{}
 	for _, task := range events {

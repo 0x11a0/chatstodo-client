@@ -13,11 +13,51 @@ import (
 	"github.com/lucasodra/chatstodo-client/internal/utils"
 )
 
+func RefreshData(session *sessions.Session) int {
+
+	backendRequest, err := http.NewRequest(
+		http.MethodGet,
+		os.Getenv("BACKEND_REFRESH_DATA_URL"),
+		nil,
+	)
+	if err != nil {
+		log.Println("user-manager.go - RefreshData(), request")
+		log.Println(err)
+		return http.StatusInternalServerError
+	}
+
+	backendRequest.Header.Set(
+		"Authorization", session.Values[constants.COOKIE_JWT].(string),
+	)
+
+	backendResponse, err := http.DefaultClient.Do(backendRequest)
+	if err != nil {
+		log.Println("user-manager.go - RefreshData(), response")
+		log.Println(err)
+		return http.StatusInternalServerError
+	}
+
+	type ResponseBody struct {
+		Success string `json:"success"`
+		Message string `json:"message"`
+		Error   string `json:"error"`
+	}
+	var responseBody ResponseBody
+
+	err = json.NewDecoder(backendResponse.Body).Decode(&responseBody)
+	if err != nil {
+		log.Println("user-manager.go - RefreshData(), decode")
+		log.Println(err)
+		return http.StatusInternalServerError
+	}
+
+	return backendResponse.StatusCode
+}
+
 // Get the summaries from the backend.
 // Also returns the appropriate http status code.
 // Expected: http.StatusOK
-func GetSummaries(writer http.ResponseWriter,
-	request *http.Request, session *sessions.Session) ([]*Summary, int) {
+func GetSummaries(session *sessions.Session) ([]*Summary, int) {
 
 	backendRequest, err := http.NewRequest(
 		http.MethodGet,
@@ -35,7 +75,6 @@ func GetSummaries(writer http.ResponseWriter,
 	)
 
 	backendResponse, err := http.DefaultClient.Do(backendRequest)
-	_, err = http.DefaultClient.Do(backendRequest)
 	if err != nil {
 		log.Println("user-manager.go - GetSummaries(), response")
 		log.Println(err)
@@ -59,8 +98,7 @@ func GetSummaries(writer http.ResponseWriter,
 // Get the tasks from the backend.
 // Also returns the appropriate http status code.
 // Expected: http.StatusOK
-func GetTasks(writer http.ResponseWriter,
-	request *http.Request, session *sessions.Session) ([]*Task, int) {
+func GetTasks(session *sessions.Session) ([]*Task, int) {
 
 	backendRequest, err := http.NewRequest(
 		http.MethodGet,
@@ -78,7 +116,6 @@ func GetTasks(writer http.ResponseWriter,
 	)
 
 	backendResponse, err := http.DefaultClient.Do(backendRequest)
-	_, err = http.DefaultClient.Do(backendRequest)
 	if err != nil {
 		log.Println("user-manager.go - getTasks(), response")
 		log.Println(err)
@@ -114,8 +151,7 @@ func GetTasks(writer http.ResponseWriter,
 // Get the tasks from the backend.
 // Also returns the appropriate http status code.
 // Expected: http.StatusOK
-func GetEvents(writer http.ResponseWriter,
-	request *http.Request, session *sessions.Session) ([]*Event, int) {
+func GetEvents(session *sessions.Session) ([]*Event, int) {
 
 	backendRequest, err := http.NewRequest(
 		http.MethodGet,
@@ -133,7 +169,6 @@ func GetEvents(writer http.ResponseWriter,
 	)
 
 	backendResponse, err := http.DefaultClient.Do(backendRequest)
-	_, err = http.DefaultClient.Do(backendRequest)
 	if err != nil {
 		log.Println("user-manager.go - getEvents(), response")
 		log.Println(err)

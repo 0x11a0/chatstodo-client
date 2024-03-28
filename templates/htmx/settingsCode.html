@@ -16,7 +16,7 @@
 
             <p id="platform-error-text">{{ .errorMessage }}</p>
 
-            <button id="platform-code-submit" type="submit" class="mui-btn mui-btn--raised">Submit</button>
+            <button id="platform-code-submit" type="submit" class="mui-btn mui-btn--raised" disabled>Submit</button>
 
             {{ .csrfField }}
         </form>
@@ -39,6 +39,5 @@
             }
 
         </script>
-        <!--button _="on click trigger closeModal">Close</button-->
     </div>
 </div>

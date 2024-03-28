@@ -1,12 +1,12 @@
 package internal
 
 import (
-	"html/template"
-	"net/http"
-	"slices"
 	"github.com/gorilla/csrf"
 	"github.com/lucasodra/chatstodo-client/internal/backend"
 	"github.com/lucasodra/chatstodo-client/internal/constants"
+	"html/template"
+	"net/http"
+	"slices"
 )
 
 // /htmx/home/summaries
@@ -25,7 +25,7 @@ func (server *Server) htmxHomeSummaries(writer http.ResponseWriter,
 	// Error ignored due to auth wrapper taking care of it
 	session, _ := server.redisSessionStore.Get(request, constants.COOKIE_NAME)
 	// TODO: Error handling
-	summaries, _ := backend.GetSummaries(writer, request, session)
+	summaries, _ := backend.GetSummaries(session)
 
 	summariesMap := map[string]struct{}{}
 	for _, task := range summaries {

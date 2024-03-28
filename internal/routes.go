@@ -25,12 +25,14 @@ var (
 			HtmxPath:    "/htmx/home",
 			RedirectUrl: "/home",
 		},
-		{
-			Id:          "tab-groups",
-			Title:       "Groups",
-			HtmxPath:    "/htmx/groups",
-			RedirectUrl: "/groups",
-		},
+		/*
+			{
+				Id:          "tab-groups",
+				Title:       "Groups",
+				HtmxPath:    "/htmx/groups",
+				RedirectUrl: "/groups",
+			},
+		*/
 		{
 			Id:          "tab-settings",
 			Title:       "Settings",
