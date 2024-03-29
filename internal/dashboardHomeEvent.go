@@ -150,6 +150,7 @@ func (server *Server) htmxEventExport(writer http.ResponseWriter,
 		}
 		server.exportEvent(writer, request, calendarEvent)
 	}
+	log.Println("events saved")
 }
 
 // /htmx/home/events
